@@ -1,75 +1,76 @@
 package com.edutech.microservicio_curso.controller;
 
-import com.edutech.microservicio_curso.model.TipoCurso;
-import com.edutech.microservicio_curso.service.TipoCursoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.edutech.microservicio_curso.model.TipoCurso;
+import com.edutech.microservicio_curso.service.TipoCursoService;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/tiposcurso")
+@RequestMapping("/api/tipos-cursos")
 public class TipoCursoController {
-
+    
     private final TipoCursoService tipoCursoService;
-
+    
     public TipoCursoController(TipoCursoService tipoCursoService) {
         this.tipoCursoService = tipoCursoService;
     }
-
+    
     @GetMapping
     public ResponseEntity<List<TipoCurso>> getAllTiposCurso() {
         List<TipoCurso> tiposCurso = tipoCursoService.findAll();
-        return new ResponseEntity<>(tiposCurso, HttpStatus.OK);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<TipoCurso> getTipoCursoById(@PathVariable Integer id) {
-        return tipoCursoService.findById(id)
-                .map(tipoCurso -> new ResponseEntity<>(tipoCurso, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        return ResponseEntity.ok(tiposCurso);
     }
     
-    @GetMapping("/nombre/{nombre}")
-    public ResponseEntity<TipoCurso> getTipoCursoByNombre(@PathVariable String nombre) {
-        return tipoCursoService.findByNombre(nombre)
-                .map(tipoCurso -> new ResponseEntity<>(tipoCurso, HttpStatus.OK))
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    @GetMapping("/{id}")
+    public ResponseEntity<TipoCurso> getTipoCursoById(@PathVariable Integer id) {
+        Optional<TipoCurso> tipoCurso = tipoCursoService.findById(id);
+        return tipoCurso.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
-
+    
     @PostMapping
     public ResponseEntity<TipoCurso> createTipoCurso(@RequestBody TipoCurso tipoCurso) {
+        // Verificar si ya existe un tipo de curso con el mismo nombre
         if (tipoCursoService.existsByNombre(tipoCurso.getNombre())) {
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
+            return ResponseEntity.badRequest().build();
         }
+        
         TipoCurso savedTipoCurso = tipoCursoService.save(tipoCurso);
         return new ResponseEntity<>(savedTipoCurso, HttpStatus.CREATED);
     }
-
+    
     @PutMapping("/{id}")
     public ResponseEntity<TipoCurso> updateTipoCurso(@PathVariable Integer id, @RequestBody TipoCurso tipoCurso) {
-        return tipoCursoService.findById(id)
-                .map(existingTipoCurso -> {
-                    // Verificar si el nuevo nombre ya existe en otro registro
-                    if (!existingTipoCurso.getNombre().equalsIgnoreCase(tipoCurso.getNombre()) &&
-                        tipoCursoService.existsByNombre(tipoCurso.getNombre())) {
-                        return new ResponseEntity<TipoCurso>(HttpStatus.CONFLICT);
-                    }
-                    
-                    // Usar el nombre correcto del ID
-                    tipoCurso.setId(id);
-                    TipoCurso updatedTipoCurso = tipoCursoService.save(tipoCurso);
-                    return new ResponseEntity<>(updatedTipoCurso, HttpStatus.OK);
-                })
-                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        Optional<TipoCurso> existingTipoCurso = tipoCursoService.findById(id);
+        
+        if (existingTipoCurso.isPresent()) {
+            // Verificar si el nuevo nombre ya existe en otro tipo de curso
+            Optional<TipoCurso> tipoCursoByNombre = tipoCursoService.findByNombre(tipoCurso.getNombre());
+            if (tipoCursoByNombre.isPresent() && !tipoCursoByNombre.get().getId().equals(id)) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            tipoCurso.setId(id);
+            TipoCurso updatedTipoCurso = tipoCursoService.save(tipoCurso);
+            return ResponseEntity.ok(updatedTipoCurso);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-
+    
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTipoCurso(@PathVariable Integer id) {
-        if (tipoCursoService.deleteById(id)) {
+        Optional<TipoCurso> tipoCurso = tipoCursoService.findById(id);
+        
+        if (tipoCurso.isPresent()) {
+            tipoCursoService.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return ResponseEntity.notFound().build();
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

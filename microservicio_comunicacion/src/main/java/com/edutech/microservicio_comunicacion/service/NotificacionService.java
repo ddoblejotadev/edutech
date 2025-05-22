@@ -41,7 +41,7 @@ public class NotificacionService {
     
     public Notificacion crearNotificacion(Notificacion notificacion) {
         // Verificar que la persona existe
-        if (!clienteService.existePersona(notificacion.getIdPersona())) {
+        if (!clienteService.existePersona(String.valueOf(notificacion.getIdPersona()))) {
             return null;
         }
         
