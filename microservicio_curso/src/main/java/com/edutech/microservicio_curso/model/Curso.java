@@ -1,58 +1,153 @@
 package com.edutech.microservicio_curso.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 @Entity
-@Table(name = "curso")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Table(name = "cursos")
 public class Curso {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_curso") // Asegúrate que coincida con el nombre real de la columna
     private Integer idCurso;
     
-    // Si usas control de versiones, asegúrate de que la columna exista en la base de datos
-    @Version
-    @Column(name = "version")
-    private Long version = 0L; // inicializar en 0
-    
-    @Column(nullable = false, length = 50)
+    @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
     
-    @Column(length = 100)
+    @Column(name = "descripcion", length = 500)
     private String descripcion;
     
-    @Column(name = "fec_creacion", nullable = false)
-    private LocalDate fechaCreacion = LocalDate.now(); // Valor predeterminado
+    @Column(name = "duracion_horas")
+    private int duracionHoras;
     
-    @Column(name = "fec_publicacion")
-    private LocalDate fechaPublicacion;
+    @Column(name = "nivel", length = 50)
+    private String nivel;
     
-    @Column(length = 1)
-    private String sence;
+    @Column(name = "categoria", length = 100)
+    private String categoria;
     
-    @Column(precision = 10, scale = 2)
+    @Column(name = "precio", precision = 10, scale = 2)
     private BigDecimal precio;
     
+    @Column(name = "sence", length = 20)
+    private String sence;
+    
+    @Column(name = "fecha_creacion")
+    private LocalDate fechaCreacion;
+    
+    @Column(name = "fecha_publicacion")
+    private LocalDate fechaPublicacion;
+    
     @ManyToOne
-    @JoinColumn(name = "id_tipocurso")
-    @JsonBackReference
+    @JoinColumn(name = "tipo_curso_id", nullable = false)
     private TipoCurso tipoCurso;
     
-    // Estos campos no están en el modelo SQL pero los mantendremos 
-    // para compatibilidad con el código existente
-    private String categoria;
-    private Integer duracionHoras;
-    private String nivel;
+    // Constructores
+    public Curso() {
+    }
+    
+    public Curso(Integer idCurso, String nombre, String descripcion, int duracionHoras, 
+                String nivel, String categoria, BigDecimal precio, String sence,
+                LocalDate fechaCreacion, LocalDate fechaPublicacion, TipoCurso tipoCurso) {
+        this.idCurso = idCurso;
+        this.nombre = nombre;
+        this.descripcion = descripcion;
+        this.duracionHoras = duracionHoras;
+        this.nivel = nivel;
+        this.categoria = categoria;
+        this.precio = precio;
+        this.sence = sence;
+        this.fechaCreacion = fechaCreacion;
+        this.fechaPublicacion = fechaPublicacion;
+        this.tipoCurso = tipoCurso;
+    }
+    
+    // Getters y Setters
+    public Integer getIdCurso() {
+        return idCurso;
+    }
+    
+    public void setIdCurso(Integer idCurso) {
+        this.idCurso = idCurso;
+    }
+    
+    public String getNombre() {
+        return nombre;
+    }
+    
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    public String getDescripcion() {
+        return descripcion;
+    }
+    
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
+    
+    public int getDuracionHoras() {
+        return duracionHoras;
+    }
+    
+    public void setDuracionHoras(int duracionHoras) {
+        this.duracionHoras = duracionHoras;
+    }
+    
+    public String getNivel() {
+        return nivel;
+    }
+    
+    public void setNivel(String nivel) {
+        this.nivel = nivel;
+    }
+    
+    public String getCategoria() {
+        return categoria;
+    }
+    
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
+    }
+    
+    public BigDecimal getPrecio() {
+        return precio;
+    }
+    
+    public void setPrecio(BigDecimal precio) {
+        this.precio = precio;
+    }
+    
+    public String getSence() {
+        return sence;
+    }
+    
+    public void setSence(String sence) {
+        this.sence = sence;
+    }
+    
+    public LocalDate getFechaCreacion() {
+        return fechaCreacion;
+    }
+    
+    public void setFechaCreacion(LocalDate fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
+    }
+    
+    public LocalDate getFechaPublicacion() {
+        return fechaPublicacion;
+    }
+    
+    public void setFechaPublicacion(LocalDate fechaPublicacion) {
+        this.fechaPublicacion = fechaPublicacion;
+    }
+    
+    public TipoCurso getTipoCurso() {
+        return tipoCurso;
+    }
+    
+    public void setTipoCurso(TipoCurso tipoCurso) {
+        this.tipoCurso = tipoCurso;
+    }
 }

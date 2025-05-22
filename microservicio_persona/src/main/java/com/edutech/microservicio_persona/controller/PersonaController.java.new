@@ -1,20 +1,22 @@
 package com.edutech.microservicio_persona.controller;
 
-import jakarta.validation.Valid;
+import com.edutech.microservicio_persona.model.Persona;
+import com.edutech.microservicio_persona.service.PersonaService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.edutech.microservicio_persona.model.Persona;
-import com.edutech.microservicio_persona.service.PersonaService;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/personas")
 public class PersonaController {
+    
     private final PersonaService personaService;
 
+    @Autowired
     public PersonaController(PersonaService personaService) {
         this.personaService = personaService;
     }
@@ -52,7 +54,7 @@ public class PersonaController {
     }
 
     @PostMapping
-    public ResponseEntity<Persona> createPersona(@RequestBody @Valid Persona persona) {
+    public ResponseEntity<Persona> createPersona(@RequestBody Persona persona) {
         // Verificar si ya existe una persona con ese correo
         if (persona.getCorreo() != null && personaService.existsByCorreo(persona.getCorreo())) {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
@@ -63,7 +65,7 @@ public class PersonaController {
     }
 
     @PutMapping("/{rut}")
-    public ResponseEntity<Persona> updatePersona(@PathVariable String rut, @RequestBody @Valid Persona persona) {
+    public ResponseEntity<Persona> updatePersona(@PathVariable String rut, @RequestBody Persona persona) {
         return personaService.findByRut(rut)
                 .map(existingPersona -> {
                     persona.setRut(rut);

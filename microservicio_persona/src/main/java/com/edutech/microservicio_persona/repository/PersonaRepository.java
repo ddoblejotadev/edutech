@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PersonaRepository extends JpaRepository<Persona, String> {
+public interface PersonaRepository extends JpaRepository<Persona, Integer> {
     
     Optional<Persona> findByCorreo(String correo);
     
@@ -17,6 +17,8 @@ public interface PersonaRepository extends JpaRepository<Persona, String> {
     
     boolean existsByCorreo(String correo);
     
-    @Query("SELECT p FROM Persona p WHERE LOWER(p.nombres) LIKE LOWER(CONCAT('%', :nombre, '%'))")
+    @Query("SELECT p FROM Persona p WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")
     List<Persona> buscarPorNombre(@Param("nombre") String nombre);
+
+    Optional<Persona> findByRut(String rut);
 }
