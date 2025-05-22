@@ -1,0 +1,8 @@
+# URLs de microservicios
+microservicio:
+  persona:
+    url: http://localhost:8081/api/personas
+  curso:
+    url: http://localhost:8082/api/cursos
+  ejecucion:
+    url: http://localhost:8084/api/ejecuciones

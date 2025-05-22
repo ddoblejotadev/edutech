@@ -12,14 +12,20 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        
+        CorsConfiguration config = new CorsConfiguration();        
         // Permitir todos los orígenes para desarrollo - en producción deberías limitarlo
-        config.addAllowedOrigin("*");
-        // Para soportar credenciales, debes especificar orígenes exactos (no usar *)
+        // config.addAllowedOrigin("*"); // Esto no permite credenciales (cookies, auth)
+        
+        // Usar allowedOriginPatterns para soporte de credenciales
+        config.addAllowedOriginPattern("*"); // Para desarrollo
+        
+        // Para producción, especificar orígenes exactos:
         // config.addAllowedOrigin("http://localhost:19000"); // Para Expo en desarrollo
         // config.addAllowedOrigin("http://192.168.0.X:19000"); // IP local para desarrollo en dispositivo físico
         // config.addAllowedOrigin("https://app.edutech.com"); // Para producción
+        
+        // Habilitar credenciales
+        config.setAllowCredentials(true);
         
         // Permitir métodos HTTP comunes
         config.addAllowedMethod("GET");

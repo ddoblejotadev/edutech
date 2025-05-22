@@ -1,0 +1,131 @@
+version: '3.8'
+
+services:
+  # Base de datos MySQL
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_ROOT_PASSWORD: ""
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - edutech-network
+
+  # API Gateway
+  api-gateway:
+    build: ./api_gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - edutech-network
+
+  # Microservicio Persona
+  microservicio-persona:
+    build: ./microservicio_persona
+    ports:
+      - "8081:8081"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/edutech_personas?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+    networks:
+      - edutech-network
+
+  # Microservicio Curso
+  microservicio-curso:
+    build: ./microservicio_curso
+    ports:
+      - "8082:8082"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/edutech_cursos?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+    networks:
+      - edutech-network
+
+  # Microservicio Ejecución
+  microservicio-ejecucion:
+    build: ./microservicio_ejecucion
+    ports:
+      - "8084:8084"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      microservicio-persona:
+        condition: service_started
+      microservicio-curso:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/edutech_ejecuciones?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      MICROSERVICIO_PERSONA_URL: http://microservicio-persona:8081/api/personas
+      MICROSERVICIO_CURSO_URL: http://microservicio-curso:8082/api/cursos
+    networks:
+      - edutech-network
+
+  # Microservicio Comunicación
+  microservicio-comunicacion:
+    build: ./microservicio_comunicacion
+    ports:
+      - "8085:8085"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      microservicio-persona:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/edutech_comunicacion?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      MICROSERVICIO_PERSONA_URL: http://microservicio-persona:8081/api/personas
+    networks:
+      - edutech-network
+
+  # Microservicio Evaluación
+  microservicio-evaluacion:
+    build: ./microservicio_evaluacion
+    ports:
+      - "8086:8086"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      microservicio-persona:
+        condition: service_started
+      microservicio-curso:
+        condition: service_started
+      microservicio-ejecucion:
+        condition: service_started
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/edutech_evaluacion?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ""
+      MICROSERVICIO_PERSONA_URL: http://microservicio-persona:8081/api/personas
+      MICROSERVICIO_CURSO_URL: http://microservicio-curso:8082/api/cursos
+      MICROSERVICIO_EJECUCION_URL: http://microservicio-ejecucion:8084/api/ejecuciones
+    networks:
+      - edutech-network
+
+networks:
+  edutech-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

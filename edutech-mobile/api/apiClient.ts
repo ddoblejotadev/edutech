@@ -12,11 +12,11 @@ const getDevelopmentBaseUrl = () => {
     return 'http://10.0.2.2:8080';
   } else if (Platform.OS === 'ios') {
     // En iOS el simulador comparte la red con la máquina host
-    return 'http://localhost:8080';
-  } else {
+    return 'http://localhost:8080';  } else {
     // Para dispositivos físicos, usa variable de entorno o la IP configurada
-    // IMPORTANTE: Cambiar esta IP a la IP local de tu máquina en la red actual
-    return process.env.API_URL || 'http://192.168.1.3:8080';
+    // Recomendación: usar el script show-ip.js para obtener la IP local
+    const defaultIp = '192.168.0.1'; // Cambia esto o usa el script
+    return process.env.API_URL || `http://${defaultIp}:8080`;
   }
 };
 

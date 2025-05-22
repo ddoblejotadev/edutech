@@ -8,8 +8,8 @@ spring:
   application:
     name: api_gateway
   mvc:
-    pathmatch:
-      matching-strategy: ANT_PATH_MATCHER
+    problemdetails:
+      enabled: true
   cloud:
     gateway:
       mvc:
