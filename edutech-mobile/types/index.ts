@@ -24,6 +24,7 @@ export interface Persona {
   email: string;
   telefono: string;
   rol: string;
+  avatar?: string;
 }
 
 export interface Curso {

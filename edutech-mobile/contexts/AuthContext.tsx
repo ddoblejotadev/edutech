@@ -9,6 +9,8 @@ interface User {
   apellidos: string;
   email: string;
   roles: string[];
+  rol?: string;
+  avatar?: string;
 }
 
 // Tipo para el contexto de autenticación
@@ -77,14 +79,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
   }, [user, segments, isLoading]);
-
   // Función para iniciar sesión
   const signIn = async (username: string, password: string) => {
     setIsLoading(true);
     setError(null);
     try {
       const response = await authService.login({ username, password });
-      setUser(response.usuario);
+      // Añadir propiedad rol y avatar al usuario
+      const userWithExtras = {
+        ...response.usuario,
+        rol: response.usuario.roles[0] || 'Estudiante',
+        avatar: 'https://via.placeholder.com/150' // Avatar por defecto
+      };
+      setUser(userWithExtras);
     } catch (error: any) {
       setError(error.message || 'Error al iniciar sesión');
       console.error('Error al iniciar sesión:', error);

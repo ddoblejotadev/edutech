@@ -66,10 +66,10 @@ const ALL_COURSES: CourseItem[] = [
 const CATEGORIES = [
   { id: 'diseño', name: 'Diseño', color: '#00E5B3', icon: 'brush' },
   { id: 'desarrollo', name: 'Desarrollo', color: '#0066FF', icon: 'laptop' },
-  { id: 'ia', name: 'IA', color: '#FFB800', icon: 'psychology' },
-  { id: 'seguridad', name: 'Seguridad', color: '#FF3B5F', icon: 'lock' },
+  { id: 'ia', name: 'IA', color: '#FFB800', icon: 'analytics' },
+  { id: 'seguridad', name: 'Seguridad', color: '#FF3B5F', icon: 'shield' },
   { id: 'datos', name: 'Datos', color: '#0DE57A', icon: 'bar-chart' },
-  { id: 'negocios', name: 'Negocios', color: '#A66CFF', icon: 'work' }
+  { id: 'negocios', name: 'Negocios', color: '#A66CFF', icon: 'briefcase' }
 ];
 
 export default function ExploreScreen() {
@@ -248,8 +248,7 @@ export default function ExploreScreen() {
                     styles.categoryItem,
                     { backgroundColor: category.color + '22' } // Agregar transparencia
                   ]}
-                  onPress={() => toggleCategory(category.id)}
-                  activeOpacity={0.7}
+                  onPress={() => toggleCategory(category.id)}                  activeOpacity={0.7}
                 >
                   <Ionicons name={category.icon as any} size={28} color={category.color} />
                   <ThemedText type="bodyBold">{category.name}</ThemedText>

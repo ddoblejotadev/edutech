@@ -1,81 +1,64 @@
 import { StyleSheet, TouchableOpacity, View, ScrollView, RefreshControl } from 'react-native';
 import { router } from 'expo-router';
-import { useEffect, useState, useCallback } from          <TouchableOpacity 
-            style={styles.quickActionItem}
-            onPress={() => {/* TODO: Implementar navegación a Calendario */}}
-            activeOpacity={0.7}
-          >
-            <View style={[styles.iconContainer, { backgroundColor: '#FF3B5F' }]}>
-              <IconSymbol name="calendar" size={22} color="#1A1A2E" />
-            </View>
-            <ThemedText type="caption">Calendario</ThemedText>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.quickActionItem}
-            onPress={() => {/* TODO: Implementar navegación a Perfil */}}
-            activeOpacity={0.7}
-          > { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useEffect, useState, useCallback } from 'react';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { SearchBar } from '@/components/ui/SearchBar';
-import { CourseList, type CourseItem } from '@/components/ui/CourseList';
+import { CourseList } from '@/components/ui/CourseList';
 import { notificacionesApi } from '../../api/notificacionesService';
 import { useAuth } from '@/contexts/AuthContext';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
+// Define un tipo para el curso (añade esto en la parte superior del archivo, después de las importaciones)
+interface Course {
+  id: string;
+  title: string;
+  description?: string;
+  image?: string;
+  progress?: number;
+  // Añade otras propiedades que necesites
+}
+
 // Datos de ejemplo para mostrar
-const FEATURED_COURSES = [
+const FEATURED_COURSES: Course[] = [
   {
     id: '1',
     title: 'Diseño UX/UI Avanzado',
     description: 'Aprende a crear interfaces modernas y experiencias de usuario efectivas',
-    imageUri: 'https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
-    instructor: 'Ana García',
-    category: 'Diseño',
-    duration: '8 semanas'
+    image: 'https://images.unsplash.com/photo-1522542550221-31fd19575a2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
   },
   {
     id: '2',
     title: 'Machine Learning Aplicado',
     description: 'Implementa algoritmos de machine learning en proyectos reales',
-    imageUri: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
-    instructor: 'Pedro Ramírez',
-    category: 'IA',
-    duration: '10 semanas'
+    image: 'https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80',
   },
   {
     id: '3',
     title: 'Desarrollo Web Full Stack',
     description: 'Construye aplicaciones web completas con tecnologías modernas',
-    imageUri: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1472&q=80',
-    instructor: 'Carolina Torres',
-    category: 'Desarrollo',
-    duration: '12 semanas'
+    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=1472&q=80',
   }
 ];
 
-const MY_COURSES = [
+const MY_COURSES: Course[] = [
   {
     id: '4',
     title: 'Principios de Diseño UX/UI',
     description: 'Fundamentos de diseño centrado en el usuario',
-    imageUri: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1528&q=80',
-    instructor: 'Ana García',
+    image: 'https://images.unsplash.com/photo-1561070791-2526d30994b5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1528&q=80',
     progress: 75,
-    category: 'Diseño'
   },
   {
     id: '5',
     title: 'Python para Ciencia de Datos',
     description: 'Análisis y visualización de datos con Python',
-    imageUri: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?ixlib=rb-4.0.3&auto=format&fit=crop&w=1374&q=80',
-    instructor: 'Carlos Sánchez',
+    image: 'https://images.unsplash.com/photo-1526379095098-d400fd0bf935?ixlib=rb-4.0.3&auto=format&fit=crop&w=1374&q=80',
     progress: 30,
-    category: 'Programación'
   }
 ];
 
@@ -113,7 +96,7 @@ export default function HomeScreen() {
     }, 1000);
   }, [cargarNotificacionesNoLeidas]);
 
-  const handleCoursePress = useCallback((course: CourseItem) => {
+  const handleCoursePress = useCallback((course: Course) => {
     router.push({
       pathname: '/curso/[id]',
       params: { id: course.id }
@@ -164,7 +147,7 @@ export default function HomeScreen() {
             placeholder="Buscar cursos, temas..."
             value={searchQuery}
             onChangeText={setSearchQuery}
-            onSearch={(query) => router.push('/(tabs)/explore?search=' + query)}
+            onSearch={(query) => router.push({ pathname: '/(tabs)/explore', params: { search: query } })}
             containerStyle={styles.searchBar}
           />
         </View>
@@ -192,10 +175,9 @@ export default function HomeScreen() {
             </View>
             <ThemedText type="caption">Explorar</ThemedText>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+            <TouchableOpacity 
             style={styles.quickActionItem}
-            onPress={() => router.navigate('/calendario')}
+            onPress={() => router.push({pathname: "calendario"} as any)}
             activeOpacity={0.7}
           >
             <View style={[styles.iconContainer, { backgroundColor: '#FF3B5F' }]}>
@@ -203,10 +185,9 @@ export default function HomeScreen() {
             </View>
             <ThemedText type="caption">Calendario</ThemedText>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+            <TouchableOpacity 
             style={styles.quickActionItem}
-            onPress={() => router.navigate('/perfil')}
+            onPress={() => router.push({pathname: "perfil"} as any)}
             activeOpacity={0.7}
           >
             <View style={[styles.iconContainer, { backgroundColor: '#0DE57A' }]}>
