@@ -18,10 +18,7 @@
         <module>microservicio_evaluacion</module>
         <module>microservicio_ejecucion</module>
         <module>service-registry</module>
-        <!-- Descomentaremos estos módulos después de que los hayamos construido adecuadamente -->
-        <!-- <module>commons-dto</module> -->
-        <!-- <module>commons-util</module> -->
-        <!-- <module>config-server</module> -->
+        <module>auth-service</module>
     </modules>
     
     <properties>
