@@ -2,32 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, RefreshControl, TouchableOpacity } from 'react-native';
 import { notificacionesApi } from '../../api/notificacionesService';
 import { Notificacion } from '../../types';
-import { ThemedView, ThemedText } from '../../components';
-import { router } from 'expo-router';
-import { useThemeColor } from '../../hooks/useThemeColor';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function NotificacionesScreen() {
   const [notificaciones, setNotificaciones] = useState<Notificacion[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  
-  // Usuario simulado - en una app real esto vendría de la autenticación
+    // Usuario simulado - en una app real esto vendría de la autenticación
   const rutUsuario = '12345678-9';
   
+  // Colores del tema
   const backgroundColor = useThemeColor({}, 'background');
   const textColor = useThemeColor({}, 'text');
-  const cardColor = useThemeColor({}, 'card');
   const accentColor = useThemeColor({}, 'tint');
   
   useEffect(() => {
     cargarNotificaciones();
   }, []);
-  
-  const cargarNotificaciones = async () => {
+    const cargarNotificaciones = async () => {
     try {
       setLoading(true);
       const response = await notificacionesApi.getByPersona(rutUsuario);
-      setNotificaciones(response.data);
+      setNotificaciones(response);
     } catch (error) {
       console.error('Error al cargar notificaciones:', error);
     } finally {
@@ -52,17 +50,16 @@ export default function NotificacionesScreen() {
     setRefreshing(true);
     cargarNotificaciones();
   };
-  
-  const renderNotificacion = ({ item }: { item: Notificacion }) => (
+    const  renderNotificacion = ({ item }: { item: Notificacion }) => (
     <TouchableOpacity 
       style={[
         styles.notificacionContainer, 
-        { backgroundColor: cardColor },
+        { backgroundColor: '#f5f5f5' },
         !item.leida && { borderLeftColor: accentColor, borderLeftWidth: 4 }
       ]}
       onPress={() => marcarComoLeida(item.id)}
     >
-      <ThemedText style={styles.titulo} lightColor="#000" darkColor="#fff">
+      <ThemedText style={styles.tituloNotificacion} lightColor="#000" darkColor="#fff">
         {item.titulo}
       </ThemedText>
       <ThemedText style={styles.mensaje} lightColor="#444" darkColor="#bbb">
@@ -80,8 +77,7 @@ export default function NotificacionesScreen() {
       </View>
     </TouchableOpacity>
   );
-  
-  return (
+    return (
     <ThemedView style={styles.container}>
       <ThemedText style={styles.titulo} lightColor="#000" darkColor="#fff">
         Mis Notificaciones
@@ -140,7 +136,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
-  titulo: {
+  tituloNotificacion: {
     fontSize: 16,
     fontWeight: 'bold',
   },

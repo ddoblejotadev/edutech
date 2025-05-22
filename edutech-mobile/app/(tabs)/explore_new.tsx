@@ -251,7 +251,7 @@ export default function ExploreScreen() {
                   onPress={() => toggleCategory(category.id)}
                   activeOpacity={0.7}
                 >
-                  <Ionicons name={category.icon as any} size={28} color={category.color} />
+                  <Ionicons name={category.icon} size={28} color={category.color} />
                   <ThemedText type="bodyBold">{category.name}</ThemedText>
                 </TouchableOpacity>
               ))}

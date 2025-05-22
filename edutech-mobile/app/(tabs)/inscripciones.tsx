@@ -1,33 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, RefreshControl } from 'react-native';
 import { inscripcionesApi } from '../../api/inscripcionesService';
-import { EjecucionPersona, Ejecucion } from '../../types';
-import { ThemedView, ThemedText } from '../../components';
+import { EjecucionPersona } from '../../types';
+import { ThemedText } from '@/components/ThemedText';
+import { ThemedView } from '@/components/ThemedView';
 import { router } from 'expo-router';
-import { useThemeColor } from '../../hooks/useThemeColor';
+import { useThemeColor } from '@/hooks/useThemeColor';
 
 export default function InscripcionesScreen() {
   const [inscripciones, setInscripciones] = useState<EjecucionPersona[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  
-  // Usuario simulado - en una app real esto vendría de la autenticación
+    // Usuario simulado - en una app real esto vendría de la autenticación
   const rutUsuario = '12345678-9';
   
-  const backgroundColor = useThemeColor({}, 'background');
-  const textColor = useThemeColor({}, 'text');
   const cardColor = useThemeColor({}, 'card');
   const accentColor = useThemeColor({}, 'tint');
   
   useEffect(() => {
     cargarInscripciones();
   }, []);
-  
-  const cargarInscripciones = async () => {
+    const cargarInscripciones = async () => {
     try {
       setLoading(true);
       const response = await inscripcionesApi.getInscripcionesByPersona(rutUsuario);
-      setInscripciones(response.data);
+      setInscripciones(response);
     } catch (error) {
       console.error('Error al cargar inscripciones:', error);
     } finally {
@@ -65,10 +62,14 @@ export default function InscripcionesScreen() {
         Estado: {item.estado}
       </ThemedText>
       
-      <View style={styles.actions}>
-        <TouchableOpacity 
+      <View style={styles.actions}>        <TouchableOpacity 
           style={[styles.button, styles.viewButton]} 
-          onPress={() => router.push(`/curso/${item.idEjecucion}`)}
+          onPress={() => {
+            router.push({
+              pathname: "/curso/[id]",
+              params: { id: item.idEjecucion }
+            });
+          }}
         >
           <Text style={styles.buttonText}>Ver Curso</Text>
         </TouchableOpacity>

@@ -1,8 +1,7 @@
 server:
   port: 8080
   tomcat:
-    max-http-header-size: 262144  # 256KB
-    max-swallow-size: 10485760    # 10MB
+    max-swallow-size: 10485760    
     max-http-form-post-size: 10485760 
 
 spring:
@@ -14,8 +13,8 @@ spring:
   cloud:
     gateway:
       mvc:
-        # Para el caso de gateway-mvc, usamos routesProperties
-        routesProperties:
+        # Para el caso de gateway-mvc, usamos routes
+        routes:
           - id: microservicio_persona
             uri: http://localhost:8081
             predicates:
@@ -46,9 +45,3 @@ management:
     web:
       exposure:
         include: health,info,gateway
-
-logging:
-  level:
-    org.springframework.web: DEBUG
-    org.springframework.cloud.gateway: DEBUG
-    com.edutech: DEBUG
