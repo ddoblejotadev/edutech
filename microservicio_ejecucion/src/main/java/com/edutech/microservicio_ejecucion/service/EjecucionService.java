@@ -2,7 +2,6 @@ package com.edutech.microservicio_ejecucion.service;
 
 import com.edutech.microservicio_ejecucion.model.Ejecucion;
 import com.edutech.microservicio_ejecucion.repository.EjecucionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +11,6 @@ public class EjecucionService {
     
     private final EjecucionRepository ejecucionRepository;
     
-    @Autowired
     public EjecucionService(EjecucionRepository ejecucionRepository) {
         this.ejecucionRepository = ejecucionRepository;
     }

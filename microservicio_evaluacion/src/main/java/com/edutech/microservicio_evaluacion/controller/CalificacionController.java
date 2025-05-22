@@ -2,7 +2,6 @@ package com.edutech.microservicio_evaluacion.controller;
 
 import com.edutech.microservicio_evaluacion.model.Calificacion;
 import com.edutech.microservicio_evaluacion.service.CalificacionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ public class CalificacionController {
     
     private final CalificacionService calificacionService;
     
-    @Autowired
     public CalificacionController(CalificacionService calificacionService) {
         this.calificacionService = calificacionService;
     }

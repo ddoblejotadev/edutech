@@ -4,7 +4,6 @@ import com.edutech.microservicio_evaluacion.model.Respuesta;
 import com.edutech.microservicio_evaluacion.repository.OpcionRepository;
 import com.edutech.microservicio_evaluacion.repository.PreguntaRepository;
 import com.edutech.microservicio_evaluacion.repository.RespuestaRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +17,6 @@ public class RespuestaService {
     private final OpcionRepository opcionRepository;
     private final ClienteService clienteService;
     
-    @Autowired
     public RespuestaService(RespuestaRepository respuestaRepository, 
                           PreguntaRepository preguntaRepository,
                           OpcionRepository opcionRepository,

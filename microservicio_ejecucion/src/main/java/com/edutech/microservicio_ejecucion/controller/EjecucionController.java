@@ -2,7 +2,6 @@ package com.edutech.microservicio_ejecucion.controller;
 
 import com.edutech.microservicio_ejecucion.model.Ejecucion;
 import com.edutech.microservicio_ejecucion.service.EjecucionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ public class EjecucionController {
     
     private final EjecucionService ejecucionService;
     
-    @Autowired
     public EjecucionController(EjecucionService ejecucionService) {
         this.ejecucionService = ejecucionService;
     }

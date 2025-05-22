@@ -5,7 +5,6 @@ import com.edutech.microservicio_ejecucion.model.EjecucionPersona;
 import com.edutech.microservicio_ejecucion.model.EjecucionPersonaId;
 import com.edutech.microservicio_ejecucion.repository.EjecucionPersonaRepository;
 import com.edutech.microservicio_ejecucion.repository.EjecucionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +17,6 @@ public class InscripcionService {
     private final EjecucionRepository ejecucionRepository;
     private final ClienteService clienteService;
     
-    @Autowired
     public InscripcionService(EjecucionPersonaRepository ejecucionPersonaRepository, 
                              EjecucionRepository ejecucionRepository,
                              ClienteService clienteService) {

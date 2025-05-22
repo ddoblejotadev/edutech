@@ -2,7 +2,6 @@ package com.edutech.microservicio_comunicacion.service;
 
 import com.edutech.microservicio_comunicacion.model.Mensaje;
 import com.edutech.microservicio_comunicacion.repository.MensajeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ public class MensajeService {
     private final MensajeRepository mensajeRepository;
     private final ClienteService clienteService;
     
-    @Autowired
     public MensajeService(MensajeRepository mensajeRepository, ClienteService clienteService) {
         this.mensajeRepository = mensajeRepository;
         this.clienteService = clienteService;

@@ -2,7 +2,6 @@ package com.edutech.microservicio_evaluacion.controller;
 
 import com.edutech.microservicio_evaluacion.model.Opcion;
 import com.edutech.microservicio_evaluacion.service.OpcionService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ public class OpcionController {
     
     private final OpcionService opcionService;
     
-    @Autowired
     public OpcionController(OpcionService opcionService) {
         this.opcionService = opcionService;
     }

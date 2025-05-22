@@ -2,7 +2,6 @@ package com.edutech.microservicio_comunicacion.service;
 
 import com.edutech.microservicio_comunicacion.model.Notificacion;
 import com.edutech.microservicio_comunicacion.repository.NotificacionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ public class NotificacionService {
     private final NotificacionRepository notificacionRepository;
     private final ClienteService clienteService;
     
-    @Autowired
     public NotificacionService(NotificacionRepository notificacionRepository, ClienteService clienteService) {
         this.notificacionRepository = notificacionRepository;
         this.clienteService = clienteService;

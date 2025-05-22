@@ -2,7 +2,6 @@ package com.edutech.microservicio_comunicacion.controller;
 
 import com.edutech.microservicio_comunicacion.model.Mensaje;
 import com.edutech.microservicio_comunicacion.service.MensajeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,6 @@ public class MensajeController {
     
     private final MensajeService mensajeService;
     
-    @Autowired
     public MensajeController(MensajeService mensajeService) {
         this.mensajeService = mensajeService;
     }

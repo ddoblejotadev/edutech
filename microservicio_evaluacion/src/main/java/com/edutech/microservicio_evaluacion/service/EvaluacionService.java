@@ -2,7 +2,6 @@ package com.edutech.microservicio_evaluacion.service;
 
 import com.edutech.microservicio_evaluacion.model.Evaluacion;
 import com.edutech.microservicio_evaluacion.repository.EvaluacionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,6 @@ public class EvaluacionService {
     private final EvaluacionRepository evaluacionRepository;
     private final ClienteService clienteService;
     
-    @Autowired
     public EvaluacionService(EvaluacionRepository evaluacionRepository, ClienteService clienteService) {
         this.evaluacionRepository = evaluacionRepository;
         this.clienteService = clienteService;
