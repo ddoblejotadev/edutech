@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+  # Servicio de registro Eureka
+  service-registry:
+    build: ./service-registry
+    ports:
+      - "8761:8761"
+    networks:
+      - edutech-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761/actuator/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   # Base de datos MySQL
   mysql:
     image: mysql:8.0
@@ -18,7 +31,6 @@ services:
       retries: 5
     networks:
       - edutech-network
-
   # API Gateway
   api-gateway:
     build: ./api_gateway
@@ -27,9 +39,12 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      service-registry:
+        condition: service_healthy
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     networks:
       - edutech-network
-
   # Microservicio Persona
   microservicio-persona:
     build: ./microservicio_persona
@@ -38,13 +53,15 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      service-registry:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/edutech_personas?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ""
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     networks:
       - edutech-network
-
   # Microservicio Curso
   microservicio-curso:
     build: ./microservicio_curso
@@ -53,10 +70,13 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+      service-registry:
+        condition: service_healthy
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/edutech_cursos?createDatabaseIfNotExist=true
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: ""
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://service-registry:8761/eureka/
     networks:
       - edutech-network
 
@@ -98,7 +118,6 @@ services:
       MICROSERVICIO_PERSONA_URL: http://microservicio-persona:8081/api/personas
     networks:
       - edutech-network
-
   # Microservicio Evaluación
   microservicio-evaluacion:
     build: ./microservicio_evaluacion
@@ -122,6 +141,40 @@ services:
       MICROSERVICIO_EJECUCION_URL: http://microservicio-ejecucion:8084/api/ejecuciones
     networks:
       - edutech-network
+      
+  # Prometheus para monitoreo
+  prometheus:
+    image: prom/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - edutech-network
+    depends_on:
+      - api-gateway
+      - microservicio-persona
+      - microservicio-curso
+      - microservicio-ejecucion
+      - microservicio-comunicacion
+      - microservicio-evaluacion
+      
+  # Grafana para visualización
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./monitoring/grafana/dashboard-provisioning.yml:/etc/grafana/provisioning/dashboards/dashboard-provisioning.yml
+      - ./monitoring/grafana/datasource-provisioning.yml:/etc/grafana/provisioning/datasources/datasource-provisioning.yml
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+    environment:
+      GF_SECURITY_ADMIN_USER: admin
+      GF_SECURITY_ADMIN_PASSWORD: admin
+    networks:
+      - edutech-network
+    depends_on:
+      - prometheus
 
 networks:
   edutech-network:

@@ -1,47 +1,67 @@
 server:
   port: 8080
-  tomcat:
-    max-swallow-size: 10485760    
-    max-http-form-post-size: 10485760 
 
 spring:
   application:
-    name: api_gateway
-  mvc:
-    problemdetails:
-      enabled: true
+    name: api-gateway
   cloud:
     gateway:
-      mvc:
-        # Para el caso de gateway-mvc, usamos routes
-        routes:
-          - id: microservicio_persona
-            uri: http://localhost:8081
-            predicates:
-              - Path=/api/personas/**
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: microservicio-persona
+          uri: lb://microservicio-persona
+          predicates:
+            - Path=/api/personas/**
+        - id: microservicio-curso
+          uri: lb://microservicio-curso
+          predicates:
+            - Path=/api/cursos/**
+        - id: microservicio-ejecucion
+          uri: lb://microservicio-ejecucion
+          predicates:
+            - Path=/api/ejecuciones/**
+        - id: microservicio-comunicacion
+          uri: lb://microservicio-comunicacion
+          predicates:
+            - Path=/api/comunicaciones/**
+        - id: microservicio-evaluacion
+          uri: lb://microservicio-evaluacion
+          predicates:
+            - Path=/api/evaluaciones/**
 
-          - id: microservicio_curso
-            uri: http://localhost:8082
-            predicates:
-              - Path=/api/cursos/**
-          
-          - id: microservicio_ejecucion
-            uri: http://localhost:8084
-            predicates:
-              - Path=/api/ejecuciones/**,/api/inscripciones/**
-          
-          - id: microservicio_comunicacion
-            uri: http://localhost:8085
-            predicates:
-              - Path=/api/mensajes/**,/api/notificaciones/**
-          
-          - id: microservicio_evaluacion
-            uri: http://localhost:8086
-            predicates:
-              - Path=/api/evaluaciones/**,/api/preguntas/**,/api/opciones/**,/api/calificaciones/**,/api/respuestas/**
+eureka:
+  client:
+    service-url:
+      defaultZone: http://service-registry:8761/eureka/
+  instance:
+    preferIpAddress: true
+
+# Configuración de Resilience4j
+resilience4j:
+  circuitbreaker:
+    instances:
+      default:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  prometheus:
+    metrics:
+      export:
+        enabled: true
