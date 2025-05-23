@@ -1,9 +1,5 @@
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { View, Text, StyleSheet } from 'react-native';
 import { PaperProvider, DefaultTheme } from 'react-native-paper';
-import { AuthProvider } from './src/context/AuthContext';
-import AppNavigator from './src/navigation/AppNavigator';
 import { COLORS } from './src/config/theme';
 
 // Personalizar el tema de React Native Paper
@@ -19,13 +15,11 @@ const theme = {
   },
 };
 
-export default function App() {
-  return (
+// Envolver la aplicación con el proveedor de Paper
+export const withPaperProvider = (Component) => {
+  return (props) => (
     <PaperProvider theme={theme}>
-      <AuthProvider>
-        <StatusBar style="auto" />
-        <AppNavigator />
-      </AuthProvider>
+      <Component {...props} />
     </PaperProvider>
   );
-}
+};

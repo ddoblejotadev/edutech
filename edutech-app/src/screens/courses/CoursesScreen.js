@@ -124,17 +124,22 @@ const CoursesScreen = ({ navigation }) => {
       />
     );
   };
-  
-  const renderCourseItem = ({ item }) => (
+    const renderCourseItem = ({ item }) => (
     <Card 
       onPress={() => navigation.navigate('CourseDetail', { courseId: item.id })}
       style={styles.courseCard}
       elevation="sm"
     >
-      <Image 
-        source={item.imageUrl ? { uri: item.imageUrl } : require('../../../assets/images/course-placeholder.png')} 
-        style={styles.courseImage} 
-      />
+      {item.imageUrl ? (
+        <Image 
+          source={{ uri: item.imageUrl }} 
+          style={styles.courseImage} 
+        />
+      ) : (
+        <View style={[styles.courseImage, styles.coursePlaceholder]}>
+          <Ionicons name="book-outline" size={48} color={COLORS.white} />
+        </View>
+      )}
       
       <View style={styles.courseContent}>
         <View style={styles.courseHeader}>
