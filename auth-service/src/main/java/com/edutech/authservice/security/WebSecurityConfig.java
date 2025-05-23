@@ -24,17 +24,20 @@ public class WebSecurityConfig {
     UserDetailsServiceImpl userDetailsService;
 
     @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
-
-    @Bean
+    private AuthEntryPointJwt unauthorizedHandler;    @Bean
     public AuthTokenFilter authenticationJwtTokenFilter() {
         return new AuthTokenFilter();
     }
-
+    
     @Bean
+    @SuppressWarnings("deprecation") // Suprimimos las advertencias de deprecación
     public DaoAuthenticationProvider authenticationProvider() {
+        // Creamos una nueva instancia utilizando el constructor (que está marcado como deprecado)
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         
+        // Configuramos el UserDetailsService y el PasswordEncoder
+        // Nota: estos métodos están marcados como deprecados en Spring Boot 3.5.0,
+        // pero aún no hay una alternativa directa en la API pública
         authProvider.setUserDetailsService(userDetailsService);
         authProvider.setPasswordEncoder(passwordEncoder());
         

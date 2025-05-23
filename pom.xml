@@ -19,15 +19,10 @@
         <module>microservicio_ejecucion</module>
         <module>service-registry</module>
         <module>auth-service</module>
-    </modules>
-    
-    <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>${java.version}</maven.compiler.source>
+    </modules>      <properties>        <java.version>17</java.version>        <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <spring-boot.version>3.4.6</spring-boot.version>
-        <spring-cloud.version>2023.0.1</spring-cloud.version>
-        <testcontainers.version>1.19.6</testcontainers.version>
+        <spring-boot.version>3.5.0</spring-boot.version>
+        <spring-cloud.version>2023.0.3</spring-cloud.version>        <testcontainers.version>1.19.6</testcontainers.version>
         <lombok.version>1.18.34</lombok.version> <!-- Actualizado a la última versión -->
         <mapstruct.version>1.5.5.Final</mapstruct.version>
         <openapi.version>2.4.0</openapi.version>
@@ -105,8 +100,7 @@
                             </exclude>
                         </excludes>
                     </configuration>
-                </plugin>
-                <plugin>
+                </plugin>                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.13.0</version>
@@ -114,6 +108,19 @@
                         <source>${java.version}</source>
                         <target>${java.version}</target>
                         <parameters>true</parameters>
+                        <fork>true</fork>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.mapstruct</groupId>
+                                <artifactId>mapstruct-processor</artifactId>
+                                <version>${mapstruct.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
                 </plugin>
                 <plugin>

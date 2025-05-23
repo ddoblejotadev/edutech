@@ -1,91 +1,143 @@
 import React, { createContext, useState, useEffect } from 'react';
-import { getUserInfo, getToken, login, logout, register } from '../services/authService';
+import * as SecureStore from 'expo-secure-store';
+import { Auth } from '../services/apiService';
 
 export const AuthContext = createContext({
   isAuthenticated: false,
   user: null,
+  token: null,
   login: () => {},
   logout: () => {},
   register: () => {},
-  loading: true
+  loading: true,
+  error: null
 });
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null);
+  const [error, setError] = useState(null);
+
+  // Limpiar el error después de 5 segundos
+  useEffect(() => {
+    if (error) {
+      const timeout = setTimeout(() => {
+        setError(null);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [error]);
 
   useEffect(() => {
-    // Verificar si el usuario ya está autenticado al cargar la aplicación
-    const loadUserFromStorage = async () => {
+    // Cargar usuario desde almacenamiento local al iniciar
+    const loadUser = async () => {
       try {
-        const token = await getToken();
-        if (token) {
-          const userInfo = await getUserInfo();
-          setUser(userInfo);
+        const storedToken = await SecureStore.getItemAsync('userToken');
+        const storedUser = await SecureStore.getItemAsync('userData');
+        
+        if (storedToken && storedUser) {
+          setToken(storedToken);
+          setUser(JSON.parse(storedUser));
         }
       } catch (error) {
-        console.error('Error al cargar información del usuario:', error);
+        console.error('Error cargando datos del usuario:', error);
+        setError('No se pudieron cargar los datos de usuario.');
       } finally {
         setLoading(false);
       }
     };
 
-    loadUserFromStorage();
+    loadUser();
   }, []);
 
   const handleLogin = async (username, password) => {
+    setLoading(true);
+    setError(null);
     try {
-      const userData = await login(username, password);
-      setUser({
-        id: userData.id,
-        username: userData.username,
-        email: userData.email,
-        roles: userData.roles,
-      });
-      return { success: true };
+      // Usar el servicio de API para iniciar sesión
+      const response = await Auth.login(username, password);
+      
+      if (response.token && response.user) {
+        // Guardar datos en almacenamiento seguro
+        await SecureStore.setItemAsync('userToken', response.token);
+        await SecureStore.setItemAsync('userData', JSON.stringify(response.user));
+        
+        setToken(response.token);
+        setUser(response.user);
+        return { success: true };
+      } else {
+        throw new Error('Respuesta de autenticación inválida');
+      }
     } catch (error) {
       console.error('Error en handleLogin:', error);
+      setError(error.message || 'Error de autenticación');
       return { 
         success: false, 
-        error: error.response?.data?.message || 'Error de autenticación'
+        error: error.message || 'Error de autenticación'
       };
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleLogout = async () => {
+    setLoading(true);
     try {
-      await logout();
+      await SecureStore.deleteItemAsync('userToken');
+      await SecureStore.deleteItemAsync('userData');
       setUser(null);
+      setToken(null);
       return { success: true };
     } catch (error) {
       console.error('Error en handleLogout:', error);
+      setError('Error al cerrar sesión');
       return { success: false, error: 'Error al cerrar sesión' };
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleRegister = async (username, email, password) => {
+  const handleRegister = async (username, email, password, name) => {
+    setLoading(true);
+    setError(null);
     try {
-      await register(username, email, password);
-      // Al registrarse exitosamente, iniciamos sesión con las credenciales proporcionadas
-      return await handleLogin(username, password);
+      // Usar el servicio de API para registrar usuario
+      const response = await Auth.register({
+        username,
+        email,
+        password,
+        name
+      });
+      
+      if (response.success) {
+        // Iniciar sesión automáticamente después del registro
+        return await handleLogin(username, password);
+      }
+      
+      throw new Error(response.message || 'Error en el registro');
     } catch (error) {
       console.error('Error en handleRegister:', error);
+      setError(error.message || 'Error en el registro');
       return { 
         success: false, 
-        error: error.response?.data?.message || 'Error en el registro'
+        error: error.message || 'Error en el registro'
       };
+    } finally {
+      setLoading(false);
     }
   };
-
   return (
     <AuthContext.Provider
       value={{
         isAuthenticated: !!user,
         user,
+        token,
         login: handleLogin,
         logout: handleLogout,
         register: handleRegister,
-        loading
+        loading,
+        error
       }}
     >
       {children}
