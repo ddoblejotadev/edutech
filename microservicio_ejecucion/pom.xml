@@ -4,33 +4,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>com.edutech</groupId>
-		<artifactId>edutech-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.3.0</version>
+		<relativePath/>
 	</parent>
 	
 	<groupId>com.edutech</groupId>
 	<artifactId>microservicio-ejecucion</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<name>microservicio_ejecucion</name>
-	<description>Microservicio para gestionar ejecuciones e inscripciones de cursos</description>
-	<url/>
-	<licenses>
-		<license/>
-	</licenses>
-	<developers>
-		<developer/>
-	</developers>
-	<scm>
-		<connection/>
-		<developerConnection/>
-		<tag/>
-		<url/>
-	</scm>
+	<version>0.0.1-SNAPSHOT</version>	<name>microservicio_ejecucion</name>	<description>Microservicio para gestionar ejecuciones e inscripciones de cursos</description>
+	
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

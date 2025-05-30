@@ -6,8 +6,9 @@ echo         EDUTECH - CONSTRUCCION LOCAL
 echo ================================================
 echo.
 
-REM Configurar opciones JVM para evitar warnings
-set "MAVEN_OPTS=--add-opens java.base/sun.misc=ALL-UNNAMED --enable-native-access=ALL-UNNAMED"
+REM Configurar opciones JVM para Java 24
+set "MAVEN_OPTS=--add-opens java.base/sun.misc=ALL-UNNAMED --enable-native-access=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED -Dmaven.compiler.release=24"
+set "JAVA_TOOL_OPTIONS=--add-opens java.base/sun.misc=ALL-UNNAMED --enable-native-access=ALL-UNNAMED"
 
 echo [1/3] Limpiando compilaciones anteriores...
 mvn clean -q 2>nul

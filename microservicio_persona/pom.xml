@@ -4,16 +4,21 @@
 	<modelVersion>4.0.0</modelVersion>
 	
 	<parent>
-		<groupId>com.edutech</groupId>
-		<artifactId>edutech-parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.3.0</version>
+		<relativePath/>
 	</parent>
 	
+	<groupId>com.edutech</groupId>
 	<artifactId>microservicio_persona</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>microservicio_persona</name>
 	<description>Microservicio de gestión de personas</description>
+	
+	<properties>
+		<java.version>17</java.version>
+	</properties>
 	
 	<dependencies>
 		<!-- Spring Boot Starter Web -->
