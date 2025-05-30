@@ -1,0 +1,159 @@
+version: '3.8'
+
+services:
+  # Base de datos MySQL con phpMyAdmin
+  mysql:
+    image: mysql:8.0
+    container_name: edutech-mysql
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: edutech_db
+      MYSQL_USER: edutech_user
+      MYSQL_PASSWORD: edutech_pass
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - edutech-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: edutech-phpmyadmin
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+    depends_on:
+      - mysql
+    networks:
+      - edutech-network
+
+  # API Gateway simplificado
+  api-gateway:
+    build:
+      context: ./api_gateway
+      dockerfile: Dockerfile
+    container_name: edutech-gateway
+    ports:
+      - "8762:8762"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=edutech_db
+      - DB_USER=edutech_user
+      - DB_PASSWORD=edutech_pass
+    depends_on:
+      - mysql
+    networks:
+      - edutech-network
+
+  # Microservicio Persona
+  microservicio-persona:
+    build:
+      context: ./microservicio_persona
+      dockerfile: Dockerfile
+    container_name: edutech-persona
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=edutech_db
+      - DB_USER=edutech_user
+      - DB_PASSWORD=edutech_pass
+    depends_on:
+      - mysql
+    networks:
+      - edutech-network
+
+  # Microservicio Curso
+  microservicio-curso:
+    build:
+      context: ./microservicio_curso
+      dockerfile: Dockerfile
+    container_name: edutech-curso
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=edutech_db
+      - DB_USER=edutech_user
+      - DB_PASSWORD=edutech_pass
+    depends_on:
+      - mysql
+    networks:
+      - edutech-network
+
+  # Microservicio Ejecución
+  microservicio-ejecucion:
+    build:
+      context: ./microservicio_ejecucion
+      dockerfile: Dockerfile
+    container_name: edutech-ejecucion
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=edutech_db
+      - DB_USER=edutech_user
+      - DB_PASSWORD=edutech_pass
+    depends_on:
+      - mysql
+    networks:
+      - edutech-network
+
+  # Microservicio Evaluación
+  microservicio-evaluacion:
+    build:
+      context: ./microservicio_evaluacion
+      dockerfile: Dockerfile
+    container_name: edutech-evaluacion
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=edutech_db
+      - DB_USER=edutech_user
+      - DB_PASSWORD=edutech_pass
+    depends_on:
+      - mysql
+    networks:
+      - edutech-network
+
+  # Microservicio Comunicación
+  microservicio-comunicacion:
+    build:
+      context: ./microservicio_comunicacion
+      dockerfile: Dockerfile
+    container_name: edutech-comunicacion
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - DB_HOST=mysql
+      - DB_PORT=3306
+      - DB_NAME=edutech_db
+      - DB_USER=edutech_user
+      - DB_PASSWORD=edutech_pass
+    depends_on:
+      - mysql
+    networks:
+      - edutech-network
+
+volumes:
+  mysql_data:
+
+networks:
+  edutech-network:
+    driver: bridge
