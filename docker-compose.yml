@@ -30,27 +30,6 @@ services:
       - mysql
     networks:
       - edutech-network
-
-  # API Gateway simplificado
-  api-gateway:
-    build:
-      context: ./api_gateway
-      dockerfile: Dockerfile
-    container_name: edutech-gateway
-    ports:
-      - "8762:8762"
-    environment:
-      - SPRING_PROFILES_ACTIVE=docker
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_NAME=edutech_db
-      - DB_USER=edutech_user
-      - DB_PASSWORD=edutech_pass
-    depends_on:
-      - mysql
-    networks:
-      - edutech-network
-
   # Microservicio Persona
   microservicio-persona:
     build:

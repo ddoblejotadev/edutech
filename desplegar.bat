@@ -1,11 +1,16 @@
 @echo off
+setlocal
+
 echo ================================================
 echo         EDUTECH - CONSTRUCCION Y DESPLIEGUE
 echo ================================================
 echo.
 
+REM Configurar opciones JVM para evitar warnings
+set "MAVEN_OPTS=--add-opens java.base/sun.misc=ALL-UNNAMED --enable-native-access=ALL-UNNAMED"
+
 echo [1/4] Limpiando compilaciones anteriores...
-mvn clean -q
+mvn clean -q 2>nul
 if errorlevel 1 (
     echo ERROR: Fallo en la limpieza
     pause
@@ -13,7 +18,7 @@ if errorlevel 1 (
 )
 
 echo [2/4] Compilando todos los microservicios...
-mvn package -DskipTests -q
+mvn package -DskipTests -q 2>nul
 if errorlevel 1 (
     echo ERROR: Fallo en la compilacion
     pause
@@ -27,19 +32,23 @@ echo [4/4] Iniciando servicios con Docker Compose...
 docker-compose up -d
 if errorlevel 1 (
     echo ERROR: Fallo al iniciar Docker Compose
+    echo Nota: Asegurate de que Docker Desktop este iniciado
     pause
     exit /b 1
 )
 
 echo.
 echo ================================================
-echo                 DESPLIEGUE EXITOSO
+echo           DESPLIEGUE COMPLETADO
 echo ================================================
 echo.
 echo Servicios disponibles:
-echo - phpMyAdmin:     http://localhost:8080
-echo - API Gateway:    http://localhost:8762
-echo - Microservicios: Puertos 8081-8085
+echo - Microservicio Persona:      http://localhost:8081
+echo - Microservicio Curso:        http://localhost:8082
+echo - Microservicio Ejecucion:    http://localhost:8083
+echo - Microservicio Evaluacion:   http://localhost:8084
+echo - Microservicio Comunicacion: http://localhost:8085
+echo - phpMyAdmin:                 http://localhost:8080
 echo.
 echo Para ver los logs: docker-compose logs -f
 echo Para detener:     docker-compose down
