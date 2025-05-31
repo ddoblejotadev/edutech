@@ -1,77 +1,50 @@
-import axios from 'axios';
-import * as SecureStore from 'expo-secure-store';
-import { API_URL, AUTH_ENDPOINTS } from '../config/api';
+// Este archivo está obsoleto - la autenticación se maneja en AuthContext
+import { API_URL, DEMO_MODE } from '../config/api';
 
-// Función para iniciar sesión
-export const login = async (username, password) => {
-  try {
-    const response = await axios.post(`${API_URL}${AUTH_ENDPOINTS.LOGIN}`, {
-      username,
-      password,
-    });
-    
-    // Guardar el token en el almacenamiento seguro
-    await SecureStore.setItemAsync('userToken', response.data.token);
-    await SecureStore.setItemAsync('userInfo', JSON.stringify({
-      id: response.data.id,
-      username: response.data.username,
-      email: response.data.email,
-      roles: response.data.roles,
-    }));
-    
-    return response.data;
-  } catch (error) {
-    console.error('Error en login:', error);
-    throw error;
-  }
-};
+// Función legacy para compatibilidad
+export const authService = {
+  login: async (email, password) => {
+    if (DEMO_MODE) {
+      // Credenciales demo
+      if (email === 'juan.perez@alumno.edu' && password === 'demo123') {
+        return {
+          success: true,
+          token: 'demo-token-123',
+          user: {
+            id: 1,
+            name: 'Juan Pérez García',
+            email: 'juan.perez@alumno.edu',
+            role: 'student'
+          }
+        };
+      }
+      return {
+        success: false,
+        error: 'Credenciales incorrectas'
+      };
+    }
 
-// Función para registrar un nuevo usuario
-export const register = async (username, email, password) => {
-  try {
-    const response = await axios.post(`${API_URL}${AUTH_ENDPOINTS.REGISTER}`, {
-      username,
-      email,
-      password,
-      roles: ["student"], // Por defecto, asignamos el rol de estudiante
-    });
-    
-    return response.data;
-  } catch (error) {
-    console.error('Error en registro:', error);
-    throw error;
-  }
-};
+    try {
+      const response = await fetch(`${API_URL}/auth/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, password })
+      });
 
-// Función para cerrar sesión
-export const logout = async () => {
-  try {
-    await SecureStore.deleteItemAsync('userToken');
-    await SecureStore.deleteItemAsync('userInfo');
-    return true;
-  } catch (error) {
-    console.error('Error al cerrar sesión:', error);
-    return false;
-  }
-};
-
-// Función para obtener el token del almacenamiento
-export const getToken = async () => {
-  try {
-    return await SecureStore.getItemAsync('userToken');
-  } catch (error) {
-    console.error('Error al obtener token:', error);
-    return null;
-  }
-};
-
-// Función para obtener información del usuario
-export const getUserInfo = async () => {
-  try {
-    const userInfo = await SecureStore.getItemAsync('userInfo');
-    return userInfo ? JSON.parse(userInfo) : null;
-  } catch (error) {
-    console.error('Error al obtener info de usuario:', error);
-    return null;
+      const data = await response.json();
+      return {
+        success: response.ok,
+        token: data.token,
+        user: data.user,
+        error: data.message
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: 'Error de conexión'
+      };
+    }
   }
 };

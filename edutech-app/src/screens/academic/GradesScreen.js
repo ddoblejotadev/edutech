@@ -1,260 +1,390 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Card, Title, SegmentedButtons, Divider, ProgressBar, DataTable } from 'react-native-paper';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+  RefreshControl,
+  TouchableOpacity,
+  Alert,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
+import { StudentApiService } from '../../services/studentApiService';
 
 const GradesScreen = () => {
-  const [period, setPeriod] = useState('current');
-  
-  // Datos de ejemplo - Calificaciones actuales
-  const currentCourses = [
-    { id: 1, code: 'CS101', name: 'Introducción a la Programación', credits: 4, grade: 95, status: 'En progreso' },
-    { id: 2, code: 'DB202', name: 'Bases de Datos Avanzadas', credits: 4, grade: 88, status: 'En progreso' },
-    { id: 3, code: 'AI303', name: 'Inteligencia Artificial', credits: 3, grade: 92, status: 'En progreso' },
-    { id: 4, code: 'WD204', name: 'Desarrollo Web', credits: 3, grade: 90, status: 'En progreso' },
-  ];
-  
-  // Datos de ejemplo - Historial académico
-  const academicHistory = [
-    { id: 5, code: 'CS100', name: 'Fundamentos de Computación', credits: 3, grade: 85, semester: 'Otoño 2024' },
-    { id: 6, code: 'MT101', name: 'Cálculo I', credits: 4, grade: 78, semester: 'Otoño 2024' },
-    { id: 7, code: 'ENG201', name: 'Comunicación Técnica', credits: 2, grade: 92, semester: 'Primavera 2024' },
-    { id: 8, code: 'PH103', name: 'Física para Informática', credits: 4, grade: 81, semester: 'Primavera 2024' },
-    { id: 9, code: 'DB101', name: 'Introducción a Bases de Datos', credits: 3, grade: 94, semester: 'Otoño 2023' },
-  ];
-  
+  const [grades, setGrades] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState('current');
+  const [summary, setSummary] = useState(null);
+
+  useEffect(() => {
+    loadGrades();
+  }, [selectedPeriod]);
+
+  const loadGrades = async () => {
+    try {
+      setLoading(true);
+      const data = await StudentApiService.getGrades();
+      setGrades(data.grades || []);
+      setSummary(data.summary || {});
+    } catch (error) {
+      Alert.alert('Error', 'No se pudieron cargar las calificaciones');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await loadGrades();
+    setRefreshing(false);
+  };
+
   const getGradeColor = (grade) => {
-    if (grade >= 90) return '#4CAF50';
-    if (grade >= 80) return '#2196F3';
-    if (grade >= 70) return '#FF9800';
-    return '#F44336';
+    if (grade >= 6.0) return COLORS.success;  // Escala chilena
+    if (grade >= 5.0) return COLORS.primary;
+    if (grade >= 4.0) return COLORS.warning;
+    return COLORS.error;
   };
-  
+
   const getGradeLetter = (grade) => {
-    if (grade >= 90) return 'A';
-    if (grade >= 80) return 'B';
-    if (grade >= 70) return 'C';
-    if (grade >= 60) return 'D';
-    return 'F';
+    if (grade >= 6.5) return 'MB'; // Muy Bueno
+    if (grade >= 5.5) return 'B';  // Bueno
+    if (grade >= 4.5) return 'S';  // Suficiente
+    if (grade >= 4.0) return 'I';  // Insuficiente
+    return 'M'; // Malo
   };
-  
-  const calculateGPA = (courses) => {
-    if (courses.length === 0) return 0;
-    
-    const totalPoints = courses.reduce((sum, course) => {
-      return sum + (course.grade / 20) * course.credits;
-    }, 0);
-    
-    const totalCredits = courses.reduce((sum, course) => sum + course.credits, 0);
-    
-    return (totalPoints / totalCredits).toFixed(2);
+
+  const getGradeStatus = (grade) => {
+    if (grade >= 4.0) return 'Aprobado';
+    return 'Reprobado';
   };
-  
-  const currentGPA = calculateGPA(currentCourses);
-  const cumulativeGPA = calculateGPA([...currentCourses, ...academicHistory]);
-  
-  return (
-    <ScrollView style={styles.container}>
-      <Card style={styles.summaryCard}>
-        <Card.Content>
-          <Title style={styles.cardTitle}>Resumen Académico</Title>
-          
-          <View style={styles.gpaContainer}>
-            <View style={styles.gpaItem}>
-              <Text style={styles.gpaLabel}>GPA Actual</Text>
-              <Text style={styles.gpaValue}>{currentGPA}</Text>
-            </View>
-            <View style={styles.gpaItem}>
-              <Text style={styles.gpaLabel}>GPA Acumulado</Text>
-              <Text style={styles.gpaValue}>{cumulativeGPA}</Text>
-            </View>
-            <View style={styles.gpaItem}>
-              <Text style={styles.gpaLabel}>Créditos</Text>
-              <Text style={styles.gpaValue}>47/120</Text>
-            </View>
+
+  const filteredGrades = grades.filter(grade => {
+    if (selectedPeriod === 'current') return grade.current;
+    return !grade.current;
+  });
+
+  const periods = [
+    { key: 'current', label: 'Periodo Actual', icon: 'calendar' },
+    { key: 'history', label: 'Historial', icon: 'time' },
+  ];
+
+  const renderPeriodButton = (period) => (
+    <TouchableOpacity
+      key={period.key}
+      style={[
+        styles.periodButton,
+        selectedPeriod === period.key && styles.periodButtonActive
+      ]}
+      onPress={() => setSelectedPeriod(period.key)}
+    >
+      <Ionicons
+        name={period.icon}
+        size={18}
+        color={selectedPeriod === period.key ? COLORS.white : COLORS.primary}
+      />
+      <Text style={[
+        styles.periodButtonText,
+        selectedPeriod === period.key && styles.periodButtonTextActive
+      ]}>
+        {period.label}
+      </Text>
+    </TouchableOpacity>
+  );
+
+  const renderSummaryCard = () => {
+    if (!summary || selectedPeriod !== 'current') return null;
+
+    return (
+      <View style={styles.summaryCard}>
+        <Text style={styles.summaryTitle}>Resumen Académico</Text>
+        <View style={styles.summaryGrid}>
+          <View style={styles.summaryItem}>
+            <Text style={styles.summaryValue}>{summary.gpa || '0.0'}</Text>
+            <Text style={styles.summaryLabel}>PPA (1-7)</Text>
           </View>
-          
-          <View style={styles.progressContainer}>
-            <Text style={styles.progressLabel}>Progreso del grado</Text>
-            <ProgressBar progress={47/120} color="#00008B" style={styles.progressBar} />
-            <Text style={styles.progressText}>39% completado</Text>
+          <View style={styles.summaryItem}>
+            <Text style={styles.summaryValue}>{summary.totalCredits || 0}</Text>
+            <Text style={styles.summaryLabel}>Créditos</Text>
           </View>
-        </Card.Content>
-      </Card>
-      
-      <View style={styles.segmentContainer}>
-        <SegmentedButtons
-          value={period}
-          onValueChange={setPeriod}
-          buttons={[
-            { value: 'current', label: 'Semestre Actual' },
-            { value: 'history', label: 'Historial Académico' },
-          ]}
-          style={styles.segmentButtons}
-        />
+          <View style={styles.summaryItem}>
+            <Text style={styles.summaryValue}>{summary.completedCourses || 0}</Text>
+            <Text style={styles.summaryLabel}>Ramos</Text>
+          </View>
+          <View style={styles.summaryItem}>
+            <Text style={styles.summaryValue}>{summary.currentSemester || 'N/A'}</Text>
+            <Text style={styles.summaryLabel}>Semestre</Text>
+          </View>
+        </View>
       </View>
-      
-      {period === 'current' ? (
-        <>
-          <Text style={styles.sectionTitle}>Semestre Actual (Primavera 2025)</Text>
-          {currentCourses.map(course => (
-            <Card key={course.id} style={styles.courseCard}>
-              <Card.Content>
-                <View style={styles.courseHeader}>
-                  <View>
-                    <Text style={styles.courseCode}>{course.code}</Text>
-                    <Title style={styles.courseName}>{course.name}</Title>
-                  </View>
-                  <View style={styles.gradeContainer}>
-                    <Text style={[styles.gradeText, { color: getGradeColor(course.grade) }]}>
-                      {course.grade}%
-                    </Text>
-                    <Text style={[styles.gradeLetter, { backgroundColor: getGradeColor(course.grade) }]}>
-                      {getGradeLetter(course.grade)}
-                    </Text>
-                  </View>
-                </View>
-                <Divider style={styles.divider} />
-                <View style={styles.courseFooter}>
-                  <Text>Créditos: {course.credits}</Text>
-                  <Text>{course.status}</Text>
-                </View>
-              </Card.Content>
-            </Card>
-          ))}
-        </>
-      ) : (
-        <>
-          <Text style={styles.sectionTitle}>Historial Académico</Text>
-          <Card style={styles.historyCard}>
-            <DataTable>
-              <DataTable.Header>
-                <DataTable.Title>Curso</DataTable.Title>
-                <DataTable.Title numeric>Créditos</DataTable.Title>
-                <DataTable.Title numeric>Nota</DataTable.Title>
-                <DataTable.Title>Semestre</DataTable.Title>
-              </DataTable.Header>
-              
-              {academicHistory.map(course => (
-                <DataTable.Row key={course.id}>
-                  <DataTable.Cell>{course.code} - {course.name}</DataTable.Cell>
-                  <DataTable.Cell numeric>{course.credits}</DataTable.Cell>
-                  <DataTable.Cell 
-                    numeric 
-                    textStyle={{ color: getGradeColor(course.grade) }}
-                  >
-                    {course.grade}%
-                  </DataTable.Cell>
-                  <DataTable.Cell>{course.semester}</DataTable.Cell>
-                </DataTable.Row>
-              ))}
-            </DataTable>
-          </Card>
-        </>
-      )}
-    </ScrollView>
+    );
+  };
+
+  const renderGradeCard = ({ item }) => (
+    <TouchableOpacity style={styles.gradeCard}>
+      <View style={styles.gradeHeader}>
+        <View style={styles.courseInfo}>
+          <Text style={styles.courseCode}>{item.courseCode}</Text>
+          <Text style={styles.courseName} numberOfLines={2}>
+            {item.courseName}
+          </Text>
+          {item.semester && (
+            <Text style={styles.semester}>{item.semester}</Text>
+          )}
+        </View>
+        
+        <View style={styles.gradeContainer}>
+          <View style={[styles.gradeBadge, { backgroundColor: getGradeColor(item.grade) }]}>
+            <Text style={styles.gradeNumber}>{item.grade}</Text>
+            <Text style={styles.gradeLetter}>{getGradeLetter(item.grade)}</Text>
+          </View>
+        </View>
+      </View>
+
+      <View style={styles.gradeDetails}>
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Créditos:</Text>
+          <Text style={styles.detailValue}>{item.credits}</Text>
+        </View>
+        
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>Estado:</Text>
+          <Text style={[
+            styles.detailValue,
+            { color: item.grade >= 70 ? COLORS.success : COLORS.error }
+          ]}>
+            {getGradeStatus(item.grade)}
+          </Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
+  if (loading && !refreshing) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={COLORS.primary} />
+        <Text style={styles.loadingText}>Cargando calificaciones...</Text>
+      </View>
+    );
+  }
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.periodSelector}>
+        {periods.map(renderPeriodButton)}
+      </View>
+
+      {renderSummaryCard()}
+
+      <FlatList
+        data={filteredGrades}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={renderGradeCard}
+        contentContainerStyle={styles.gradesList}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={[COLORS.primary]}
+            tintColor={COLORS.primary}
+          />
+        }
+        ListEmptyComponent={
+          <View style={styles.emptyContainer}>
+            <Ionicons name="school-outline" size={64} color={COLORS.lightText} />
+            <Text style={styles.emptyTitle}>No hay calificaciones</Text>
+            <Text style={styles.emptySubtitle}>
+              {selectedPeriod === 'current' 
+                ? 'Las calificaciones del período actual aparecerán aquí'
+                : 'No hay historial académico disponible'
+              }
+            </Text>
+          </View>
+        }
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    padding: 16,
+    backgroundColor: COLORS.background,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: COLORS.background,
+  },
+  loadingText: {
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text,
+    marginTop: SPACING.md,
+  },
+  periodSelector: {
+    flexDirection: 'row',
+    padding: SPACING.md,
+    backgroundColor: COLORS.white,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  periodButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+    marginRight: SPACING.sm,
+    backgroundColor: COLORS.white,
+  },
+  periodButtonActive: {
+    backgroundColor: COLORS.primary,
+  },
+  periodButtonText: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.primary,
+    marginLeft: SPACING.xs,
+  },
+  periodButtonTextActive: {
+    color: COLORS.white,
   },
   summaryCard: {
-    marginBottom: 16,
+    backgroundColor: COLORS.white,
+    margin: SPACING.md,
+    borderRadius: 12,
+    padding: SPACING.md,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  cardTitle: {
-    fontSize: 18,
-    marginBottom: 10,
+  summaryTitle: {
+    fontSize: FONT_SIZE.lg,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.text,
+    marginBottom: SPACING.md,
   },
-  gpaContainer: {
+  summaryGrid: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginVertical: 10,
   },
-  gpaItem: {
+  summaryItem: {
     alignItems: 'center',
+    flex: 1,
   },
-  gpaLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
+  summaryValue: {
+    fontSize: FONT_SIZE.xl,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.primary,
+    marginBottom: SPACING.xs,
   },
-  gpaValue: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#00008B',
+  summaryLabel: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.lightText,
   },
-  progressContainer: {
-    marginTop: 10,
+  gradesList: {
+    padding: SPACING.md,
   },
-  progressLabel: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
+  gradeCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    padding: SPACING.md,
+    marginBottom: SPACING.md,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
-  progressBar: {
-    height: 8,
-    borderRadius: 4,
-  },
-  progressText: {
-    fontSize: 12,
-    color: '#666',
-    textAlign: 'right',
-    marginTop: 5,
-  },
-  segmentContainer: {
-    marginBottom: 16,
-  },
-  segmentButtons: {
-    backgroundColor: '#fff',
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  courseCard: {
-    marginBottom: 10,
-  },
-  courseHeader: {
+  gradeHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
+    alignItems: 'flex-start',
+    marginBottom: SPACING.md,
+  },
+  courseInfo: {
+    flex: 1,
+    marginRight: SPACING.md,
   },
   courseCode: {
-    fontSize: 14,
-    color: '#666',
+    fontSize: FONT_SIZE.md,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.primary,
+    marginBottom: SPACING.xs,
   },
   courseName: {
-    fontSize: 16,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text,
+    marginBottom: SPACING.xs,
+  },
+  semester: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.lightText,
   },
   gradeContainer: {
     alignItems: 'center',
   },
-  gradeText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  gradeBadge: {
+    borderRadius: 8,
+    padding: SPACING.sm,
+    alignItems: 'center',
+    minWidth: 60,
+  },
+  gradeNumber: {
+    fontSize: FONT_SIZE.lg,
+    color: COLORS.white,
+    fontWeight: FONT_WEIGHT.bold,
   },
   gradeLetter: {
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: 'white',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-    marginTop: 4,
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.white,
   },
-  divider: {
-    marginVertical: 10,
+  gradeDetails: {
+    borderTopWidth: 1,
+    borderTopColor: COLORS.border,
+    paddingTop: SPACING.md,
   },
-  courseFooter: {
+  detailRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: SPACING.sm,
   },
-  historyCard: {
-    marginBottom: 20,
+  detailLabel: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.lightText,
+  },
+  detailValue: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.text,
+    fontWeight: FONT_WEIGHT.medium,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingTop: SPACING.xl * 2,
+  },
+  emptyTitle: {
+    fontSize: FONT_SIZE.lg,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.text,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.sm,
+  },
+  emptySubtitle: {
+    fontSize: FONT_SIZE.md,
+    color: COLORS.lightText,
+    textAlign: 'center',
+    paddingHorizontal: SPACING.xl,
   },
 });
 

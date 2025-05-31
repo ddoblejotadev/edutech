@@ -1,31 +1,22 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, Text, StyleSheet } from 'react-native';
-import { PaperProvider, DefaultTheme } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
 import { AuthProvider } from './src/context/AuthContext';
 import AppNavigator from './src/navigation/AppNavigator';
-import { COLORS } from './src/config/theme';
-
-// Personalizar el tema de React Native Paper
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: COLORS.primary,
-    accent: COLORS.secondary,
-    background: COLORS.background,
-    text: COLORS.text,
-    error: COLORS.error,
-  },
-};
 
 export default function App() {
   return (
-    <PaperProvider theme={theme}>
-      <AuthProvider>
+    <AuthProvider>
+      <View style={styles.container}>
         <StatusBar style="auto" />
         <AppNavigator />
-      </AuthProvider>
-    </PaperProvider>
+      </View>
+    </AuthProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

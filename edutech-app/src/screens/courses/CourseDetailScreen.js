@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity, SafeAreaView, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT, SHADOWS } from '../../config/theme';
+import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
 import { Button, Card } from '../../components/common/UIComponents';
 import { LoadingState, ErrorState } from '../../components/common/StateComponents';
 import { AuthContext } from '../../context/AuthContext';
-import { Courses } from '../../services/apiService';
+import { StudentApiService } from '../../services/studentApiService';
 
 const CourseDetailScreen = ({ route, navigation }) => {
   const { courseId } = route.params;
   const [activeTab, setActiveTab] = useState('contenido');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [courseData, setCourseData] = useState(null);
-  const [enrolling, setEnrolling] = useState(false);
+  const [courseData, setCourseData] = useState(null);  const [enrolling, setEnrolling] = useState(false);
   
   const { token } = useContext(AuthContext);
   
@@ -24,8 +23,12 @@ const CourseDetailScreen = ({ route, navigation }) => {
       setError(null);
       
       try {
-        const data = await Courses.getDetails(token, courseId);
-        setCourseData(data);
+        const response = await StudentApiService.getCourseById(token, courseId);
+        if (response.success) {
+          setCourseData(response.data);
+        } else {
+          throw new Error(response.message || 'No se encontró el curso');
+        }
       } catch (error) {
         console.error('Error cargando detalles del curso:', error);
         setError(error.message || 'No se pudo cargar la información del curso');
@@ -42,24 +45,30 @@ const CourseDetailScreen = ({ route, navigation }) => {
     setEnrolling(true);
     
     try {
-      await Courses.enroll(token, courseId);
-      Alert.alert(
-        "Inscripción Exitosa", 
-        "Te has inscrito al curso exitosamente",
-        [{ text: "OK", onPress: () => {
-          // Recargar los detalles del curso con el estado actualizado
-          const loadCourseDetails = async () => {
-            try {
-              const data = await Courses.getDetails(token, courseId);
-              setCourseData(data);
-            } catch (error) {
-              console.error('Error recargando detalles del curso:', error);
-            }
-          };
-          
-          loadCourseDetails();
-        }}]
-      );
+      const response = await StudentApiService.enrollInCourse(token, courseId);
+      if (response.success) {
+        Alert.alert(
+          "Inscripción Exitosa", 
+          response.message || "Te has inscrito al curso exitosamente",
+          [{ text: "OK", onPress: () => {
+            // Recargar los detalles del curso con el estado actualizado
+            const loadCourseDetails = async () => {
+              try {
+                const courseResponse = await StudentApiService.getCourseById(token, courseId);
+                if (courseResponse.success) {
+                  setCourseData(courseResponse.data);
+                }
+              } catch (error) {
+                console.error('Error recargando detalles del curso:', error);
+              }
+            };
+            
+            loadCourseDetails();
+          }}]
+        );
+      } else {
+        throw new Error(response.message || 'Error al inscribirse');
+      }
     } catch (error) {
       Alert.alert(
         "Error", 
@@ -322,10 +331,10 @@ const CourseDetailScreen = ({ route, navigation }) => {
           </TouchableOpacity>
         </View>
         
-        <Image 
-          source={courseData.imageUrl ? { uri: courseData.imageUrl } : require('../../../assets/images/course-placeholder.png')} 
-          style={styles.courseImage} 
-        />
+        <View style={styles.courseImagePlaceholder}>
+          <Ionicons name="book-outline" size={60} color={COLORS.primary} />
+          <Text style={styles.imageText}>Imagen del Curso</Text>
+        </View>
         
         <View style={styles.courseInfo}>
           <View style={styles.courseHeader}>
@@ -431,10 +440,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  courseImage: {
+  courseImagePlaceholder: {
     width: '100%',
     height: 200,
-    resizeMode: 'cover',
+    backgroundColor: COLORS.lightGray,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageText: {
+    marginTop: SPACING.sm,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.muted,
   },
   courseInfo: {
     paddingTop: SPACING.md,

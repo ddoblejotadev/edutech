@@ -1,120 +1,157 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, Alert, SafeAreaView, ActivityIndicator } from 'react-native';
-import { TextInput, Button, Text, Snackbar } from 'react-native-paper';
+import { View, StyleSheet, TouchableOpacity, SafeAreaView, ScrollView, TextInput } from 'react-native';
+import { Text, Button, Snackbar } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
 import { AuthContext } from '../../context/AuthContext';
 import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
 
+const DEMO_MODE = true; // Activar modo demo
+
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [secureTextEntry, setSecureTextEntry] = useState(true);
+  const [email, setEmail] = useState('juan.perez@alumno.edu');
+  const [password, setPassword] = useState('demo123');
+  const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
   const [snackbarMsg, setSnackbarMsg] = useState('');
   
-  const { login, loading, error } = useContext(AuthContext);
-  
-  // Mostrar error en Snackbar si existe
+  const { login, error, clearError } = useContext(AuthContext);
+
   useEffect(() => {
     if (error) {
       setSnackbarMsg(error);
       setShowSnackbar(true);
+      clearError(); // Limpiar error después de mostrarlo
     }
-  }, [error]);
-  
+  }, [error, clearError]);
+
   const handleLogin = async () => {
-    if (!username || !password) {
+    if (!email || !password) {
       setSnackbarMsg('Por favor ingresa tu usuario y contraseña');
       setShowSnackbar(true);
       return;
     }
     
+    if (!email.includes('@')) {
+      setSnackbarMsg('Por favor ingresa un email válido');
+      setShowSnackbar(true);
+      return;
+    }
+    
+    setLoading(true);
     try {
-      const result = await login(username, password);
+      const result = await login(email, password);
       if (!result.success) {
-        setSnackbarMsg(result.error || 'Credenciales incorrectas. Inténtalo de nuevo.');
+        setSnackbarMsg(result.error || 'Error de autenticación');
         setShowSnackbar(true);
       }
+      // Si es exitoso, el contexto manejará la navegación automáticamente
     } catch (error) {
-      setSnackbarMsg('Error de conexión. Inténtalo más tarde.');
+      console.error('Error en handleLogin:', error);
+      setSnackbarMsg('Error inesperado. Inténtalo más tarde.');
       setShowSnackbar(true);
-      console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
-    return (
+
+  const fillDemoCredentials = () => {
+    setEmail('juan.perez@alumno.edu');
+    setPassword('demo123');
+    setSnackbarMsg('✅ Credenciales demo rellenadas. Presiona "Iniciar Sesión" para continuar.');
+    setShowSnackbar(true);
+  };
+
+  return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
-        <View style={styles.logoContainer}>
-          <View style={styles.logoWrapper}>
-            <Ionicons name="school" size={60} color={COLORS.primary} />
-          </View>
-          <Text style={styles.logoText}>Edu-Tech</Text>
-          <Text style={styles.subtitle}>Plataforma de aprendizaje en línea</Text>
+      <ScrollView contentContainerStyle={styles.scrollContent}>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>EduTech</Text>
+          <Text style={styles.subtitle}>Accede a tu cuenta</Text>
+          
+          {/* Mensaje de modo demo */}
+          {DEMO_MODE && (
+            <TouchableOpacity style={styles.demoNotice} onPress={fillDemoCredentials}>
+              <Ionicons name="information-circle" size={20} color="#3b82f6" />
+              <Text style={styles.demoText}>
+                Modo Demo - Toca aquí para usar credenciales demo
+              </Text>
+            </TouchableOpacity>
+          )}
         </View>
-        
-        <View style={styles.formContainer}>
-          <TextInput
-            label="Usuario"
-            value={username}
-            onChangeText={setUsername}
-            style={styles.input}
-            mode="outlined"
-            autoCapitalize="none"
-            left={<TextInput.Icon icon="account" />}
-            disabled={loading}
-          />
-          
-          <TextInput
-            label="Contraseña"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry={secureTextEntry}
-            style={styles.input}
-            mode="outlined"
-            disabled={loading}
-            left={<TextInput.Icon icon="lock" />}
-            right={
-              <TextInput.Icon 
-                icon={secureTextEntry ? "eye" : "eye-off"} 
-                onPress={() => setSecureTextEntry(!secureTextEntry)}
+
+        {/* Formulario */}
+        <View style={styles.form}>
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Correo electrónico</Text>
+            <View style={styles.inputContainer}>
+              <Ionicons name="mail-outline" size={20} color={COLORS.muted} style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="usuario@ejemplo.com"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor={COLORS.muted}
               />
-            }
-          />
-          
-          <Button 
-            mode="contained" 
-            onPress={handleLogin}
-            style={styles.button}
-            loading={loading}
-            disabled={loading}
-          >
-            Iniciar Sesión
-          </Button>
-          
-          <TouchableOpacity 
-            style={styles.forgotPassword}
-            onPress={() => {
-              // Implementar recuperación de contraseña
-              setSnackbarMsg('Función de recuperación de contraseña disponible próximamente');
-              setShowSnackbar(true);
-            }}
-          >
+            </View>
+          </View>
+
+          <View style={styles.inputGroup}>
+            <Text style={styles.label}>Contraseña</Text>
+            <View style={styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color={COLORS.muted} style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Tu contraseña"
+                secureTextEntry={!showPassword}
+                placeholderTextColor={COLORS.muted}
+              />
+              <TouchableOpacity
+                style={styles.eyeIcon}
+                onPress={() => setShowPassword(!showPassword)}
+              >
+                <Ionicons 
+                  name={showPassword ? "eye-off-outline" : "eye-outline"} 
+                  size={20} 
+                  color={COLORS.muted} 
+                />
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          <TouchableOpacity style={styles.forgotPassword}>
             <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
           </TouchableOpacity>
-          
-          <View style={styles.registerContainer}>
-            <Text style={styles.registerQuestion}>¿No tienes una cuenta? </Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <Text style={styles.registerText}>Regístrate</Text>
-            </TouchableOpacity>
-          </View>
+
+          <Button
+            mode="contained"
+            onPress={handleLogin}
+            loading={loading}
+            disabled={loading}
+            style={styles.loginButton}
+          >
+            {loading ? "Iniciando sesión..." : "Iniciar sesión"}
+          </Button>
         </View>
-      </View>
+
+        {/* Footer */}
+        <View style={styles.footer}>
+          <Text style={styles.footerText}>¿No tienes cuenta? </Text>
+          <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+            <Text style={styles.signUpText}>Regístrate</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
       
       <Snackbar
         visible={showSnackbar}
         onDismiss={() => setShowSnackbar(false)}
-        duration={3000}
+        duration={4000}
         action={{
           label: 'Cerrar',
           onPress: () => setShowSnackbar(false),
@@ -131,63 +168,95 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: COLORS.white,
   },
-  content: {
-    flex: 1,
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
     padding: SPACING.md,
-    justifyContent: 'center',
   },
-  logoContainer: {
+  header: {
     alignItems: 'center',
-    marginBottom: SPACING.xxl,
+    marginBottom: 48,
   },
-  logoWrapper: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    backgroundColor: COLORS.primary + '15',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: SPACING.md,
-  },
-  logoText: {
-    fontSize: FONT_SIZE.xxxl,
+  title: {
+    fontSize: 40,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.primary,
-    marginBottom: SPACING.xs,
+    marginBottom: 4,
   },
   subtitle: {
     fontSize: FONT_SIZE.md,
     color: COLORS.muted,
   },
-  formContainer: {
-    marginBottom: SPACING.xxl,
+  demoNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#eff6ff',
+    padding: 12,
+    borderRadius: 8,
+    marginTop: 16,
+    borderWidth: 1,
+    borderColor: '#bfdbfe',
   },
-  input: {
+  demoText: {
+    marginLeft: 8,
+    fontSize: 14,
+    color: '#3b82f6',
+    fontWeight: '500',
+  },
+  form: {
+    marginBottom: 48,
+  },
+  inputGroup: {
     marginBottom: SPACING.md,
+  },
+  label: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.text,
+    marginBottom: 8,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: 8,
+    padding: 10,
     backgroundColor: COLORS.white,
   },
-  button: {
-    padding: SPACING.sm,
-    backgroundColor: COLORS.primary,
-    marginTop: SPACING.md,
+  inputIcon: {
+    marginRight: 10,
+  },
+  input: {
+    flex: 1,
+    height: 40,
+    fontSize: FONT_SIZE.md,
+    color: COLORS.text,
+  },
+  eyeIcon: {
+    padding: 8,
   },
   forgotPassword: {
     alignItems: 'center',
-    marginTop: SPACING.lg,
+    marginTop: 24,
   },
   forgotPasswordText: {
     color: COLORS.primary,
     fontSize: FONT_SIZE.sm,
   },
-  registerContainer: {
+  loginButton: {
+    padding: 8,
+    backgroundColor: COLORS.primary,
+    marginTop: 16,
+  },
+  footer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: SPACING.xl,
+    marginTop: 32,
   },
-  registerQuestion: {
+  footerText: {
     color: COLORS.text,
   },
-  registerText: {
+  signUpText: {
     color: COLORS.primary,
     fontWeight: FONT_WEIGHT.bold,
   },

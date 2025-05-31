@@ -1,114 +1,68 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
-import { COLORS, BORDER_RADIUS, FONT_SIZE, FONT_WEIGHT, SPACING } from '../../config/theme';
+import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator, TextInput } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
 
 // Botón personalizado con diferentes variantes
 export const Button = ({ 
   title, 
   onPress, 
-  variant = 'filled', // filled, outlined, text
-  color = 'primary', 
-  size = 'md', // sm, md, lg
+  variant = 'primary', 
   disabled = false,
   loading = false,
   icon = null,
   style = {},
 }) => {
-  // Determinar estilos según las props
-  const getButtonStyles = () => {
-    let buttonStyle = { ...styles.button };
-    
-    // Variante
-    if (variant === 'outlined') {
-      buttonStyle.backgroundColor = 'transparent';
-      buttonStyle.borderWidth = 1;
-      buttonStyle.borderColor = disabled ? COLORS.muted : COLORS[color];
-    } else if (variant === 'text') {
-      buttonStyle.backgroundColor = 'transparent';
-      buttonStyle.elevation = 0;
-      buttonStyle.shadowOpacity = 0;
-    } else {
-      // filled (default)
-      buttonStyle.backgroundColor = disabled ? COLORS.muted : COLORS[color];
-    }
-    
-    // Tamaño
-    if (size === 'sm') {
-      buttonStyle.paddingVertical = SPACING.xs;
-      buttonStyle.paddingHorizontal = SPACING.md;
-    } else if (size === 'lg') {
-      buttonStyle.paddingVertical = SPACING.md;
-      buttonStyle.paddingHorizontal = SPACING.xl;
-    }
-    
-    return buttonStyle;
-  };
-  
-  const getTextStyles = () => {
-    let textStyle = { ...styles.buttonText };
-    
-    if (variant === 'text' || variant === 'outlined') {
-      textStyle.color = disabled ? COLORS.muted : COLORS[color];
-    }
-    
-    if (size === 'sm') {
-      textStyle.fontSize = FONT_SIZE.sm;
-    } else if (size === 'lg') {
-      textStyle.fontSize = FONT_SIZE.lg;
-    }
-    
-    return textStyle;
-  };
-  
+  const buttonStyle = [
+    styles.button,
+    variant === 'outlined' ? styles.buttonOutlined : styles.buttonPrimary,
+    disabled && styles.buttonDisabled,
+    style
+  ];
+
+  const textStyle = [
+    styles.buttonText,
+    variant === 'outlined' ? styles.buttonTextOutlined : styles.buttonTextPrimary,
+    disabled && styles.buttonTextDisabled
+  ];
+
   return (
-    <TouchableOpacity
-      onPress={onPress}
+    <TouchableOpacity 
+      style={buttonStyle} 
+      onPress={onPress} 
       disabled={disabled || loading}
-      style={[getButtonStyles(), style]}
       activeOpacity={0.8}
     >
       <View style={styles.buttonContent}>
         {loading ? (
           <ActivityIndicator 
-            color={variant === 'filled' ? COLORS.white : COLORS[color]} 
+            color={variant === 'outlined' ? COLORS.primary : COLORS.white} 
             size="small" 
-            style={styles.buttonIcon} 
+            style={styles.buttonIcon}
           />
         ) : icon ? (
-          <View style={styles.buttonIcon}>{icon}</View>
+          <Ionicons 
+            name={icon} 
+            size={20} 
+            color={variant === 'outlined' ? COLORS.primary : COLORS.white} 
+            style={styles.buttonIcon}
+          />
         ) : null}
-        <Text style={getTextStyles()}>{title}</Text>
+        <Text style={textStyle}>{title}</Text>
       </View>
     </TouchableOpacity>
   );
 };
 
 // Componente de tarjeta
-export const Card = ({ 
-  children, 
-  style = {}, 
-  onPress = null, 
-  elevation = 'md' // none, sm, md, lg
-}) => {
-  const cardStyle = [
-    styles.card,
-    elevation !== 'none' && styles[`shadow${elevation.toUpperCase()}`],
-    style
-  ];
+export const Card = ({ children, style = {}, onPress }) => {
+  const CardComponent = onPress ? TouchableOpacity : View;
   
-  if (onPress) {
-    return (
-      <TouchableOpacity 
-        style={cardStyle} 
-        onPress={onPress}
-        activeOpacity={0.8}
-      >
-        {children}
-      </TouchableOpacity>
-    );
-  }
-  
-  return <View style={cardStyle}>{children}</View>;
+  return (
+    <CardComponent style={[styles.card, style]} onPress={onPress} activeOpacity={0.8}>
+      {children}
+    </CardComponent>
+  );
 };
 
 // Componente de mensaje de error
@@ -175,14 +129,25 @@ export const Divider = ({ text }) => (
 );
 
 const styles = StyleSheet.create({
-  // Estilos para Button
   button: {
-    borderRadius: BORDER_RADIUS.md,
-    paddingVertical: SPACING.sm,
-    paddingHorizontal: SPACING.lg,
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 100,
+    paddingVertical: SPACING.md,
+    paddingHorizontal: SPACING.lg,
+    borderRadius: 8,
+    minHeight: 48,
+  },
+  buttonPrimary: {
+    backgroundColor: COLORS.primary,
+  },
+  buttonOutlined: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: COLORS.primary,
+  },
+  buttonDisabled: {
+    opacity: 0.6,
   },
   buttonContent: {
     flexDirection: 'row',
@@ -190,36 +155,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   buttonText: {
-    color: COLORS.white,
     fontSize: FONT_SIZE.md,
-    fontWeight: FONT_WEIGHT.semibold,
-    textAlign: 'center',
+    fontWeight: FONT_WEIGHT.medium,
+  },
+  buttonTextPrimary: {
+    color: COLORS.white,
+  },
+  buttonTextOutlined: {
+    color: COLORS.primary,
+  },
+  buttonTextDisabled: {
+    color: COLORS.muted,
   },
   buttonIcon: {
-    marginRight: SPACING.xs,
+    marginRight: SPACING.sm,
   },
-  
-  // Estilos para Card
   card: {
-    backgroundColor: COLORS.card,
-    borderRadius: BORDER_RADIUS.md,
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
     padding: SPACING.lg,
-    marginVertical: SPACING.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  shadowSM: {
-    ...SHADOWS.sm,
-  },
-  shadowMD: {
-    ...SHADOWS.md,
-  },
-  shadowLG: {
-    ...SHADOWS.lg,
-  },
-  
-  // Estilos para ErrorMessage
   errorContainer: {
-    backgroundColor: `${COLORS.error}22`, // 22 es opacidad en hex
-    borderRadius: BORDER_RADIUS.sm,
+    backgroundColor: `${COLORS.error}22`,
+    borderRadius: 8,
     padding: SPACING.md,
     marginVertical: SPACING.sm,
     flexDirection: 'row',
@@ -229,15 +192,12 @@ const styles = StyleSheet.create({
   errorText: {
     color: COLORS.error,
     fontSize: FONT_SIZE.sm,
-    marginTop: SPACING.xs,
   },
   retryText: {
     color: COLORS.primary,
-    fontWeight: FONT_WEIGHT.semibold,
+    fontWeight: FONT_WEIGHT.medium,
     marginLeft: SPACING.sm,
   },
-  
-  // Estilos para Input
   inputContainer: {
     marginBottom: SPACING.md,
   },
@@ -251,8 +211,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: COLORS.border,
-    borderRadius: BORDER_RADIUS.md,
+    borderColor: COLORS.lightGray,
+    borderRadius: 8,
     backgroundColor: COLORS.white,
   },
   input: {
@@ -277,8 +237,6 @@ const styles = StyleSheet.create({
   inputError: {
     borderColor: COLORS.error,
   },
-  
-  // Estilos para Divider
   dividerContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -287,7 +245,7 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: COLORS.border,
+    backgroundColor: COLORS.lightGray,
   },
   dividerText: {
     color: COLORS.muted,
@@ -295,6 +253,3 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.sm,
   },
 });
-
-// Importar TextInput aquí para evitar problemas de dependencia circular
-import { TextInput } from 'react-native';

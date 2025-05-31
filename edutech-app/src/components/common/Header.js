@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT, SHADOWS } from '../../config/theme';
+import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
 
 const Header = ({ 
   title, 
@@ -59,7 +59,11 @@ const styles = StyleSheet.create({
   },
   solidContainer: {
     backgroundColor: COLORS.primary,
-    ...SHADOWS.sm,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 2,
   },
   transparentContainer: {
     backgroundColor: 'transparent',
