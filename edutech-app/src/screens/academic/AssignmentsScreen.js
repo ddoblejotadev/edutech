@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
     padding: SPACING.sm,
   },
   headerTitle: {
-    fontSize: FONT_SIZE.xl,
+    fontSize: FONT_SIZE.md,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text,
   },

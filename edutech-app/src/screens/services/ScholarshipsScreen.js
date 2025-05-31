@@ -73,46 +73,19 @@ const ScholarshipsScreen = ({ route, navigation }) => {
   };
 
   const handleApply = (scholarship) => {
-    if (scholarship.status === 'applied') {
-      Alert.alert(
-        'Ya aplicaste',
-        'Ya has aplicado a esta beca. Puedes verificar el estado en tu panel de aplicaciones.',
-        [{ text: 'OK' }]
-      );
-      return;
-    }
-
-    if (scholarship.status === 'expired') {
-      Alert.alert(
-        'Beca expirada',
-        'Esta beca ya no está disponible. La fecha límite ha pasado.',
-        [{ text: 'OK' }]
-      );
-      return;
-    }
-
     Alert.alert(
       'Aplicar a Beca',
-      `¿Deseas aplicar a la ${scholarship.name}?\n\nMonto: $${scholarship.amount} MXN (${scholarship.percentage}% de la colegiatura)\n\nDeberás completar los requisitos solicitados.`,
+      `¿Deseas aplicar a la ${scholarship.name}?\n\nMonto: $${scholarship.amount.toLocaleString('es-CL')} CLP (${scholarship.percentage}% de la colegiatura)\n\nDeberás completar los requisitos solicitados.`,
       [
         { text: 'Cancelar', style: 'cancel' },
         { 
           text: 'Aplicar', 
-          onPress: () => processApplication(scholarship)
+          onPress: () => {
+            Alert.alert('Aplicación Enviada', 'Tu aplicación a la beca ha sido enviada exitosamente.');
+          }
         }
       ]
     );
-  };
-
-  const processApplication = (scholarship) => {
-    // Simular proceso de aplicación
-    setTimeout(() => {
-      Alert.alert(
-        'Aplicación Exitosa',
-        `Has aplicado exitosamente a la ${scholarship.name}.\n\nFolio: BECA-2024-${Math.floor(Math.random() * 1000)}\n\nRecibirás información sobre los siguientes pasos por email.`,
-        [{ text: 'OK' }]
-      );
-    }, 1000);
   };
 
   const renderCategoryFilter = () => (
@@ -166,7 +139,7 @@ const ScholarshipsScreen = ({ route, navigation }) => {
         <View style={styles.scholarshipDetails}>
           <View style={styles.amountContainer}>
             <Text style={styles.amountLabel}>Monto del apoyo:</Text>
-            <Text style={styles.amountValue}>${scholarship.amount} MXN</Text>
+            <Text style={styles.amountValue}>${scholarship.amount.toLocaleString('es-CL')} CLP</Text>
             <Text style={styles.percentageValue}>({scholarship.percentage}% colegiatura)</Text>
           </View>
 
@@ -281,9 +254,11 @@ const styles = StyleSheet.create({
     marginRight: SPACING.md,
   },
   headerTitle: {
-    fontSize: FONT_SIZE.lg,
+    fontSize: FONT_SIZE.md,
     color: COLORS.white,
     fontWeight: FONT_WEIGHT.bold,
+    flex: 1,
+    textAlign: 'center',
   },
   content: {
     flex: 1,

@@ -102,40 +102,23 @@ const ExamRegistrationScreen = ({ navigation, route }) => {
 
   const handleRegistration = () => {
     if (selectedExams.length === 0) {
-      Alert.alert('Error', 'Selecciona al menos un examen para continuar.');
+      Alert.alert('Error', 'Selecciona al menos un examen para inscribirte');
       return;
     }
 
-    const selectedExamsList = availableExams.filter(exam => 
-      selectedExams.includes(exam.id)
-    );
-
     Alert.alert(
       'Confirmar Inscripción',
-      `¿Confirmas la inscripción a ${selectedExams.length} examen(es)?\n\nCosto total: $${calculateTotal()} MXN`,
+      `¿Confirmas la inscripción a ${selectedExams.length} examen(es)?\n\nCosto total: $${calculateTotal().toLocaleString('es-CL')} CLP`,
       [
         { text: 'Cancelar', style: 'cancel' },
         { 
           text: 'Confirmar', 
-          onPress: () => processRegistration(selectedExamsList)
+          onPress: () => {
+            Alert.alert('Inscripción Exitosa', 'Te has inscrito exitosamente a los exámenes seleccionados.');
+          }
         }
       ]
     );
-  };
-
-  const processRegistration = (exams) => {
-    setLoading(true);
-    
-    setTimeout(() => {
-      setLoading(false);
-      const folio = `EX-2024-${Math.floor(Math.random() * 10000)}`;
-      
-      Alert.alert(
-        'Inscripción Exitosa',
-        `Te has inscrito exitosamente a ${exams.length} examen(es).\n\nFolio: ${folio}\n\nRecibirás un email con los detalles y ubicaciones.`,
-        [{ text: 'OK', onPress: () => navigation.goBack() }]
-      );
-    }, 2000);
   };
 
   const getStatusColor = (status, attempts, maxAttempts) => {
@@ -197,7 +180,7 @@ const ExamRegistrationScreen = ({ navigation, route }) => {
           
           <View style={styles.detailRow}>
             <Ionicons name="cash-outline" size={16} color={COLORS.muted} />
-            <Text style={styles.detailText}>${exam.cost} MXN</Text>
+            <Text style={styles.detailText}>${exam.cost.toLocaleString('es-CL')} CLP</Text>
           </View>
           
           <View style={styles.detailRow}>
@@ -230,7 +213,7 @@ const ExamRegistrationScreen = ({ navigation, route }) => {
             Exámenes seleccionados: {selectedExams.length}
           </Text>
           <Text style={styles.totalCost}>
-            Total a pagar: ${calculateTotal()} MXN
+            Total a pagar: ${calculateTotal().toLocaleString('es-CL')} CLP
           </Text>
         </View>
         

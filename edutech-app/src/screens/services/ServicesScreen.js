@@ -36,7 +36,7 @@ const ServicesScreen = ({ navigation }) => {
       icon: 'card-outline', 
       status: serviceStatuses[3] || null,
       screen: 'UniversityCard',
-      cost: '$5.000'
+      cost: '$5.000 CLP'
     },
     { 
       id: 4, 
@@ -148,13 +148,13 @@ const styles = StyleSheet.create({
     paddingTop: 48,
   },
   headerTitle: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'white',
     marginBottom: 4,
   },
   headerSubtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: 'white',
     opacity: 0.9,
   },
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   serviceTitle: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '600',
     marginBottom: 4,
     color: '#1f2937',

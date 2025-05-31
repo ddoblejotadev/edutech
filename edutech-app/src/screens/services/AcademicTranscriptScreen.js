@@ -59,7 +59,7 @@ const AcademicTranscriptScreen = ({ route, navigation }) => {
     
     Alert.alert(
       'Confirmar Solicitud',
-      `¿Confirmas la solicitud de ${selected.title}?\n\nCosto: $${selected.cost} MXN\nTiempo de entrega: ${selected.deliveryTime}`,
+      `¿Confirmas la solicitud de ${selected.title}?\n\nCosto: $${selected.cost.toLocaleString('es-CL')} CLP\nTiempo de entrega: ${selected.deliveryTime}`,
       [
         { text: 'Cancelar', style: 'cancel' },
         { 
@@ -113,7 +113,7 @@ const AcademicTranscriptScreen = ({ route, navigation }) => {
             <View style={styles.typeDetails}>
               <View style={styles.detailItem}>
                 <Ionicons name="cash-outline" size={16} color={COLORS.success} />
-                <Text style={styles.detailText}>${type.cost} MXN</Text>
+                <Text style={styles.detailText}>${type.cost.toLocaleString('es-CL')} CLP</Text>
               </View>
               
               <View style={styles.detailItem}>

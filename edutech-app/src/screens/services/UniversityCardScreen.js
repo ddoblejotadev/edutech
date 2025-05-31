@@ -84,7 +84,10 @@ const UniversityCardScreen = ({ route, navigation }) => {
   const handlePayment = () => {
     Alert.alert(
       'Realizar Pago',
-      `El costo de la credencial es $${cardInfo.currentRequest.cost} MXN`,
+      `El costo de la credencial es $${cardInfo.currentRequest.cost.toLocaleString('es-CL', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+      })} CLP`,
       [
         { text: 'Cancelar', style: 'cancel' },
         { 
@@ -171,7 +174,12 @@ const UniversityCardScreen = ({ route, navigation }) => {
           
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Costo:</Text>
-            <Text style={styles.detailValue}>${cardInfo.currentRequest.cost} MXN</Text>
+            <Text style={styles.detailValue}>
+              ${cardInfo.currentRequest.cost.toLocaleString('es-CL', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+              })} CLP
+            </Text>
           </View>
           
           <View style={styles.detailRow}>
@@ -288,6 +296,7 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     fontWeight: FONT_WEIGHT.bold,
     flex: 1,
+    textAlign: 'center',
   },
   content: {
     flex: 1,
@@ -297,7 +306,7 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg,
   },
   cardTitle: {
-    fontSize: FONT_SIZE.lg,
+    fontSize: FONT_SIZE.md,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text,
     marginBottom: SPACING.md,
