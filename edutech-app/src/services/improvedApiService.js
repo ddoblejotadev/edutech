@@ -85,24 +85,32 @@ const fetchWithTimeout = async (url, options = {}, timeout = API_TIMEOUT) => {
 
 // Datos demo para autenticación
 const DEMO_USER_DATA = {
-  'juan.perez@alumno.edu': {
-    password: 'demo123',
+  'carlos.mendoza@duocuc.cl': {
+    password: 'duoc2024',
     user: {
       id: 1,
-      name: 'Juan Pérez',
-      email: 'juan.perez@alumno.edu',
-      phone: '+52 55 1234-5678',
-      bio: 'Estudiante de Ingeniería en Sistemas',
+      name: 'Carlos Andrés Mendoza Vargas',
+      nombre: 'Carlos Andrés Mendoza Vargas',
+      email: 'carlos.mendoza@duocuc.cl',
+      phone: '+56 9 8765 4321',
+      bio: 'Estudiante de Ingeniería en Informática - DUOC UC',
       role: 'Estudiante',
-      joinDate: 'Enero 2024',
-      totalCourses: 3,
-      completedCourses: 1,
+      joinDate: 'Marzo 2021',
+      totalCourses: 4,
+      completedCourses: 2,
       avatarUrl: null,
+      carrera: 'Ingeniería en Informática',
+      sede: 'Plaza Vespucio',
+      año: 4,
+      semestre: 8,
+      rut: '19.234.567-8',
       achievements: [
-        { id: 1, title: 'Primer curso completado', icon: 'trophy', date: 'Febrero 2024' }
+        { id: 1, title: 'Primer semestre completado', icon: 'trophy', date: 'Julio 2021' },
+        { id: 2, title: 'Beca de Excelencia Académica', icon: 'medal', date: 'Marzo 2022' }
       ],
       certificates: [
-        { id: 1, title: 'Fundamentos de Programación', date: 'Febrero 2024' }
+        { id: 1, title: 'Fundamentos de Programación', date: 'Diciembre 2022' },
+        { id: 2, title: 'Base de Datos I', date: 'Julio 2023' }
       ],
       preferences: {
         notifications: true,
@@ -119,15 +127,18 @@ export const ImprovedAuthService = {
   login: async (email, password) => {
     if (DEMO_MODE) {
       await simulateNetworkDelay();
-      const user = DEMO_USERS.find(u => u.email === email);
-      if (user && password === "demo123") {
+      const userData = DEMO_USER_DATA[email];
+      if (userData && password === "demo123") {
         return {
           success: true,
-          token: "demo-token-12345",
-          user: user
+          token: userData.token,
+          user: userData.user
         };
       } else {
-        throw new Error('Credenciales inválidas. Usa: juan.perez@alumno.edu / demo123');
+        return {
+          success: false,
+          message: "Credenciales incorrectas. Use carlos.sanchez@duocuc.cl / demo123"
+        };
       }
     }
     

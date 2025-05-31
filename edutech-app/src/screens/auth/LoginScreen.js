@@ -8,8 +8,8 @@ import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
 const DEMO_MODE = true; // Activar modo demo
 
 const LoginScreen = ({ navigation }) => {
-  const [email, setEmail] = useState('juan.perez@alumno.edu');
-  const [password, setPassword] = useState('demo123');
+  const [email, setEmail] = useState('carlos.mendoza@duocuc.cl');
+  const [password, setPassword] = useState('duoc2024');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showSnackbar, setShowSnackbar] = useState(false);
@@ -56,8 +56,8 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const fillDemoCredentials = () => {
-    setEmail('juan.perez@alumno.edu');
-    setPassword('demo123');
+    setEmail('carlos.mendoza@duocuc.cl');
+    setPassword('duoc2024');
     setSnackbarMsg('✅ Credenciales demo rellenadas. Presiona "Iniciar Sesión" para continuar.');
     setShowSnackbar(true);
   };

@@ -6,22 +6,65 @@ export const authService = {
   login: async (email, password) => {
     if (DEMO_MODE) {
       // Credenciales demo
-      if (email === 'juan.perez@alumno.edu' && password === 'demo123') {
-        return {
-          success: true,
-          token: 'demo-token-123',
-          user: {
-            id: 1,
-            name: 'Juan Pérez García',
-            email: 'juan.perez@alumno.edu',
-            role: 'student'
+      const validateCredentials = (email, password) => {
+        // Verificar en datos demo
+        const user = DEMO_USERS.find(u => 
+          (u.email === email || u.username === email) && u.password === password
+        );
+        
+        if (user) {
+          return {
+            success: true,
+            user: {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              rut: user.rut,
+              role: user.role,
+              sede: user.sede,
+              carrera: user.carrera
+            },
+            token: 'demo-token-' + user.id
+          };
+        }
+
+        // Credenciales demo adicionales para compatibilidad
+        const demoCredentials = [
+          {
+            email: 'carlos.mendoza@duocuc.cl',
+            password: 'duoc2024',
+            user: {
+              id: 1,
+              name: 'Carlos Andrés Mendoza Vargas',
+              email: 'carlos.mendoza@duocuc.cl',
+              rut: '19.234.567-8',
+              role: 'student',
+              sede: 'Plaza Vespucio',
+              carrera: 'Ingeniería en Informática'
+            }
           }
+        ];
+
+        const demoUser = demoCredentials.find(cred => 
+          cred.email === email && cred.password === password
+        );
+
+        if (demoUser) {
+          return {
+            success: true,
+            user: demoUser.user,
+            token: 'demo-token-' + demoUser.user.id
+          };
+        }
+
+        return {
+          success: false,
+          message: 'Credenciales incorrectas. Usa: carlos.mendoza@duocuc.cl / duoc2024'
         };
-      }
-      return {
-        success: false,
-        error: 'Credenciales incorrectas'
       };
+
+      const result = validateCredentials(email, password);
+      return result;
     }
 
     try {

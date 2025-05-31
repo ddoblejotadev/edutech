@@ -8,7 +8,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { EvaluationService } from '../../services/studentApiService';
 
 const EvaluationResultScreen = ({ route, navigation }) => {
-  const { evaluationId, courseId } = route.params;
+  const { evaluationId, courseId } = route.params || {};
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);

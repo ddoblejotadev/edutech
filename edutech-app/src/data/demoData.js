@@ -1,273 +1,157 @@
-// Datos de demostración para la presentación
-
-// Estudiante demo actualizado
+// Datos de demostración para la aplicación EduTech - DUOC UC
 export const DEMO_USERS = [
   {
     id: 1,
-    nombre: "Juan Pérez",
-    email: "juan.perez@alumno.edu",
-    rol: "ESTUDIANTE",
-    telefono: "+34 600 123 456",
-    fechaNacimiento: "2000-05-15",
-    carrera: "Ingeniería en Sistemas",
-    semestre: 6,
-    promedio: 8.5,
-    creditos: 85,
-    foto: "https://via.placeholder.com/150"
-  },
-  {
-    id: 2,
-    nombre: "María García",
-    email: "maria.garcia@profesor.edu", 
-    rol: "PROFESOR",
-    telefono: "+34 600 789 012",
-    departamento: "Ciencias de la Computación",
-    especializacion: "Desarrollo de Software"
+    username: 'carlos.mendoza@duocuc.cl',
+    email: 'carlos.mendoza@duocuc.cl',
+    password: 'duoc2024',
+    name: 'Carlos Andrés Mendoza Vargas',
+    rut: '19.234.567-8',
+    role: 'student',
+    sede: 'Plaza Vespucio',
+    carrera: 'Ingeniería en Informática',
+    año: 4,
+    semestre: 8,
+    modalidad: 'Presencial',
+    jornada: 'Diurna',
+    cohorte: '2021',
+    estadoAcademico: 'Regular',
+    promedio: 6.2,
+    creditosAprobados: 198,
+    creditosTotales: 240,
+    telefono: '+56 9 8765 4321',
+    fechaNacimiento: '1999-03-15',
+    fechaIngreso: '2021-03-01',
+    direccion: 'Av. Vicuña Mackenna 3939, La Florida',
+    region: 'Región Metropolitana',
+    foto: null,
+    beneficios: [
+      {
+        nombre: 'Beca de Excelencia Académica DUOC UC',
+        estado: 'ACTIVA',
+        porcentaje: 50,
+        descripcion: 'Beca por rendimiento académico destacado'
+      },
+      {
+        nombre: 'Gratuidad',
+        estado: 'ACTIVA',
+        porcentaje: 100,
+        descripcion: 'Beneficio estatal de gratuidad'
+      }
+    ],
+    historialAcademico: {
+      asignaturasAprobadas: 42,
+      asignaturasReprobadas: 2,
+      asignaturasPendientes: 6
+    }
   }
 ];
 
-// Cursos expandidos con más información
+// Datos de cursos DUOC UC
 export const DEMO_COURSES = [
   {
     id: 1,
-    nombre: "Programación en Java",
-    descripcion: "Curso completo de programación orientada a objetos con Java. Aprende desde conceptos básicos hasta patrones de diseño avanzados.",
-    duracion: 120,
-    modalidad: "PRESENCIAL",
-    fechaInicio: "2025-06-01",
-    fechaFin: "2025-08-30",
-    profesorId: 2,
-    profesorNombre: "María García",
-    estado: "ACTIVO",
-    participantes: 25,
-    maxParticipantes: 30,
-    progreso: 65,
-    calificacion: 8.5,
-    creditos: 4,
-    horario: "Lunes y Miércoles 9:00-11:00",
-    aula: "Lab. Computación 301",
-    modulos: [
-      { id: 1, nombre: "Fundamentos de Java", completado: true, duracion: "2 semanas" },
-      { id: 2, nombre: "POO en Java", completado: true, duracion: "3 semanas" },
-      { id: 3, nombre: "Estructuras de Datos", completado: false, duracion: "3 semanas" },
-      { id: 4, nombre: "Interfaces y Herencia", completado: false, duracion: "2 semanas" }
+    title: 'Programación Orientada a Objetos',
+    code: 'INFO1166',
+    description: 'Fundamentos de programación orientada a objetos usando Java',
+    instructor: 'Prof. María González Silva',
+    credits: 6,
+    semester: '2024-2',
+    schedule: 'Lun-Mié-Vie 08:00-09:30',
+    classroom: 'Lab. Informática A',
+    isEnrolled: true,
+    progress: 75,
+    rating: 4.5,
+    students: 32,
+    level: 'Intermedio',
+    category: 'programming',
+    status: 'active',
+    modules: [
+      { id: 1, name: 'Conceptos básicos de POO', completed: true },
+      { id: 2, name: 'Clases y objetos en Java', completed: true },
+      { id: 3, name: 'Herencia y polimorfismo', completed: false },
+      { id: 4, name: 'Proyecto final', completed: false }
     ]
   },
   {
     id: 2,
-    nombre: "Desarrollo Web Frontend",
-    descripcion: "React, JavaScript ES6+ y desarrollo de interfaces modernas. Crea aplicaciones web interactivas y responsivas.",
-    duracion: 80,
-    modalidad: "VIRTUAL",
-    fechaInicio: "2025-06-15",
-    fechaFin: "2025-08-15",
-    profesorId: 2,
-    profesorNombre: "María García",
-    estado: "ACTIVO",
-    participantes: 18,
-    maxParticipantes: 20,
-    progreso: 40,
-    calificacion: 9.0,
-    creditos: 3,
-    horario: "Martes y Jueves 14:00-16:00",
-    aula: "Virtual - Zoom",
-    modulos: [
-      { id: 1, nombre: "JavaScript ES6+", completado: true, duracion: "2 semanas" },
-      { id: 2, nombre: "React Básico", completado: true, duracion: "3 semanas" },
-      { id: 3, nombre: "React Hooks", completado: false, duracion: "2 semanas" },
-      { id: 4, nombre: "Proyecto Final", completado: false, duracion: "1 semana" }
+    title: 'Base de Datos II',
+    code: 'INFO1277',
+    description: 'Diseño y administración avanzada de bases de datos',
+    instructor: 'Prof. Roberto Silva Herrera',
+    credits: 5,
+    semester: '2024-2',
+    schedule: 'Mar-Jue 10:00-11:30',
+    classroom: 'Aula 205',
+    isEnrolled: true,
+    progress: 68,
+    rating: 4.3,
+    students: 28,
+    level: 'Avanzado',
+    category: 'database',
+    status: 'active',
+    modules: [
+      { id: 1, name: 'Normalización avanzada', completed: true },
+      { id: 2, name: 'Procedimientos almacenados', completed: true },
+      { id: 3, name: 'Optimización de consultas', completed: false },
+      { id: 4, name: 'Administración de BD', completed: false }
     ]
   },
   {
     id: 3,
-    nombre: "Base de Datos MySQL",
-    descripcion: "Diseño y administración de bases de datos relacionales. Aprende SQL desde lo básico hasta consultas avanzadas.",
-    duracion: 60,
-    modalidad: "HIBRIDA",
-    fechaInicio: "2025-07-01",
-    fechaFin: "2025-08-15",
-    profesorId: 2,
-    profesorNombre: "María García",
-    estado: "ACTIVO",
-    participantes: 22,
-    maxParticipantes: 25,
-    progreso: 20,
-    calificacion: 7.8,
-    creditos: 3,
-    horario: "Viernes 10:00-14:00",
-    aula: "Lab. Redes 205",
-    modulos: [
-      { id: 1, nombre: "Fundamentos de BD", completado: true, duracion: "1 semana" },
-      { id: 2, nombre: "SQL Básico", completado: false, duracion: "2 semanas" },
-      { id: 3, nombre: "SQL Avanzado", completado: false, duracion: "2 semanas" },
-      { id: 4, nombre: "Optimización", completado: false, duracion: "1 semana" }
+    title: 'Inglés Técnico II',
+    code: 'INGL2201',
+    description: 'Inglés aplicado al área técnica e informática',
+    instructor: 'Prof. Ana Torres Mitchell',
+    credits: 3,
+    semester: '2024-2',
+    schedule: 'Vie 14:00-16:30',
+    classroom: 'Aula 301',
+    isEnrolled: true,
+    progress: 82,
+    rating: 4.7,
+    students: 35,
+    level: 'Intermedio',
+    category: 'language',
+    status: 'active',
+    modules: [
+      { id: 1, name: 'Technical vocabulary', completed: true },
+      { id: 2, name: 'Documentation writing', completed: true },
+      { id: 3, name: 'Presentations skills', completed: true },
+      { id: 4, name: 'Final project', completed: false }
     ]
   }
 ];
 
-// Evaluaciones con resultados detallados
+// Evaluaciones y tareas
 export const DEMO_EVALUATIONS = [
   {
     id: 1,
-    cursoId: 1,
-    cursoNombre: "Programación en Java",
-    titulo: "Examen Parcial - POO",
-    descripcion: "Evaluación de conceptos de programación orientada a objetos",
-    fechaCreacion: "2025-05-20",
-    fechaLimite: "2025-06-01",
-    duracion: 90,
-    preguntas: 20,
-    puntajeTotal: 100,
-    estado: "COMPLETADO",
-    puntajeObtenido: 85,
-    porcentajeAprobacion: 70,
-    tiempoUtilizado: 75,
-    fechaCompletado: "2025-05-28",
-    intentos: 1,
-    maxIntentos: 2
+    title: 'Examen Parcial - POO',
+    courseId: 1,
+    courseName: 'Programación Orientada a Objetos',
+    type: 'exam',
+    date: '2024-06-15',
+    time: '09:00',
+    duration: '120 minutos',
+    location: 'Lab. Informática A',
+    weight: 30,
+    status: 'scheduled',
+    description: 'Examen sobre conceptos fundamentales de POO y Java'
   },
   {
     id: 2,
-    cursoId: 2,
-    cursoNombre: "Desarrollo Web Frontend",
-    titulo: "Quiz - JavaScript ES6",
-    descripcion: "Evaluación rápida de sintaxis moderna de JavaScript",
-    fechaCreacion: "2025-05-25",
-    fechaLimite: "2025-06-05",
-    duracion: 30,
-    preguntas: 10,
-    puntajeTotal: 50,
-    estado: "COMPLETADO",
-    puntajeObtenido: 45,
-    porcentajeAprobacion: 60,
-    tiempoUtilizado: 28,
-    fechaCompletado: "2025-05-30",
-    intentos: 1,
-    maxIntentos: 3
-  },
-  {
-    id: 3,
-    cursoId: 1,
-    cursoNombre: "Programación en Java",
-    titulo: "Examen Final",
-    descripcion: "Evaluación integral del curso de Java",
-    fechaCreacion: "2025-05-30",
-    fechaLimite: "2025-06-15",
-    duracion: 120,
-    preguntas: 30,
-    puntajeTotal: 100,
-    estado: "PENDIENTE",
-    porcentajeAprobacion: 70,
-    intentos: 0,
-    maxIntentos: 1
-  }
-];
-
-// Tareas y asignaciones
-export const DEMO_ASSIGNMENTS = [
-  {
-    id: 1,
-    cursoId: 1,
-    cursoNombre: "Programación en Java",
-    titulo: "Proyecto: Sistema de Inventario",
-    descripcion: "Desarrollar un sistema básico de inventario usando conceptos POO",
-    fechaAsignacion: "2025-05-20",
-    fechaEntrega: "2025-06-10",
-    estado: "EN_PROGRESO",
-    calificacion: null,
-    comentarios: null,
-    archivo: null
-  },
-  {
-    id: 2,
-    cursoId: 2,
-    cursoNombre: "Desarrollo Web Frontend",
-    titulo: "Práctica: Componentes React",
-    descripcion: "Crear una aplicación de lista de tareas con React Hooks",
-    fechaAsignacion: "2025-05-25",
-    fechaEntrega: "2025-06-05",
-    estado: "ENTREGADO",
-    calificacion: 9.2,
-    comentarios: "Excelente implementación de hooks. Código limpio y bien documentado.",
-    archivo: "lista-tareas-react.zip"
-  }
-];
-
-// Horario académico
-export const DEMO_SCHEDULE = [
-  {
-    dia: "Lunes",
-    clases: [
-      {
-        hora: "09:00-11:00",
-        curso: "Programación en Java",
-        profesor: "María García",
-        aula: "Lab. Computación 301",
-        tipo: "TEORIA"
-      },
-      {
-        hora: "14:00-16:00",
-        curso: "Matemáticas Discretas", 
-        profesor: "Dr. López",
-        aula: "Aula 204",
-        tipo: "TEORIA"
-      }
-    ]
-  },
-  {
-    dia: "Martes",
-    clases: [
-      {
-        hora: "14:00-16:00",
-        curso: "Desarrollo Web Frontend",
-        profesor: "María García", 
-        aula: "Virtual - Zoom",
-        tipo: "PRACTICA"
-      }
-    ]
-  },
-  {
-    dia: "Miércoles",
-    clases: [
-      {
-        hora: "09:00-11:00",
-        curso: "Programación en Java",
-        profesor: "María García",
-        aula: "Lab. Computación 301", 
-        tipo: "PRACTICA"
-      },
-      {
-        hora: "16:00-18:00",
-        curso: "Inglés Técnico",
-        profesor: "Prof. Smith",
-        aula: "Aula 105",
-        tipo: "TEORIA"
-      }
-    ]
-  },
-  {
-    dia: "Jueves", 
-    clases: [
-      {
-        hora: "14:00-16:00",
-        curso: "Desarrollo Web Frontend",
-        profesor: "María García",
-        aula: "Virtual - Zoom",
-        tipo: "TEORIA"
-      }
-    ]
-  },
-  {
-    dia: "Viernes",
-    clases: [
-      {
-        hora: "10:00-14:00",
-        curso: "Base de Datos MySQL",
-        profesor: "María García",
-        aula: "Lab. Redes 205",
-        tipo: "PRACTICA"
-      }
-    ]
+    title: 'Proyecto Base de Datos',
+    courseId: 2,
+    courseName: 'Base de Datos II',
+    type: 'project',
+    date: '2024-06-20',
+    time: '23:59',
+    duration: 'Entrega final',
+    location: 'Plataforma virtual',
+    weight: 40,
+    status: 'in_progress',
+    description: 'Diseño e implementación de sistema de BD para empresa'
   }
 ];
 
@@ -275,109 +159,314 @@ export const DEMO_SCHEDULE = [
 export const DEMO_COMMUNICATIONS = [
   {
     id: 1,
-    tipo: "ANUNCIO",
-    titulo: "Suspensión de clases - Día feriado",
-    contenido: "Les informamos que el próximo lunes 2 de junio no habrá clases por ser día feriado nacional.",
-    fechaPublicacion: "2025-05-30",
-    remitente: "Dirección Académica",
-    cursoId: null, // Anuncio general
-    leido: false,
-    importante: true
+    title: 'Proceso de Matrícula 2025',
+    content: 'El proceso de matrícula para el año académico 2025 estará disponible desde el 15 de diciembre de 2024 hasta el 15 de enero de 2025.',
+    date: '2024-05-25',
+    type: 'announcement',
+    priority: 'high',
+    department: 'Secretaría Académica',
+    read: false
   },
   {
     id: 2,
-    tipo: "MENSAJE_CURSO",
-    titulo: "Material adicional disponible",
-    contenido: "He subido ejemplos adicionales de código Java al aula virtual. Revisen la sección de recursos.",
-    fechaPublicacion: "2025-05-29",
-    remitente: "María García",
-    cursoId: 1,
-    leido: true,
-    importante: false
-  },
-  {
-    id: 3,
-    tipo: "RECORDATORIO",
-    titulo: "Examen Final próximo",
-    contenido: "Recuerden que el examen final de Java será el 15 de junio. Repasen los temas de herencia y polimorfismo.",
-    fechaPublicacion: "2025-05-28",
-    remitente: "María García", 
-    cursoId: 1,
-    leido: false,
-    importante: true
+    title: 'Evaluación Docente 2024-2',
+    content: 'Ya está disponible la evaluación docente del segundo semestre 2024. Tu opinión es importante para mejorar la calidad académica.',
+    date: '2024-05-23',
+    type: 'notification',
+    priority: 'medium',
+    department: 'Dirección Académica',
+    read: true
   }
 ];
 
-// Calificaciones detalladas
-export const DEMO_GRADES = [
+// Horario semanal
+export const DEMO_SCHEDULE = {
+  'Lunes': [
+    {
+      id: 1,
+      subject: 'Programación Orientada a Objetos',
+      code: 'INFO1166',
+      time: '08:00 - 09:30',
+      professor: 'Prof. María González',
+      classroom: 'Lab. Informática A',
+      building: 'Edificio Tecnológico',
+      type: 'Laboratorio'
+    },
+    {
+      id: 2,
+      subject: 'Arquitectura de Software',
+      code: 'INFO1288',
+      time: '10:00 - 11:30',
+      professor: 'Prof. Luis Vargas',
+      classroom: 'Aula 102',
+      building: 'Edificio Tecnológico',
+      type: 'Teórica'
+    }
+  ],
+  'Martes': [
+    {
+      id: 3,
+      subject: 'Base de Datos II',
+      code: 'INFO1277',
+      time: '10:00 - 11:30',
+      professor: 'Prof. Roberto Silva',
+      classroom: 'Aula 205',
+      building: 'Edificio Central',
+      type: 'Teórica'
+    }
+  ],
+  'Miércoles': [
+    {
+      id: 4,
+      subject: 'Programación Orientada a Objetos',
+      code: 'INFO1166',
+      time: '08:00 - 09:30',
+      professor: 'Prof. María González',
+      classroom: 'Lab. Informática A',
+      building: 'Edificio Tecnológico',
+      type: 'Laboratorio'
+    }
+  ],
+  'Jueves': [
+    {
+      id: 5,
+      subject: 'Base de Datos II',
+      code: 'INFO1277',
+      time: '10:00 - 11:30',
+      professor: 'Prof. Roberto Silva',
+      classroom: 'Lab. Informática B',
+      building: 'Edificio Tecnológico',
+      type: 'Laboratorio'
+    }
+  ],
+  'Viernes': [
+    {
+      id: 6,
+      subject: 'Inglés Técnico II',
+      code: 'INGL2201',
+      time: '14:00 - 16:30',
+      professor: 'Prof. Ana Torres',
+      classroom: 'Aula 301',
+      building: 'Edificio de Idiomas',
+      type: 'Práctica'
+    }
+  ]
+};
+
+// Tareas y asignaciones
+export const DEMO_ASSIGNMENTS = [
   {
     id: 1,
+    titulo: 'Implementación de Sistema POO',
+    descripcion: 'Desarrollar un sistema completo usando los principios de POO aprendidos en clase',
     cursoId: 1,
-    cursoNombre: "Programación en Java",
-    tipo: "EXAMEN",
-    nombre: "Examen Parcial - POO",
-    calificacion: 8.5,
-    calificacionMaxima: 10,
-    peso: 30,
-    fecha: "2025-05-28",
-    comentarios: "Buen dominio de conceptos. Mejorar en implementación de interfaces."
+    cursoNombre: 'Programación Orientada a Objetos',
+    fechaAsignacion: '2024-05-10',
+    fechaEntrega: '2024-06-10',
+    estado: 'EN_PROGRESO',
+    calificacion: null,
+    comentarios: null,
+    peso: 35
   },
   {
     id: 2,
-    cursoId: 1,
-    cursoNombre: "Programación en Java", 
-    tipo: "TAREA",
-    nombre: "Ejercicios POO",
-    calificacion: 9.0,
-    calificacionMaxima: 10,
-    peso: 20,
-    fecha: "2025-05-20",
-    comentarios: "Excelente trabajo. Código bien estructurado."
-  },
-  {
-    id: 3,
-    cursoId: 2,
-    cursoNombre: "Desarrollo Web Frontend",
-    tipo: "PROYECTO",
-    nombre: "Lista de Tareas React",
-    calificacion: 9.2,
-    calificacionMaxima: 10,
-    peso: 40,
-    fecha: "2025-05-30",
-    comentarios: "Implementación sobresaliente. Uso correcto de hooks."
+    titulo: 'Ensayo Técnico en Inglés',
+    descripcion: 'Redactar un ensayo técnico sobre tendencias en tecnología',
+    cursoId: 3,
+    cursoNombre: 'Inglés Técnico II',
+    fechaAsignacion: '2024-05-15',
+    fechaEntrega: '2024-05-30',
+    estado: 'ENTREGADO',
+    calificacion: 6.8,
+    comentarios: 'Excelente uso del vocabulario técnico. Mejorar estructura de párrafos.',
+    peso: 25
   }
 ];
 
-// Recursos y materiales
+// Notas y calificaciones
+export const DEMO_GRADES = {
+  summary: {
+    gpa: 6.2,
+    totalCredits: 198,
+    completedCourses: 42,
+    currentSemester: '8° Semestre'
+  },
+  grades: [
+    {
+      id: 1,
+      courseCode: 'INFO1166',
+      courseName: 'Programación Orientada a Objetos',
+      grade: 6.8,
+      credits: 6,
+      semester: '2024-2',
+      current: true
+    },
+    {
+      id: 2,
+      courseCode: 'INFO1277',
+      courseName: 'Base de Datos II',
+      grade: 6.2,
+      credits: 5,
+      semester: '2024-2',
+      current: true
+    },
+    {
+      id: 3,
+      courseCode: 'INGL2201',
+      courseName: 'Inglés Técnico II',
+      grade: 6.9,
+      credits: 3,
+      semester: '2024-2',
+      current: true
+    },
+    {
+      id: 4,
+      courseCode: 'INFO1155',
+      courseName: 'Programación de Aplicaciones',
+      grade: 5.8,
+      credits: 6,
+      semester: '2024-1',
+      current: false
+    }
+  ]
+};
+
+// Recursos académicos
 export const DEMO_RESOURCES = [
   {
     id: 1,
-    cursoId: 1,
-    nombre: "Manual de Java - Capítulo 5",
-    tipo: "PDF",
-    tamaño: "2.5 MB",
-    fechaSubida: "2025-05-15",
-    descargas: 45,
-    url: "demo-java-manual-cap5.pdf"
+    title: 'Manual de Java - Programación POO',
+    course: 'Programación Orientada a Objetos',
+    type: 'document',
+    size: 2048000,
+    createdAt: '2024-05-15',
+    downloads: 156,
+    description: 'Guía completa de programación en Java con ejemplos prácticos'
   },
   {
     id: 2,
-    cursoId: 1,
-    nombre: "Ejemplos de código POO",
-    tipo: "ZIP",
-    tamaño: "1.2 MB", 
-    fechaSubida: "2025-05-29",
-    descargas: 23,
-    url: "demo-ejemplos-poo.zip"
+    title: 'Video: Normalización de Bases de Datos',
+    course: 'Base de Datos II',
+    type: 'video',
+    createdAt: '2024-05-10',
+    downloads: 89,
+    description: 'Tutorial sobre normalización hasta 3FN con casos prácticos'
+  }
+];
+
+// Estado financiero
+export const DEMO_FINANCIAL_STATUS = {
+  estadoCuenta: {
+    saldoTotal: -125000,
+    proximoVencimiento: {
+      fecha: '2024-06-15',
+      monto: 450000,
+      concepto: 'Arancel Junio 2024'
+    },
+    cuotasPendientes: 2,
+    ultimoPago: {
+      fecha: '2024-05-15',
+      monto: 450000,
+      metodo: 'Transferencia bancaria'
+    }
+  },
+  historialPagos: [
+    {
+      id: 1,
+      fecha: '2024-05-15',
+      concepto: 'Arancel Mayo 2024',
+      monto: 450000,
+      estado: 'Pagado',
+      metodoPago: 'Transferencia bancaria'
+    },
+    {
+      id: 2,
+      fecha: '2024-04-15',
+      concepto: 'Arancel Abril 2024',
+      monto: 450000,
+      estado: 'Pagado',
+      metodoPago: 'Tarjeta de crédito'
+    }
+  ]
+};
+
+// Servicios estudiantiles
+export const DEMO_STUDENT_SERVICES = [
+  {
+    id: 1,
+    nombre: 'Certificado de Alumno Regular',
+    descripcion: 'Certificado que acredita la condición de estudiante activo',
+    categoria: 'CERTIFICADOS',
+    precio: 0,
+    tiempoEntrega: '24 horas',
+    formato: ['DIGITAL', 'FÍSICO'],
+    requisitos: ['Estar matriculado', 'Sin deudas pendientes'],
+    estado: 'DISPONIBLE'
+  },
+  {
+    id: 2,
+    nombre: 'Concentración de Notas',
+    descripcion: 'Documento oficial con historial académico completo',
+    categoria: 'CERTIFICADOS',
+    precio: 3500,
+    tiempoEntrega: '3-5 días hábiles',
+    formato: ['DIGITAL', 'FÍSICO'],
+    requisitos: ['Solicitud formal', 'Pago de arancel'],
+    estado: 'DISPONIBLE'
   },
   {
     id: 3,
-    cursoId: 2,
-    nombre: "Guía de React Hooks",
-    tipo: "PDF",
-    tamaño: "800 KB",
-    fechaSubida: "2025-05-25",
-    descargas: 18,
-    url: "demo-react-hooks-guide.pdf"
+    nombre: 'Reposición de Credencial',
+    descripcion: 'Nueva credencial universitaria por pérdida o daño',
+    categoria: 'CREDENCIALES',
+    precio: 8500,
+    tiempoEntrega: '5-7 días hábiles',
+    formato: ['FÍSICO'],
+    requisitos: ['Denuncia de pérdida', 'Foto tamaño carnet', 'Pago de arancel'],
+    estado: 'DISPONIBLE'
+  },
+  {
+    id: 4,
+    nombre: 'Duplicado de Diploma',
+    descripcion: 'Copia oficial del título profesional',
+    categoria: 'CERTIFICADOS',
+    precio: 15000,
+    tiempoEntrega: '10-15 días hábiles',
+    formato: ['FÍSICO'],
+    requisitos: ['Solicitud notarial', 'Motivo justificado', 'Pago de arancel'],
+    estado: 'DISPONIBLE'
+  },
+  {
+    id: 5,
+    nombre: 'Cambio de Carrera',
+    descripcion: 'Trámite para cambio de programa académico',
+    categoria: 'TRAMITES',
+    precio: 25000,
+    tiempoEntrega: '15-20 días hábiles',
+    formato: ['PRESENCIAL'],
+    requisitos: ['Cumplir requisitos académicos', 'Entrevista', 'Documentación completa'],
+    estado: 'DISPONIBLE'
+  },
+  {
+    id: 6,
+    nombre: 'Retiro Temporal',
+    descripcion: 'Suspensión temporal de estudios',
+    categoria: 'TRAMITES',
+    precio: 0,
+    tiempoEntrega: '5-10 días hábiles',
+    formato: ['PRESENCIAL', 'DIGITAL'],
+    requisitos: ['Solicitud fundamentada', 'Estar al día en pagos'],
+    estado: 'DISPONIBLE'
+  },
+  {
+    id: 7,
+    nombre: 'Homologación de Ramos',
+    descripcion: 'Reconocimiento de asignaturas de otras instituciones',
+    categoria: 'TRAMITES',
+    precio: 12000,
+    tiempoEntrega: '20-30 días hábiles',
+    formato: ['PRESENCIAL'],
+    requisitos: ['Programas de asignaturas', 'Certificado de notas', 'Evaluación académica'],
+    estado: 'DISPONIBLE'
   }
 ];

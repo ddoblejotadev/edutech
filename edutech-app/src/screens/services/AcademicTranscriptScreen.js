@@ -12,8 +12,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
 import { Button, Card } from '../../components/common/UIComponents';
 
-const AcademicTranscriptScreen = ({ route, navigation }) => {
-  const { title } = route.params;
+const AcademicTranscriptScreen = ({ navigation, route }) => {
+  const { title } = route.params || { title: 'Concentración de Notas' };
   const [selectedType, setSelectedType] = useState('regular');
   const [loading, setLoading] = useState(false);
 
@@ -22,7 +22,7 @@ const AcademicTranscriptScreen = ({ route, navigation }) => {
       id: 'regular',
       title: 'Constancia Regular',
       description: 'Constancia de estudios básica',
-      cost: 50,
+      cost: 12500,
       deliveryTime: '1-2 días hábiles',
       uses: ['Trámites bancarios', 'Verificación de estudios', 'Becas externas']
     },
@@ -30,7 +30,7 @@ const AcademicTranscriptScreen = ({ route, navigation }) => {
       id: 'official',
       title: 'Constancia Oficial',
       description: 'Con sello y firma oficial',
-      cost: 75,
+      cost: 18500,
       deliveryTime: '3-5 días hábiles',
       uses: ['Trámites gubernamentales', 'Embajadas', 'Instituciones oficiales']
     },
@@ -38,7 +38,7 @@ const AcademicTranscriptScreen = ({ route, navigation }) => {
       id: 'english',
       title: 'Constancia en Inglés',
       description: 'Traducción oficial al inglés',
-      cost: 150,
+      cost: 35000,
       deliveryTime: '5-7 días hábiles',
       uses: ['Estudios en el extranjero', 'Visa de estudiante', 'Universidades internacionales']
     }
@@ -51,7 +51,7 @@ const AcademicTranscriptScreen = ({ route, navigation }) => {
     currentSemester: 7,
     status: 'Estudiante Regular',
     enrollmentDate: 'Agosto 2021',
-    gpa: 8.75
+    gpa: 5.8
   };
 
   const handleRequest = () => {

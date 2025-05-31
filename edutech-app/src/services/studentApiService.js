@@ -8,7 +8,8 @@ import {
   DEMO_SCHEDULE,
   DEMO_ASSIGNMENTS,
   DEMO_GRADES,
-  DEMO_RESOURCES
+  DEMO_RESOURCES,
+  DEMO_FINANCIAL_STATUS
 } from '../data/demoData';
 
 // Función para simular delay de red más realista
@@ -77,14 +78,14 @@ export const AuthService = {
     if (DEMO_MODE) {
       await simulateNetworkDelay();
       const user = DEMO_USERS.find(u => u.email === email);
-      if (user && password === "demo123") {
+      if (user && password === "duoc2024") {
         return {
           success: true,
           token: "demo-token-12345",
           user: user
         };
       } else {
-        throw new Error('Credenciales inválidas. Usa: juan.perez@alumno.edu / demo123');
+        throw new Error('Credenciales inválidas. Usa: carlos.mendoza@duocuc.cl / duoc2024');
       }
     }
     
@@ -369,20 +370,20 @@ const DEMO_DATA = {
   
   student: {
     id: 1,
-    name: 'Juan Pérez García',
-    email: 'juan.perez@ug.uchile.cl',
+    name: 'Carlos Andrés Mendoza Vargas',
+    email: 'carlos.mendoza@duocuc.cl',
     phone: '+56 9 8765 4321',
     enrollmentDate: '2021-03-01',
-    studentId: '21.123.456-7',
-    career: 'Ingeniería Civil en Computación',
+    studentId: '19.234.567-8',
+    career: 'Ingeniería en Informática',
     year: 4,
-    semester: 7,
+    semester: 8,
     status: 'Regular',
-    ppa: 5.5, // Promedio Ponderado Acumulado
-    completedCredits: 142,
+    ppa: 6.2,
+    completedCredits: 198,
     totalCredits: 240,
-    university: 'Universidad de Chile',
-    faculty: 'Facultad de Ciencias Físicas y Matemáticas'
+    university: 'DUOC UC',
+    faculty: 'Escuela de Informática y Telecomunicaciones'
   },
 
   grades: {
@@ -694,22 +695,237 @@ export const StudentApiService = {
   }
 };
 
-// Exports para compatibilidad con código existente
-export const CourseService = {
-  getAllCourses: StudentApiService.getCourses,
-  getCourseById: StudentApiService.getCourseById,
-  enrollInCourse: StudentApiService.enrollInCourse
+// Servicio de Estado Financiero
+export const FinancialService = {
+  getFinancialStatus: async (token) => {
+    if (DEMO_MODE) {
+      await simulateNetworkDelay();
+      return {
+        success: true,
+        data: DEMO_FINANCIAL_STATUS
+      };
+    }
+    
+    try {
+      return await fetchWithTimeout(`${API_URL}/student/financial-status`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (error) {
+      return handleApiError(error, {
+        success: true,
+        data: DEMO_FINANCIAL_STATUS
+      });
+    }
+  },
+
+  makePayment: async (token, paymentData) => {
+    if (DEMO_MODE) {
+      await simulateNetworkDelay();
+      return {
+        success: true,
+        message: 'Pago procesado exitosamente',
+        transactionId: `TXN${Date.now()}`,
+        data: {
+          fecha: new Date().toISOString(),
+          monto: paymentData.monto,
+          concepto: paymentData.concepto
+        }
+      };
+    }
+    
+    try {
+      return await fetchWithTimeout(`${API_URL}/payments/process`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify(paymentData)
+      });
+    } catch (error) {
+      return handleApiError(error, {
+        success: true,
+        message: 'Pago simulado exitosamente (modo demo)',
+        transactionId: `DEMO${Date.now()}`,
+        data: paymentData
+      });
+    }
+  },
+
+  getPaymentHistory: async (token) => {
+    if (DEMO_MODE) {
+      await simulateNetworkDelay();
+      return {
+        success: true,
+        data: DEMO_FINANCIAL_STATUS.historialPagos || []
+      };
+    }
+    
+    try {
+      return await fetchWithTimeout(`${API_URL}/payments/history`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (error) {
+      return handleApiError(error, {
+        success: true,
+        data: []
+      });
+    }
+  }
 };
 
-export const StudentService = {
-  getProfile: StudentApiService.getStudentProfile
+// Servicio de Biblioteca
+export const LibraryService = {
+  getLibraryResources: async (token) => {
+    if (DEMO_MODE) {
+      await simulateNetworkDelay();
+      return {
+        success: true,
+        data: DEMO_RESOURCES
+      };
+    }
+    
+    try {
+      return await fetchWithTimeout(`${API_URL}/library/resources`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (error) {
+      return handleApiError(error, {
+        success: true,
+        data: DEMO_RESOURCES
+      });
+    }
+  },
+
+  searchBooks: async (token, query) => {
+    if (DEMO_MODE) {
+      await simulateNetworkDelay();
+      const filteredBooks = DEMO_RESOURCES.filter(resource => 
+        resource.titulo.toLowerCase().includes(query.toLowerCase()) ||
+        resource.autor.toLowerCase().includes(query.toLowerCase())
+      );
+      return {
+        success: true,
+        data: filteredBooks
+      };
+    }
+    
+    try {
+      return await fetchWithTimeout(`${API_URL}/library/search?q=${encodeURIComponent(query)}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (error) {
+      return handleApiError(error, {
+        success: true,
+        data: []
+      });
+    }
+  },
+
+  reserveBook: async (token, bookId) => {
+    if (DEMO_MODE) {
+      await simulateNetworkDelay();
+      return {
+        success: true,
+        message: 'Libro reservado exitosamente',
+        reservationId: `RES${Date.now()}`,
+        dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString()
+      };
+    }
+    
+    try {
+      return await fetchWithTimeout(`${API_URL}/library/reserve`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ bookId })
+      });
+    } catch (error) {
+      return handleApiError(error, {
+        success: true,
+        message: 'Reserva simulada exitosamente (modo demo)',
+        reservationId: `DEMO${Date.now()}`
+      });
+    }
+  }
 };
 
-export const EvaluationService = {
-  getEvaluation: StudentApiService.getEvaluation,
-  submitEvaluation: StudentApiService.submitEvaluation
+// Servicio de Notificaciones
+export const NotificationService = {
+  getNotifications: async (token) => {
+    if (DEMO_MODE) {
+      await simulateNetworkDelay();
+      const notifications = [
+        {
+          id: 1,
+          titulo: 'Recordatorio de Pago',
+          mensaje: 'Tu arancel de marzo vence el 15 de marzo. Evita recargos pagando a tiempo.',
+          tipo: 'FINANCIERO',
+          fecha: new Date().toISOString(),
+          leido: false,
+          importante: true
+        },
+        {
+          id: 2,
+          titulo: 'Nueva Calificación',
+          mensaje: 'Se ha publicado la calificación de tu examen de Programación Móvil.',
+          tipo: 'ACADEMICO',
+          fecha: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+          leido: false,
+          importante: false
+        },
+        {
+          id: 3,
+          titulo: 'Mantenimiento Campus',
+          mensaje: 'El campus Antonio Varas estará cerrado el sábado por mantenimiento.',
+          tipo: 'GENERAL',
+          fecha: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+          leido: true,
+          importante: false
+        }
+      ];
+      return {
+        success: true,
+        data: notifications
+      };
+    }
+    
+    try {
+      return await fetchWithTimeout(`${API_URL}/notifications`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (error) {
+      return handleApiError(error, {
+        success: true,
+        data: []
+      });
+    }
+  },
+
+  markAsRead: async (token, notificationId) => {
+    if (DEMO_MODE) {
+      await simulateNetworkDelay();
+      return {
+        success: true,
+        message: 'Notificación marcada como leída'
+      };
+    }
+    
+    try {
+      return await fetchWithTimeout(`${API_URL}/notifications/${notificationId}/read`, {
+        method: 'PUT',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+    } catch (error) {
+      return handleApiError(error, {
+        success: true,
+        message: 'Marcado como leído (modo demo)'
+      });
+    }
+  }
 };
 
-export const studentApiService = {
-  getGrades: StudentApiService.getGrades
+// Exportar todos los servicios
+export default {
+  AuthService,
+  UserService,
+  FinancialService,
+  LibraryService,
+  NotificationService
 };

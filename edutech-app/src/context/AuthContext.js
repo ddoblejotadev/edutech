@@ -42,14 +42,15 @@ export const AuthProvider = ({ children }) => {
       // Simulación de demora para hacer más realista
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Verificar credenciales demo
-      if (email === 'juan.perez@alumno.edu' && password === 'demo123') {
+      // Verificar credenciales demo actualizadas
+      if (email === 'carlos.mendoza@duocuc.cl' && password === 'duoc2024') {
         const demoUser = {
           id: 1,
-          name: 'Juan Pérez García',
-          email: 'juan.perez@estudiante.uchile.cl',
-          studentId: '21.123.456-7',
-          career: 'Ingeniería Civil en Computación',
+          name: 'Carlos Andrés Mendoza Vargas',
+          email: 'carlos.mendoza@duocuc.cl',
+          studentId: '19.234.567-8',
+          career: 'Ingeniería en Informática',
+          sede: 'Plaza Vespucio',
           role: 'student'
         };
         
@@ -70,7 +71,7 @@ export const AuthProvider = ({ children }) => {
           token: demoToken
         };
       } else {
-        const errorMsg = 'Credenciales incorrectas. Usa: juan.perez@alumno.edu / demo123';
+        const errorMsg = 'Credenciales incorrectas. Usa: carlos.mendoza@duocuc.cl / duoc2024';
         console.log('❌ Credenciales incorrectas');
         setError(errorMsg);
         return {

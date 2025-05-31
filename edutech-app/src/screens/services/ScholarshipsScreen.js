@@ -9,40 +9,58 @@ import {
   Alert
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
+import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT, FONTS } from '../../config/theme';
 import { Button, Card } from '../../components/common/UIComponents';
 
 const ScholarshipsScreen = ({ route, navigation }) => {
   const { title } = route.params || { title: 'Becas y Ayudas Estudiantiles' };
   const [selectedCategory, setSelectedCategory] = useState('all');
 
+  // Datos de becas DUOC UC actualizados con formatos correctos
   const scholarships = [
     {
       id: 1,
-      name: 'Beca de Excelencia Académica',
-      description: 'Para estudiantes con promedio superior a 6.0',
-      amount: 'Hasta $500.000',
-      deadline: '30 de Julio 2024',
-      requirements: ['PPA mínimo 6.0', 'Situación socioeconómica acreditada'],
-      status: 'Abierta'
+      name: 'Beca de Excelencia Académica DUOC UC',
+      description: 'Para estudiantes con promedio ponderado superior a 6.0',
+      amount: 2225000,
+      percentage: 50,
+      deadline: '30 de Julio 2025',
+      requirements: ['Promedio mínimo 6.0', 'Sin reprobaciones', 'Situación socioeconómica acreditada'],
+      status: 'available',
+      type: 'academic'
     },
     {
       id: 2,
-      name: 'Beca JUNAEB',
-      description: 'Ayuda estatal para alimentación y mantención',
-      amount: 'Variable según tramo',
-      deadline: '15 de Agosto 2024',
-      requirements: ['Ficha de Protección Social', 'Matrícula vigente'],
-      status: 'Abierta'
+      name: 'Beca Hijo de Profesional de la Educación',
+      description: 'Descuento para hijos de profesores y educadores',
+      amount: 1112500,
+      percentage: 25,
+      deadline: '15 de Agosto 2025',
+      requirements: ['Padre/madre trabajando en educación', 'Certificado laboral vigente'],
+      status: 'available',
+      type: 'economic'
     },
     {
       id: 3,
-      name: 'Beca de Apoyo Socioeconómico',
-      description: 'Apoyo financiero para estudiantes vulnerables',
-      amount: '$300.000 semestral',
-      deadline: '10 de Septiembre 2024',
-      requirements: ['Documentación socioeconómica', 'Entrevista social'],
-      status: 'Próximamente'
+      name: 'Beca CAE - Crédito con Aval del Estado',
+      description: 'Crédito estatal para financiar estudios superiores',
+      amount: 2800000,
+      percentage: 70,
+      deadline: '10 de Septiembre 2025',
+      requirements: ['Situación socioeconómica vulnerable', 'Puntaje PSU mínimo'],
+      status: 'applied',
+      type: 'economic'
+    },
+    {
+      id: 4,
+      name: 'Beca Deportiva DUOC UC',
+      description: 'Para estudiantes destacados en deportes',
+      amount: 1335000,
+      percentage: 30,
+      deadline: '20 de Junio 2025',
+      requirements: ['Seleccionado deportivo nacional/regional', 'Mantener rendimiento deportivo'],
+      status: 'available',
+      type: 'sports'
     }
   ];
 
@@ -59,29 +77,42 @@ const ScholarshipsScreen = ({ route, navigation }) => {
     ? scholarships 
     : scholarships.filter(s => s.type === selectedCategory);
 
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('es-CL', {
+      style: 'currency',
+      currency: 'CLP',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
   const getStatusInfo = (status) => {
     switch (status) {
       case 'available':
         return { color: COLORS.success, text: 'Disponible', icon: 'checkmark-circle' };
       case 'applied':
-        return { color: COLORS.warning, text: 'Aplicaste', icon: 'time' };
+        return { color: COLORS.warning, text: 'Postulaste', icon: 'time' };
       case 'expired':
         return { color: COLORS.error, text: 'Expirada', icon: 'close-circle' };
       default:
-        return { color: COLORS.muted, text: 'Desconocido', icon: 'help-circle' };
+        return { color: COLORS.muted, text: 'Información', icon: 'information-circle' };
     }
   };
 
   const handleApply = (scholarship) => {
     Alert.alert(
-      'Aplicar a Beca',
-      `¿Deseas aplicar a la ${scholarship.name}?\n\nMonto: $${scholarship.amount.toLocaleString('es-CL')} CLP (${scholarship.percentage}% de la colegiatura)\n\nDeberás completar los requisitos solicitados.`,
+      'Postular a Beca',
+      `¿Deseas postular a la ${scholarship.name}?\n\nMonto: ${formatCurrency(scholarship.amount)} (${scholarship.percentage}% del arancel anual)\n\nDeberás completar los requisitos solicitados.`,
       [
         { text: 'Cancelar', style: 'cancel' },
         { 
-          text: 'Aplicar', 
+          text: 'Postular', 
           onPress: () => {
-            Alert.alert('Aplicación Enviada', 'Tu aplicación a la beca ha sido enviada exitosamente.');
+            Alert.alert(
+              'Postulación Enviada', 
+              'Tu postulación a la beca ha sido enviada exitosamente. Recibirás una notificación con el resultado del proceso.',
+              [{ text: 'OK' }]
+            );
           }
         }
       ]
@@ -139,8 +170,8 @@ const ScholarshipsScreen = ({ route, navigation }) => {
         <View style={styles.scholarshipDetails}>
           <View style={styles.amountContainer}>
             <Text style={styles.amountLabel}>Monto del apoyo:</Text>
-            <Text style={styles.amountValue}>${scholarship.amount.toLocaleString('es-CL')} CLP</Text>
-            <Text style={styles.percentageValue}>({scholarship.percentage}% colegiatura)</Text>
+            <Text style={styles.amountValue}>{formatCurrency(scholarship.amount)}</Text>
+            <Text style={styles.percentageValue}>({scholarship.percentage}% del arancel anual)</Text>
           </View>
 
           <View style={styles.deadlineContainer}>
@@ -161,7 +192,7 @@ const ScholarshipsScreen = ({ route, navigation }) => {
 
         <View style={styles.cardActions}>
           <Button
-            title={scholarship.status === 'applied' ? 'Ver Estado' : 'Aplicar'}
+            title={scholarship.status === 'applied' ? 'Ver Estado' : 'Postular'}
             onPress={() => handleApply(scholarship)}
             variant={scholarship.status === 'available' ? 'primary' : 'outlined'}
             disabled={scholarship.status === 'expired'}
@@ -180,13 +211,13 @@ const ScholarshipsScreen = ({ route, navigation }) => {
 
     return (
       <Card style={styles.applicationsCard}>
-        <Text style={styles.applicationsTitle}>Mis Aplicaciones</Text>
+        <Text style={styles.applicationsTitle}>Mis Postulaciones</Text>
         
         {myApplications.map((app) => (
           <View key={app.id} style={styles.applicationItem}>
             <View style={styles.applicationInfo}>
               <Text style={styles.applicationName}>{app.name}</Text>
-              <Text style={styles.applicationStatus}>En revisión</Text>
+              <Text style={styles.applicationStatus}>En evaluación</Text>
             </View>
             <TouchableOpacity style={styles.viewButton}>
               <Ionicons name="eye-outline" size={20} color={COLORS.primary} />
@@ -199,7 +230,7 @@ const ScholarshipsScreen = ({ route, navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Header */}
+      {/* Header corregido con tamaño proporcionado */}
       <View style={styles.header}>
         <TouchableOpacity 
           style={styles.backButton}
@@ -207,14 +238,17 @@ const ScholarshipsScreen = ({ route, navigation }) => {
         >
           <Ionicons name="arrow-back" size={24} color={COLORS.white} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{title}</Text>
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}>Becas y Ayudas Estudiantiles</Text>
+          <Text style={styles.headerSubtitle}>DUOC UC</Text>
+        </View>
         <View style={styles.placeholder} />
       </View>
 
       <ScrollView style={styles.content}>
         {renderMyApplications()}
         {renderCategoryFilter()}
-        
+
         <View style={styles.scholarshipsSection}>
           <Text style={styles.sectionTitle}>
             Becas Disponibles ({filteredScholarships.length})
@@ -223,12 +257,15 @@ const ScholarshipsScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.infoCard}>
-          <Text style={styles.infoTitle}>Información Importante</Text>
+          <View style={styles.infoHeader}>
+            <Ionicons name="information-circle" size={24} color={COLORS.primary} />
+            <Text style={styles.infoTitle}>Información Importante</Text>
+          </View>
           <Text style={styles.infoText}>
             • Las postulaciones deben realizarse dentro de los plazos establecidos{'\n'}
             • Todos los documentos deben estar vigentes y legalizados{'\n'}
             • El proceso de evaluación puede tomar entre 15 a 30 días hábiles{'\n'}
-            • Para más información, contacta a Bienestar Estudiantil
+            • Para más información, contacta a Bienestar Estudiantil DUOC UC
           </Text>
         </View>
       </ScrollView>
@@ -248,17 +285,30 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: SPACING.md,
     paddingVertical: SPACING.md,
-    paddingTop: SPACING.sm,
+    paddingTop: SPACING.lg,
   },
   backButton: {
-    marginRight: SPACING.md,
+    padding: SPACING.sm,
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
   headerTitle: {
-    fontSize: FONT_SIZE.md,
-    color: COLORS.white,
+    fontSize: FONT_SIZE.lg,
     fontWeight: FONT_WEIGHT.bold,
-    flex: 1,
+    color: COLORS.white,
     textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.white,
+    opacity: 0.9,
+    textAlign: 'center',
+    marginTop: 2,
+  },
+  placeholder: {
+    width: 40,
   },
   content: {
     flex: 1,
@@ -279,15 +329,15 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: SPACING.sm,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.lightGray,
+    borderBottomColor: COLORS.border,
   },
   applicationInfo: {
     flex: 1,
   },
   applicationName: {
     fontSize: FONT_SIZE.md,
-    fontWeight: FONT_WEIGHT.medium,
     color: COLORS.text,
+    fontWeight: FONT_WEIGHT.medium,
   },
   applicationStatus: {
     fontSize: FONT_SIZE.sm,
@@ -315,9 +365,9 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
   },
   categoryButtonText: {
+    fontSize: FONT_SIZE.sm,
     color: COLORS.primary,
     marginLeft: SPACING.xs,
-    fontSize: FONT_SIZE.sm,
     fontWeight: FONT_WEIGHT.medium,
   },
   categoryButtonTextActive: {
@@ -337,6 +387,11 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     padding: SPACING.md,
     marginBottom: SPACING.md,
+    elevation: 3,
+    shadowColor: COLORS.shadow,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   scholarshipHeader: {
     flexDirection: 'row',
@@ -352,27 +407,27 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.md,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text,
-    flex: 1,
-    marginRight: SPACING.sm,
+    marginBottom: SPACING.xs,
+  },
+  scholarshipDescription: {
+    fontSize: FONT_SIZE.sm,
+    color: COLORS.muted,
+    lineHeight: 20,
   },
   statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: SPACING.sm,
     paddingVertical: SPACING.xs,
     borderRadius: 12,
   },
   statusText: {
     fontSize: FONT_SIZE.xs,
-    color: COLORS.white,
     fontWeight: FONT_WEIGHT.medium,
-  },
-  scholarshipDescription: {
-    fontSize: FONT_SIZE.sm,
-    color: COLORS.muted,
-    marginBottom: SPACING.md,
-    lineHeight: 18,
+    marginLeft: SPACING.xs,
   },
   scholarshipDetails: {
-    marginBottom: SPACING.md,
+    marginVertical: SPACING.md,
   },
   amountContainer: {
     marginBottom: SPACING.sm,
@@ -380,19 +435,22 @@ const styles = StyleSheet.create({
   amountLabel: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.muted,
+    marginBottom: SPACING.xs,
   },
   amountValue: {
     fontSize: FONT_SIZE.lg,
-    fontWeight: FONT_WEIGHT.bold,
     color: COLORS.success,
+    fontWeight: FONT_WEIGHT.bold,
   },
   percentageValue: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.muted,
+    marginTop: SPACING.xs,
   },
   deadlineContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: SPACING.sm,
   },
   deadlineText: {
     fontSize: FONT_SIZE.sm,
@@ -426,10 +484,11 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.sm,
     color: COLORS.text,
     flex: 1,
+    lineHeight: 18,
   },
   cardActions: {
     borderTopWidth: 1,
-    borderTopColor: COLORS.lightGray,
+    borderTopColor: COLORS.border,
     paddingTop: SPACING.md,
   },
   applyButton: {
@@ -441,16 +500,21 @@ const styles = StyleSheet.create({
     padding: SPACING.md,
     marginTop: SPACING.md,
   },
+  infoHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: SPACING.sm,
+  },
   infoTitle: {
     fontSize: FONT_SIZE.md,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.primary,
-    marginBottom: SPACING.sm,
+    marginLeft: SPACING.sm,
   },
   infoText: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.text,
-    lineHeight: 18,
+    lineHeight: 20,
   },
 });
 

@@ -8,7 +8,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { StudentApiService } from '../../services/studentApiService';
 
 const EvaluationScreen = ({ route, navigation }) => {
-  const { evaluationId, courseId, title } = route.params;
+  const { evaluationId, courseId, title = 'Evaluación' } = route.params || {};
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState({});
   const [timeRemaining, setTimeRemaining] = useState(1800); // 30 minutos en segundos (por defecto)

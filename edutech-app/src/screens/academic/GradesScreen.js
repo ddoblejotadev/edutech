@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   View,
   Text,
@@ -8,39 +8,101 @@ import {
   RefreshControl,
   TouchableOpacity,
   Alert,
+  ScrollView,
+  SafeAreaView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
 import { StudentApiService } from '../../services/studentApiService';
+import { AuthContext } from '../../context/AuthContext';
+import { DEMO_GRADES } from '../../data/demoData';
 
-const GradesScreen = () => {
+const GradesScreen = ({ navigation }) => {
   const [grades, setGrades] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState('current');
   const [summary, setSummary] = useState(null);
+  const [error, setError] = useState(null);
+  const [networkError, setNetworkError] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  
+  const { token } = useContext(AuthContext);
 
   useEffect(() => {
     loadGrades();
   }, [selectedPeriod]);
 
-  const loadGrades = async () => {
+  const loadGrades = async (isRetry = false) => {
     try {
-      setLoading(true);
-      const data = await StudentApiService.getGrades();
-      setGrades(data.grades || []);
-      setSummary(data.summary || {});
+      if (!isRetry) {
+        setLoading(true);
+      }
+      setError(null);
+      setNetworkError(false);
+      
+      console.log('📊 Cargando calificaciones...');
+      
+      // Timeout para requests de red
+      const timeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Timeout de conexión')), 10000)
+      );
+      
+      const gradePromise = StudentApiService.getGrades(token);
+      const response = await Promise.race([gradePromise, timeoutPromise]);
+      
+      if (response && response.success) {
+        console.log('✅ Calificaciones cargadas exitosamente');
+        setGrades(response.data?.grades || []);
+        setSummary(response.data?.summary || {});
+        setRetryCount(0);
+      } else {
+        throw new Error(response?.message || 'Respuesta inválida del servicio');
+      }
     } catch (error) {
-      Alert.alert('Error', 'No se pudieron cargar las calificaciones');
+      console.error('❌ Error al cargar calificaciones:', error.message);
+      
+      // Detectar errores de red específicos
+      const isNetworkIssue = error.message.includes('Network request failed') || 
+                           error.message.includes('Timeout') ||
+                           error.message.includes('fetch') ||
+                           !navigator.onLine;
+      
+      setNetworkError(isNetworkIssue);
+      
+      if (isNetworkIssue) {
+        setError('Sin conexión a internet. Mostrando datos offline.');
+        console.log('🌐 Error de red detectado, usando datos demo');
+      } else {
+        setError('Error del servidor. Mostrando datos de demostración.');
+        console.log('🔄 Error del servidor, usando datos demo como fallback');
+      }
+      
+      // Usar datos demo como fallback
+      setGrades(DEMO_GRADES?.grades || []);
+      setSummary(DEMO_GRADES?.summary || {});
+      setRetryCount(prev => prev + 1);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
   const onRefresh = async () => {
     setRefreshing(true);
     await loadGrades();
-    setRefreshing(false);
+  };
+
+  const handleRetry = () => {
+    if (retryCount < 3) {
+      loadGrades(true);
+    } else {
+      Alert.alert(
+        'Problemas de Conexión',
+        'No se puede conectar al servidor. Verifica tu conexión a internet e intenta nuevamente más tarde.',
+        [{ text: 'Entendido' }]
+      );
+    }
   };
 
   const getGradeColor = (grade) => {
@@ -69,7 +131,7 @@ const GradesScreen = () => {
   });
 
   const periods = [
-    { key: 'current', label: 'Periodo Actual', icon: 'calendar' },
+    { key: 'current', label: 'Actual', icon: 'calendar' },
     { key: 'history', label: 'Historial', icon: 'time' },
   ];
 
@@ -84,7 +146,7 @@ const GradesScreen = () => {
     >
       <Ionicons
         name={period.icon}
-        size={18}
+        size={16}
         color={selectedPeriod === period.key ? COLORS.white : COLORS.primary}
       />
       <Text style={[
@@ -96,6 +158,27 @@ const GradesScreen = () => {
     </TouchableOpacity>
   );
 
+  const renderErrorState = () => (
+    <View style={styles.errorContainer}>
+      <Ionicons 
+        name={networkError ? "wifi-outline" : "server-outline"} 
+        size={48} 
+        color={COLORS.error} 
+      />
+      <Text style={styles.errorTitle}>
+        {networkError ? 'Sin Conexión' : 'Error del Servidor'}
+      </Text>
+      <Text style={styles.errorMessage}>{error}</Text>
+      
+      {retryCount < 3 && (
+        <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
+          <Ionicons name="refresh-outline" size={16} color={COLORS.white} />
+          <Text style={styles.retryButtonText}>Reintentar</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+
   const renderSummaryCard = () => {
     if (!summary || selectedPeriod !== 'current') return null;
 
@@ -105,7 +188,7 @@ const GradesScreen = () => {
         <View style={styles.summaryGrid}>
           <View style={styles.summaryItem}>
             <Text style={styles.summaryValue}>{summary.gpa || '0.0'}</Text>
-            <Text style={styles.summaryLabel}>PPA (1-7)</Text>
+            <Text style={styles.summaryLabel}>PPA</Text>
           </View>
           <View style={styles.summaryItem}>
             <Text style={styles.summaryValue}>{summary.totalCredits || 0}</Text>
@@ -116,7 +199,9 @@ const GradesScreen = () => {
             <Text style={styles.summaryLabel}>Ramos</Text>
           </View>
           <View style={styles.summaryItem}>
-            <Text style={styles.summaryValue}>{summary.currentSemester || 'N/A'}</Text>
+            <Text style={styles.summaryValue} numberOfLines={1} adjustsFontSizeToFit>
+              {summary.currentSemester || 'N/A'}
+            </Text>
             <Text style={styles.summaryLabel}>Semestre</Text>
           </View>
         </View>
@@ -155,7 +240,7 @@ const GradesScreen = () => {
           <Text style={styles.detailLabel}>Estado:</Text>
           <Text style={[
             styles.detailValue,
-            { color: item.grade >= 70 ? COLORS.success : COLORS.error }
+            { color: item.grade >= 4.0 ? COLORS.success : COLORS.error }
           ]}>
             {getGradeStatus(item.grade)}
           </Text>
@@ -166,26 +251,60 @@ const GradesScreen = () => {
 
   if (loading && !refreshing) {
     return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={COLORS.primary} />
-        <Text style={styles.loadingText}>Cargando calificaciones...</Text>
-      </View>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color={COLORS.primary} />
+          <Text style={styles.loadingText}>Cargando calificaciones...</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      {/* Header con navegación */}
+      <View style={styles.header}>
+        <TouchableOpacity 
+          onPress={() => navigation?.goBack()}
+          style={styles.backButton}
+        >
+          <Ionicons name="arrow-back" size={24} color={COLORS.text} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Calificaciones</Text>
+        <View style={styles.placeholder} />
+      </View>
+
+      {/* Banner de estado */}
+      {(error || networkError) && (
+        <View style={[styles.statusBanner, { 
+          backgroundColor: networkError ? `${COLORS.error}15` : `${COLORS.warning}15` 
+        }]}>
+          <Ionicons 
+            name={networkError ? "wifi-outline" : "information-circle-outline"} 
+            size={16} 
+            color={networkError ? COLORS.error : COLORS.warning} 
+          />
+          <Text style={[styles.statusText, { 
+            color: networkError ? COLORS.error : COLORS.warning 
+          }]}>
+            {error}
+          </Text>
+          {networkError && retryCount < 3 && (
+            <TouchableOpacity onPress={handleRetry} style={styles.miniRetryButton}>
+              <Ionicons name="refresh-outline" size={14} color={COLORS.error} />
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
+
+      {/* Selector de período */}
       <View style={styles.periodSelector}>
         {periods.map(renderPeriodButton)}
       </View>
 
-      {renderSummaryCard()}
-
-      <FlatList
-        data={filteredGrades}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={renderGradeCard}
-        contentContainerStyle={styles.gradesList}
+      {/* Contenido principal */}
+      <ScrollView
+        style={styles.content}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -194,9 +313,21 @@ const GradesScreen = () => {
             tintColor={COLORS.primary}
           />
         }
-        ListEmptyComponent={
+      >
+        {renderSummaryCard()}
+
+        {/* Lista de calificaciones */}
+        {filteredGrades.length > 0 ? (
+          <View style={styles.gradesList}>
+            {filteredGrades.map((item) => (
+              <View key={item.id}>
+                {renderGradeCard({ item })}
+              </View>
+            ))}
+          </View>
+        ) : (
           <View style={styles.emptyContainer}>
-            <Ionicons name="school-outline" size={64} color={COLORS.lightText} />
+            <Ionicons name="school-outline" size={64} color={COLORS.textSecondary} />
             <Text style={styles.emptyTitle}>No hay calificaciones</Text>
             <Text style={styles.emptySubtitle}>
               {selectedPeriod === 'current' 
@@ -205,9 +336,9 @@ const GradesScreen = () => {
               }
             </Text>
           </View>
-        }
-      />
-    </View>
+        )}
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -215,6 +346,85 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: COLORS.background,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    backgroundColor: COLORS.white,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.lightGray,
+    elevation: 2,
+    shadowColor: COLORS.black,
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  backButton: {
+    padding: SPACING.sm,
+    borderRadius: 8,
+  },
+  headerTitle: {
+    fontSize: FONT_SIZE.lg,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.text,
+  },
+  placeholder: {
+    width: 40,
+  },
+  statusBanner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.lightGray,
+  },
+  statusText: {
+    fontSize: FONT_SIZE.sm,
+    marginLeft: SPACING.xs,
+    flex: 1,
+  },
+  miniRetryButton: {
+    padding: SPACING.xs,
+    borderRadius: 4,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: SPACING.xl * 2,
+    paddingHorizontal: SPACING.lg,
+  },
+  errorTitle: {
+    fontSize: FONT_SIZE.lg,
+    fontWeight: FONT_WEIGHT.bold,
+    color: COLORS.error,
+    marginTop: SPACING.md,
+    marginBottom: SPACING.sm,
+    textAlign: 'center',
+  },
+  errorMessage: {
+    fontSize: FONT_SIZE.md,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    marginBottom: SPACING.lg,
+    lineHeight: FONT_SIZE.md * 1.4,
+  },
+  retryButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: SPACING.lg,
+    paddingVertical: SPACING.md,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: COLORS.white,
+    fontSize: FONT_SIZE.md,
+    fontWeight: FONT_WEIGHT.medium,
+    marginLeft: SPACING.sm,
   },
   loadingContainer: {
     flex: 1,
@@ -229,10 +439,11 @@ const styles = StyleSheet.create({
   },
   periodSelector: {
     flexDirection: 'row',
-    padding: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: SPACING.md,
     backgroundColor: COLORS.white,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
+    borderBottomColor: COLORS.lightGray,
   },
   periodButton: {
     flexDirection: 'row',
@@ -252,15 +463,19 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.sm,
     color: COLORS.primary,
     marginLeft: SPACING.xs,
+    fontWeight: FONT_WEIGHT.medium,
   },
   periodButtonTextActive: {
     color: COLORS.white,
+  },
+  content: {
+    flex: 1,
   },
   summaryCard: {
     backgroundColor: COLORS.white,
     margin: SPACING.md,
     borderRadius: 12,
-    padding: SPACING.md,
+    padding: SPACING.lg,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -271,7 +486,8 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.lg,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text,
-    marginBottom: SPACING.md,
+    marginBottom: SPACING.lg,
+    textAlign: 'center',
   },
   summaryGrid: {
     flexDirection: 'row',
@@ -280,24 +496,29 @@ const styles = StyleSheet.create({
   summaryItem: {
     alignItems: 'center',
     flex: 1,
+    paddingHorizontal: SPACING.xs,
   },
   summaryValue: {
     fontSize: FONT_SIZE.xl,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.primary,
     marginBottom: SPACING.xs,
+    textAlign: 'center',
   },
   summaryLabel: {
     fontSize: FONT_SIZE.sm,
-    color: COLORS.lightText,
+    color: COLORS.textSecondary,
+    textAlign: 'center',
+    fontWeight: FONT_WEIGHT.medium,
   },
   gradesList: {
-    padding: SPACING.md,
+    paddingHorizontal: SPACING.md,
+    paddingBottom: SPACING.xl,
   },
   gradeCard: {
     backgroundColor: COLORS.white,
     borderRadius: 12,
-    padding: SPACING.md,
+    padding: SPACING.lg,
     marginBottom: SPACING.md,
     shadowColor: COLORS.black,
     shadowOffset: { width: 0, height: 2 },
@@ -325,32 +546,38 @@ const styles = StyleSheet.create({
     fontSize: FONT_SIZE.md,
     color: COLORS.text,
     marginBottom: SPACING.xs,
+    lineHeight: FONT_SIZE.md * 1.3,
+    fontWeight: FONT_WEIGHT.medium,
   },
   semester: {
     fontSize: FONT_SIZE.sm,
-    color: COLORS.lightText,
+    color: COLORS.textSecondary,
   },
   gradeContainer: {
     alignItems: 'center',
   },
   gradeBadge: {
-    borderRadius: 8,
-    padding: SPACING.sm,
+    borderRadius: 10,
+    padding: SPACING.md,
     alignItems: 'center',
-    minWidth: 60,
+    minWidth: 65,
+    minHeight: 65,
+    justifyContent: 'center',
   },
   gradeNumber: {
-    fontSize: FONT_SIZE.lg,
+    fontSize: FONT_SIZE.xl,
     color: COLORS.white,
     fontWeight: FONT_WEIGHT.bold,
   },
   gradeLetter: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.white,
+    marginTop: 2,
+    fontWeight: FONT_WEIGHT.medium,
   },
   gradeDetails: {
     borderTopWidth: 1,
-    borderTopColor: COLORS.border,
+    borderTopColor: COLORS.lightGray,
     paddingTop: SPACING.md,
   },
   detailRow: {
@@ -360,31 +587,32 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: FONT_SIZE.sm,
-    color: COLORS.lightText,
+    color: COLORS.textSecondary,
+    fontWeight: FONT_WEIGHT.medium,
   },
   detailValue: {
     fontSize: FONT_SIZE.sm,
     color: COLORS.text,
-    fontWeight: FONT_WEIGHT.medium,
+    fontWeight: FONT_WEIGHT.bold,
   },
   emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: SPACING.xl * 2,
+    paddingVertical: SPACING.xl * 2,
+    paddingHorizontal: SPACING.lg,
   },
   emptyTitle: {
     fontSize: FONT_SIZE.lg,
     fontWeight: FONT_WEIGHT.bold,
     color: COLORS.text,
-    marginTop: SPACING.md,
-    marginBottom: SPACING.sm,
+    marginTop: SPACING.lg,
+    marginBottom: SPACING.md,
+    textAlign: 'center',
   },
   emptySubtitle: {
     fontSize: FONT_SIZE.md,
-    color: COLORS.lightText,
+    color: COLORS.textSecondary,
     textAlign: 'center',
-    paddingHorizontal: SPACING.xl,
+    lineHeight: FONT_SIZE.md * 1.4,
   },
 });
 

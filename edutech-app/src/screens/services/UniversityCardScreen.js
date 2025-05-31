@@ -13,8 +13,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT } from '../../config/theme';
 import { Button, Card } from '../../components/common/UIComponents';
 
-const UniversityCardScreen = ({ route, navigation }) => {
-  const { title } = route.params;
+const UniversityCardScreen = ({ navigation, route }) => {
+  const { title } = route.params || { title: 'Credencial Universitaria' };
   const [requestStatus, setRequestStatus] = useState('En proceso'); // 'pending', 'in_progress', 'ready', 'delivered'
 
   const cardInfo = {
