@@ -4,6 +4,7 @@ import com.edutech.microservicio_persona.model.Persona;
 import com.edutech.microservicio_persona.repository.PersonaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public class PersonaService {
 
     private final PersonaRepository personaRepository;
 
-    
+    @Autowired
     public PersonaService(PersonaRepository personaRepository) {
         this.personaRepository = personaRepository;
     }
@@ -33,25 +34,19 @@ public class PersonaService {
     }
     
     public List<Persona> buscarPorNombre(String nombre) {
-        return personaRepository.buscarPorNombre(nombre);
+        return personaRepository.findByNombreContainingIgnoreCase(nombre);
     }
 
     @Transactional
     public Persona save(Persona persona) {
         return personaRepository.save(persona);
     }    @Transactional
-    public void deleteById(Integer id) {
-        personaRepository.deleteById(id);
+    public void deleteByRut(String rut) {
+        personaRepository.deleteByRut(rut);
     }
 
     @Transactional
-    public void deleteByRut(String rut) {
-        personaRepository.findByRut(rut).ifPresent(persona -> {
-            personaRepository.delete(persona);
-        });
-    }
-
-    public boolean existsByCorreo(String correo) {
-        return personaRepository.existsByCorreo(correo);
+    public void deleteById(Integer id) {
+        personaRepository.deleteById(id);
     }
 }

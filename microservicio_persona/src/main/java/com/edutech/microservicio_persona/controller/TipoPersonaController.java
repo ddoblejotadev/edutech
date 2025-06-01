@@ -1,17 +1,21 @@
 package com.edutech.microservicio_persona.controller;
 
+import com.edutech.microservicio_persona.model.TipoPersona;
+import com.edutech.microservicio_persona.service.TipoPersonaService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.edutech.microservicio_persona.model.TipoPersona;
-import com.edutech.microservicio_persona.service.TipoPersonaService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/tipos-persona")
+@RequestMapping(value = "/api/tipospersona", produces = "application/json;charset=UTF-8")
 public class TipoPersonaController {
+
     private final TipoPersonaService tipoPersonaService;
 
+    @Autowired
     public TipoPersonaController(TipoPersonaService tipoPersonaService) {
         this.tipoPersonaService = tipoPersonaService;
     }
@@ -31,8 +35,12 @@ public class TipoPersonaController {
 
     @PostMapping
     public ResponseEntity<TipoPersona> createTipoPersona(@RequestBody TipoPersona tipoPersona) {
-        TipoPersona savedTipoPersona = tipoPersonaService.save(tipoPersona);
-        return new ResponseEntity<>(savedTipoPersona, HttpStatus.CREATED);
+        try {
+            TipoPersona nuevoTipoPersona = tipoPersonaService.save(tipoPersona);
+            return new ResponseEntity<>(nuevoTipoPersona, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping("/{id}")

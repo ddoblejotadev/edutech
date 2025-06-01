@@ -1,23 +1,19 @@
 package com.edutech.microservicio_persona.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
 @Table(name = "personas")
 public class Persona {
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "id")
+    private Integer id;
+    
+    @Column(name = "rut", unique = true, nullable = false, length = 12)
+    private String rut;
     
     @Column(name = "nombre", nullable = false, length = 100)
     private String nombre;
@@ -25,56 +21,45 @@ public class Persona {
     @Column(name = "apellido", nullable = false, length = 100)
     private String apellido;
     
-    @Column(name = "rut", nullable = false, length = 20, unique = true)
-    private String rut;
-    
-    @Column(name = "email", nullable = false, length = 100, unique = true)
-    private String email;
-    
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_nacimiento")
-    private Date fechaNacimiento;
+    @Column(name = "correo", unique = true, nullable = false, length = 100)
+    private String correo;
     
     @Column(name = "telefono", length = 20)
     private String telefono;
     
-    @Column(name = "direccion", length = 200)
-    private String direccion;
+    @Column(name = "fecha_nacimiento")
+    @Temporal(TemporalType.DATE)
+    private Date fechaNacimiento;
     
-    @Column(name = "activo", nullable = false)
-    private Boolean activo;
-    
-    @ManyToOne
-    @JoinColumn(name = "tipo_persona_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_tipo_persona", nullable = false)
     private TipoPersona tipoPersona;
+
+    // Constructores
+    public Persona() {}
     
-    // Constructor sin argumentos
-    public Persona() {
-    }
-    
-    // Constructor con todos los argumentos
-    public Persona(Long id, String nombre, String apellido, String rut, String email, 
-                   Date fechaNacimiento, String telefono, String direccion, Boolean activo, 
-                   TipoPersona tipoPersona) {
-        this.id = id;
+    public Persona(String rut, String nombre, String apellido, String correo) {
+        this.rut = rut;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.rut = rut;
-        this.email = email;
-        this.fechaNacimiento = fechaNacimiento;
-        this.telefono = telefono;
-        this.direccion = direccion;
-        this.activo = activo;
-        this.tipoPersona = tipoPersona;
+        this.correo = correo;
     }
     
     // Getters y Setters
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
     
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+    
+    public String getRut() {
+        return rut;
+    }
+    
+    public void setRut(String rut) {
+        this.rut = rut;
     }
     
     public String getNombre() {
@@ -93,33 +78,12 @@ public class Persona {
         this.apellido = apellido;
     }
     
-    public String getRut() {
-        return rut;
-    }
-    
-    public void setRut(String rut) {
-        this.rut = rut;
-    }
-    
-    public String getEmail() {
-        return email;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-    
-    // Método para compatibilidad con código existente
     public String getCorreo() {
-        return email;
-    }
-
-    public Date getFechaNacimiento() {
-        return fechaNacimiento;
+        return correo;
     }
     
-    public void setFechaNacimiento(Date fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
     
     public String getTelefono() {
@@ -130,20 +94,12 @@ public class Persona {
         this.telefono = telefono;
     }
     
-    public String getDireccion() {
-        return direccion;
+    public Date getFechaNacimiento() {
+        return fechaNacimiento;
     }
     
-    public void setDireccion(String direccion) {
-        this.direccion = direccion;
-    }
-    
-    public Boolean getActivo() {
-        return activo;
-    }
-    
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
+    public void setFechaNacimiento(Date fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
     }
     
     public TipoPersona getTipoPersona() {
@@ -152,5 +108,9 @@ public class Persona {
     
     public void setTipoPersona(TipoPersona tipoPersona) {
         this.tipoPersona = tipoPersona;
+    }
+
+    public boolean existsByCorreo(String correo) {
+        return this.correo != null && this.correo.equals(correo);
     }
 }

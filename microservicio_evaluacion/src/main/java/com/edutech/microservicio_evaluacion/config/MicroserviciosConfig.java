@@ -1,35 +1,38 @@
 package com.edutech.microservicio_evaluacion.config;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 
-/**
- * Configuración para conectar con otros microservicios
- */
 @Configuration
-@PropertySource("classpath:microservicios.yml")
+@ConfigurationProperties(prefix = "microservicio")
 public class MicroserviciosConfig {
-
-    @Value("${microservicio.persona.url}")
-    private String personaServiceUrl;
     
-    @Value("${microservicio.curso.url}")
-    private String cursoServiceUrl;
+    private String personaUrl = "http://localhost:8081";
+    private String cursoUrl = "http://localhost:8082";
+    private String ejecucionUrl = "http://localhost:8083";
     
-    @Value("${microservicio.ejecucion.url}")
-    private String ejecucionServiceUrl;
-    
-    // Getters
-    public String getPersonaServiceUrl() {
-        return personaServiceUrl;
+    // Getters and Setters
+    public String getPersonaUrl() {
+        return personaUrl;
     }
     
-    public String getCursoServiceUrl() {
-        return cursoServiceUrl;
+    public void setPersonaUrl(String personaUrl) {
+        this.personaUrl = personaUrl;
     }
     
-    public String getEjecucionServiceUrl() {
-        return ejecucionServiceUrl;
+    public String getCursoUrl() {
+        return cursoUrl;
+    }
+    
+    public void setCursoUrl(String cursoUrl) {
+        this.cursoUrl = cursoUrl;
+    }
+    
+    public String getEjecucionUrl() {
+        return ejecucionUrl;
+    }
+    
+    public void setEjecucionUrl(String ejecucionUrl) {
+        this.ejecucionUrl = ejecucionUrl;
     }
 }

@@ -1,10 +1,11 @@
 # Dockerfile multi-etapa para compilar y ejecutar
-FROM openjdk:17-jdk-slim AS builder
+FROM openjdk:17-jdk-slim-bookworm AS builder
 
 WORKDIR /app
 
-# Instalar Maven
-RUN apt-get update && apt-get install -y maven
+# Instalar Maven y limpiar caché para reducir vulnerabilidades
+RUN apt-get update && apt-get install -y --no-install-recommends maven && \
+	apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copiar POM y código fuente
 COPY pom.xml .
@@ -13,9 +14,9 @@ COPY src src
 # Compilar la aplicación
 RUN mvn package -DskipTests
 
-# Etapa de ejecución
-FROM openjdk:17-jdk-slim
+FROM openjdk:17-jdk-slim-bookworm
 
+WORKDIR /app
 WORKDIR /app
 
 # Copiar el JAR compilado desde la etapa anterior

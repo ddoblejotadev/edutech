@@ -1,10 +1,10 @@
 # Dockerfile multi-etapa para compilar y ejecutar
-FROM openjdk:17-jdk-slim AS builder
+FROM eclipse-temurin:17-jdk-alpine AS builder
 
 WORKDIR /app
 
 # Instalar Maven
-RUN apt-get update && apt-get install -y maven
+RUN apk add --no-cache maven
 
 # Copiar POM y código fuente
 COPY pom.xml .
@@ -14,7 +14,7 @@ COPY src src
 RUN mvn package -DskipTests
 
 # Etapa de ejecución
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jdk-alpine
 
 WORKDIR /app
 

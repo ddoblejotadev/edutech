@@ -1,17 +1,10 @@
 package com.edutech.microservicio_evaluacion.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "calificacion")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Calificacion {
     
     @Id
@@ -35,4 +28,74 @@ public class Calificacion {
     
     @Column(name = "fecha_entrega")
     private LocalDateTime fechaEntrega;
+
+    // Constructores
+    public Calificacion() {}
+
+    public Calificacion(Integer idEvaluacion, String rutEstudiante, Double puntajeObtenido, 
+                       String comentario, LocalDateTime fechaCalificacion, LocalDateTime fechaEntrega) {
+        this.idEvaluacion = idEvaluacion;
+        this.rutEstudiante = rutEstudiante;
+        this.puntajeObtenido = puntajeObtenido;
+        this.comentario = comentario;
+        this.fechaCalificacion = fechaCalificacion;
+        this.fechaEntrega = fechaEntrega;
+    }
+
+    // Getters y Setters
+    public Integer getIdCalificacion() {
+        return idCalificacion;
+    }
+
+    public void setIdCalificacion(Integer idCalificacion) {
+        this.idCalificacion = idCalificacion;
+    }
+
+    public Integer getIdEvaluacion() {
+        return idEvaluacion;
+    }
+
+    public void setIdEvaluacion(Integer idEvaluacion) {
+        this.idEvaluacion = idEvaluacion;
+    }
+
+    public String getRutEstudiante() {
+        return rutEstudiante;
+    }
+
+    public void setRutEstudiante(String rutEstudiante) {
+        this.rutEstudiante = rutEstudiante;
+    }
+
+    public Double getPuntajeObtenido() {
+        return puntajeObtenido;
+    }
+
+    public void setPuntajeObtenido(Double puntajeObtenido) {
+        this.puntajeObtenido = puntajeObtenido;
+    }
+
+    public String getComentario() {
+        return comentario;
+    }
+
+    public void setComentario(String comentario) {
+        this.comentario = comentario;
+    }
+
+    public LocalDateTime getFechaCalificacion() {
+        return fechaCalificacion;
+    }
+
+    public void setFechaCalificacion(LocalDateTime fechaCalificacion) {
+        this.fechaCalificacion = fechaCalificacion;
+    }
+
+    public LocalDateTime getFechaEntrega() {
+        return fechaEntrega;
+    }
+
+    public void setFechaEntrega(LocalDateTime fechaEntrega) {
+        this.fechaEntrega = fechaEntrega;
+    }
 }
