@@ -8,7 +8,7 @@ import java.util.List;
 
 @Repository
 public interface NotificacionRepository extends JpaRepository<Notificacion, Integer> {
-    List<Notificacion> findByIdPersona(String idPersona);
-    List<Notificacion> findByIdPersonaAndLeida(String idPersona, Boolean leida);
+    List<Notificacion> findByIdPersona(Long idPersona);
+    List<Notificacion> findByIdPersonaAndLeida(Long idPersona, Boolean leida);
     List<Notificacion> findByTipo(String tipo);
 }

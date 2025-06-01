@@ -42,7 +42,7 @@ public class PersonaController {
     }
 
     @GetMapping("/tipo/{idTipoPersona}")
-    public ResponseEntity<List<Persona>> getPersonasByTipo(@PathVariable Integer idTipoPersona) {
+    public ResponseEntity<List<Persona>> getPersonasByTipo(@PathVariable Long idTipoPersona) {
         List<Persona> personas = personaService.findByTipoPersona(idTipoPersona);
         return new ResponseEntity<>(personas, HttpStatus.OK);
     }

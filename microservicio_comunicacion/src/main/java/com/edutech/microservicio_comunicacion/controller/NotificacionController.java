@@ -33,12 +33,12 @@ public class NotificacionController {
     }
     
     @GetMapping("/persona/{idPersona}")
-    public ResponseEntity<List<Notificacion>> getNotificacionesByPersona(@PathVariable String idPersona) {
+    public ResponseEntity<List<Notificacion>> getNotificacionesByPersona(@PathVariable Long idPersona) {
         return ResponseEntity.ok(notificacionService.getNotificacionesByPersona(idPersona));
     }
     
     @GetMapping("/noleidas/{idPersona}")
-    public ResponseEntity<List<Notificacion>> getNotificacionesNoLeidasByPersona(@PathVariable String idPersona) {
+    public ResponseEntity<List<Notificacion>> getNotificacionesNoLeidasByPersona(@PathVariable Long idPersona) {
         return ResponseEntity.ok(notificacionService.getNotificacionesNoLeidasByPersona(idPersona));
     }
     

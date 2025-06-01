@@ -1,5 +1,23 @@
--- Script de poblado de datos para EduTech
+-- Script de poblado de datos para EduTech (Version corregida con subconsultas)
 -- Base de datos: edutech_db
+
+-- Primero, limpiamos los datos existentes para evitar duplicados
+SET FOREIGN_KEY_CHECKS = 0;
+
+DELETE FROM asistencia;
+DELETE FROM calificaciones;
+DELETE FROM evaluaciones;
+DELETE FROM horarios;
+DELETE FROM inscripciones;
+DELETE FROM curso_profesor;
+DELETE FROM cursos;
+DELETE FROM profesores;
+DELETE FROM beneficios;
+DELETE FROM comunicaciones;
+DELETE FROM servicios_estudiantiles;
+DELETE FROM usuarios;
+
+SET FOREIGN_KEY_CHECKS = 1;
 
 -- =====================================================
 -- DATOS DE USUARIOS/ESTUDIANTES
@@ -12,17 +30,7 @@ INSERT INTO usuarios (rut, nombre, email, password, telefono, fecha_nacimiento, 
 ('17.987.654-3', 'Ana Carolina Torres Muñoz', 'ana.torres@duocuc.cl', '$2a$10$N9qo8uLOickgx2ZMRZoMye', '+56 9 5432 1098', '1998-05-18', 'Av. Grecia 8500, Ñuñoa', 'Región Metropolitana', 'Plaza Vespucio', 'Diseño Gráfico', 4, 7, 'Presencial', 'Diurna', '2021', 'Regular', 6.5, 175, 210);
 
 -- =====================================================
--- DATOS DE BENEFICIOS
--- =====================================================
-
-INSERT INTO beneficios (usuario_id, nombre, descripcion, estado, porcentaje, fecha_inicio, fecha_fin) VALUES
-(1, 'Beca de Excelencia Académica DUOC UC', 'Beca por rendimiento académico destacado', 'ACTIVA', 50.00, '2024-03-01', '2024-12-31'),
-(1, 'Gratuidad', 'Beneficio estatal de gratuidad', 'ACTIVA', 100.00, '2024-03-01', '2024-12-31'),
-(2, 'Beca Socioeconómica', 'Apoyo económico por situación familiar', 'ACTIVA', 25.00, '2024-03-01', '2024-12-31'),
-(3, 'Beca de Alimentación JUNAEB', 'Beneficio de alimentación estudiantil', 'ACTIVA', 100.00, '2024-03-01', '2024-12-31');
-
--- =====================================================
--- DATOS DE PROFESORES
+-- DATOS DE PROFESORES (Insertar antes que los cursos)
 -- =====================================================
 
 INSERT INTO profesores (rut, nombre, email, telefono, especialidad, titulo, grado_academico) VALUES
@@ -44,69 +52,79 @@ INSERT INTO cursos (codigo, nombre, descripcion, creditos, semestre, nivel, moda
 ('INFO1304', 'Redes de Computadoras', 'Fundamentos de redes y protocolos de comunicación', 5, '2024-2', 'Intermedio', 'Presencial', 'networking', 'Activo', 25, 22, 'Mar 11:00-12:30, Vie 10:00-11:30', 'Lab. Redes', 'Edificio Tecnológico');
 
 -- =====================================================
--- ASIGNACIÓN DE PROFESORES A CURSOS
+-- DATOS DE BENEFICIOS (Usando subconsultas para obtener usuario_id)
+-- =====================================================
+
+INSERT INTO beneficios (usuario_id, nombre, descripcion, estado, porcentaje, fecha_inicio, fecha_fin) VALUES
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), 'Beca de Excelencia Académica DUOC UC', 'Beca por rendimiento académico destacado', 'ACTIVA', 50.00, '2024-03-01', '2024-12-31'),
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), 'Gratuidad', 'Beneficio estatal de gratuidad', 'ACTIVA', 100.00, '2024-03-01', '2024-12-31'),
+((SELECT id FROM usuarios WHERE rut = '18.123.456-7'), 'Beca Socioeconómica', 'Apoyo económico por situación familiar', 'ACTIVA', 25.00, '2024-03-01', '2024-12-31'),
+((SELECT id FROM usuarios WHERE rut = '20.345.678-9'), 'Beca de Alimentación JUNAEB', 'Beneficio de alimentación estudiantil', 'ACTIVA', 100.00, '2024-03-01', '2024-12-31');
+
+-- =====================================================
+-- ASIGNACIÓN DE PROFESORES A CURSOS (Usando subconsultas)
 -- =====================================================
 
 INSERT INTO curso_profesor (curso_id, profesor_id, rol) VALUES
-(1, 1, 'Titular'), -- Carlos Mendoza - POO
-(2, 2, 'Titular'), -- María González - BD II
-(3, 4, 'Titular'), -- Ana Torres - Inglés
-(4, 3, 'Titular'), -- Roberto Silva - Arquitectura
-(5, 5, 'Titular'); -- Luis Vargas - Redes
+((SELECT id FROM cursos WHERE codigo = 'INFO1166'), (SELECT id FROM profesores WHERE rut = '12.345.678-9'), 'Titular'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1277'), (SELECT id FROM profesores WHERE rut = '11.234.567-8'), 'Titular'),
+((SELECT id FROM cursos WHERE codigo = 'INGL2201'), (SELECT id FROM profesores WHERE rut = '14.567.890-1'), 'Titular'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1288'), (SELECT id FROM profesores WHERE rut = '13.456.789-0'), 'Titular'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1304'), (SELECT id FROM profesores WHERE rut = '15.678.901-2'), 'Titular');
 
 -- =====================================================
--- INSCRIPCIONES DE ESTUDIANTES
+-- INSCRIPCIONES DE ESTUDIANTES (Usando subconsultas)
 -- =====================================================
 
 INSERT INTO inscripciones (usuario_id, curso_id, estado, nota_final, asistencia, progreso) VALUES
-(1, 1, 'Inscrito', NULL, 92.5, 75.0), -- Carlos en POO
-(1, 2, 'Inscrito', NULL, 88.0, 68.0), -- Carlos en BD II
-(1, 3, 'Inscrito', NULL, 95.0, 82.0), -- Carlos en Inglés
-(2, 1, 'Inscrito', NULL, 89.0, 70.0), -- María en POO
-(2, 2, 'Inscrito', NULL, 91.0, 72.0), -- María en BD II
-(3, 4, 'Inscrito', NULL, 85.0, 60.0), -- Juan en Arquitectura
-(4, 3, 'Inscrito', NULL, 93.0, 85.0); -- Ana en Inglés
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), (SELECT id FROM cursos WHERE codigo = 'INFO1166'), 'Inscrito', NULL, 92.5, 75.0),
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), (SELECT id FROM cursos WHERE codigo = 'INFO1277'), 'Inscrito', NULL, 88.0, 68.0),
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), (SELECT id FROM cursos WHERE codigo = 'INGL2201'), 'Inscrito', NULL, 95.0, 82.0),
+((SELECT id FROM usuarios WHERE rut = '18.123.456-7'), (SELECT id FROM cursos WHERE codigo = 'INFO1166'), 'Inscrito', NULL, 89.0, 70.0),
+((SELECT id FROM usuarios WHERE rut = '18.123.456-7'), (SELECT id FROM cursos WHERE codigo = 'INFO1277'), 'Inscrito', NULL, 91.0, 72.0),
+((SELECT id FROM usuarios WHERE rut = '20.345.678-9'), (SELECT id FROM cursos WHERE codigo = 'INFO1288'), 'Inscrito', NULL, 85.0, 60.0),
+((SELECT id FROM usuarios WHERE rut = '17.987.654-3'), (SELECT id FROM cursos WHERE codigo = 'INGL2201'), 'Inscrito', NULL, 93.0, 85.0);
 
 -- =====================================================
--- EVALUACIONES
+-- EVALUACIONES (Usando subconsultas)
 -- =====================================================
 
 INSERT INTO evaluaciones (curso_id, nombre, descripcion, tipo, fecha_programada, duracion_minutos, ponderacion, aula, instrucciones, estado) VALUES
-(1, 'Examen Parcial - POO', 'Examen sobre conceptos fundamentales de POO y Java', 'Examen', '2024-06-15 09:00:00', 120, 30.00, 'Lab. Informática A', 'Examen teórico-práctico sobre herencia, polimorfismo y encapsulación', 'Programada'),
-(1, 'Proyecto Sistema POO', 'Desarrollo de sistema completo usando principios POO', 'Proyecto', '2024-07-10 23:59:00', 0, 40.00, 'Virtual', 'Implementar sistema de gestión usando Java con interfaz gráfica', 'Programada'),
-(2, 'Proyecto Base de Datos', 'Diseño e implementación de sistema de BD para empresa', 'Proyecto', '2024-06-20 23:59:00', 0, 40.00, 'Virtual', 'Diseñar BD completa con normalización y stored procedures', 'Programada'),
-(3, 'Presentación Oral Técnica', 'Presentación de tema técnico en inglés', 'Proyecto', '2024-06-25 14:00:00', 15, 35.00, 'Aula 301', 'Presentación de 10-15 minutos sobre tema de especialidad', 'Programada');
+((SELECT id FROM cursos WHERE codigo = 'INFO1166'), 'Examen Parcial - POO', 'Examen sobre conceptos fundamentales de POO y Java', 'Examen', '2024-06-15 09:00:00', 120, 30.00, 'Lab. Informática A', 'Examen teórico-práctico sobre herencia, polimorfismo y encapsulación', 'Programada'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1166'), 'Proyecto Sistema POO', 'Desarrollo de sistema completo usando principios POO', 'Proyecto', '2024-07-10 23:59:00', 0, 40.00, 'Virtual', 'Implementar sistema de gestión usando Java con interfaz gráfica', 'Programada'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1277'), 'Proyecto Base de Datos', 'Diseño e implementación de sistema de BD para empresa', 'Proyecto', '2024-06-20 23:59:00', 0, 40.00, 'Virtual', 'Diseñar BD completa con normalización y stored procedures', 'Programada'),
+((SELECT id FROM cursos WHERE codigo = 'INGL2201'), 'Presentación Oral Técnica', 'Presentación de tema técnico en inglés', 'Proyecto', '2024-06-25 14:00:00', 15, 35.00, 'Aula 301', 'Presentación de 10-15 minutos sobre tema de especialidad', 'Programada');
 
 -- =====================================================
--- CALIFICACIONES
+-- CALIFICACIONES (Usando subconsultas)
 -- =====================================================
 
 INSERT INTO calificaciones (evaluacion_id, usuario_id, nota, fecha_entrega, retroalimentacion, estado) VALUES
-(1, 1, 6.2, '2024-06-15 10:45:00', 'Buen manejo de conceptos, mejorar implementación de interfaces', 'Calificada'),
-(1, 2, 6.8, '2024-06-15 10:30:00', 'Excelente comprensión de herencia y polimorfismo', 'Calificada'),
-(2, 1, NULL, NULL, NULL, 'Pendiente'),
-(3, 1, 6.5, '2024-06-20 22:30:00', 'Buen diseño de BD, falta optimización en consultas', 'Calificada');
+((SELECT id FROM evaluaciones WHERE nombre = 'Examen Parcial - POO'), (SELECT id FROM usuarios WHERE rut = '19.234.567-8'), 6.2, '2024-06-15 10:45:00', 'Buen manejo de conceptos, mejorar implementación de interfaces', 'Calificada'),
+((SELECT id FROM evaluaciones WHERE nombre = 'Examen Parcial - POO'), (SELECT id FROM usuarios WHERE rut = '18.123.456-7'), 6.8, '2024-06-15 10:30:00', 'Excelente comprensión de herencia y polimorfismo', 'Calificada'),
+((SELECT id FROM evaluaciones WHERE nombre = 'Proyecto Sistema POO'), (SELECT id FROM usuarios WHERE rut = '19.234.567-8'), NULL, NULL, NULL, 'Pendiente'),
+((SELECT id FROM evaluaciones WHERE nombre = 'Proyecto Base de Datos'), (SELECT id FROM usuarios WHERE rut = '19.234.567-8'), 6.5, '2024-06-20 22:30:00', 'Buen diseño de BD, falta optimización en consultas', 'Calificada');
 
 -- =====================================================
--- HORARIOS
+-- HORARIOS (Usando subconsultas)
 -- =====================================================
 
 INSERT INTO horarios (curso_id, dia_semana, hora_inicio, hora_fin, aula, edificio, tipo_clase) VALUES
 -- POO
-(1, 'Lunes', '08:00:00', '09:30:00', 'Lab. Informática A', 'Edificio Tecnológico', 'Laboratorio'),
-(1, 'Miércoles', '08:00:00', '09:30:00', 'Lab. Informática A', 'Edificio Tecnológico', 'Laboratorio'),
-(1, 'Viernes', '08:00:00', '09:30:00', 'Lab. Informática A', 'Edificio Tecnológico', 'Laboratorio'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1166'), 'Lunes', '08:00:00', '09:30:00', 'Lab. Informática A', 'Edificio Tecnológico', 'Laboratorio'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1166'), 'Miércoles', '08:00:00', '09:30:00', 'Lab. Informática A', 'Edificio Tecnológico', 'Laboratorio'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1166'), 'Viernes', '08:00:00', '09:30:00', 'Lab. Informática A', 'Edificio Tecnológico', 'Laboratorio'),
 -- BD II
-(2, 'Martes', '10:00:00', '11:30:00', 'Aula 205', 'Edificio Central', 'Teórica'),
-(2, 'Jueves', '10:00:00', '11:30:00', 'Lab. Informática B', 'Edificio Tecnológico', 'Laboratorio'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1277'), 'Martes', '10:00:00', '11:30:00', 'Aula 205', 'Edificio Central', 'Teórica'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1277'), 'Jueves', '10:00:00', '11:30:00', 'Lab. Informática B', 'Edificio Tecnológico', 'Laboratorio'),
 -- Inglés
-(3, 'Viernes', '14:00:00', '16:30:00', 'Aula 301', 'Edificio de Idiomas', 'Práctica'),
+((SELECT id FROM cursos WHERE codigo = 'INGL2201'), 'Viernes', '14:00:00', '16:30:00', 'Aula 301', 'Edificio de Idiomas', 'Práctica'),
 -- Arquitectura
-(4, 'Lunes', '10:00:00', '11:30:00', 'Aula 102', 'Edificio Tecnológico', 'Teórica'),
-(4, 'Jueves', '09:00:00', '10:30:00', 'Aula 102', 'Edificio Tecnológico', 'Teórica'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1288'), 'Lunes', '10:00:00', '11:30:00', 'Aula 102', 'Edificio Tecnológico', 'Teórica'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1288'), 'Jueves', '09:00:00', '10:30:00', 'Aula 102', 'Edificio Tecnológico', 'Teórica'),
 -- Redes
-(5, 'Martes', '11:00:00', '12:30:00', 'Lab. Redes', 'Edificio Tecnológico', 'Laboratorio'),
-(5, 'Viernes', '10:00:00', '11:30:00', 'Lab. Redes', 'Edificio Tecnológico', 'Laboratorio');
+((SELECT id FROM cursos WHERE codigo = 'INFO1304'), 'Martes', '11:00:00', '12:30:00', 'Lab. Redes', 'Edificio Tecnológico', 'Laboratorio'),
+((SELECT id FROM cursos WHERE codigo = 'INFO1304'), 'Viernes', '10:00:00', '11:30:00', 'Lab. Redes', 'Edificio Tecnológico', 'Laboratorio');
 
 -- =====================================================
 -- COMUNICACIONES
@@ -130,18 +148,18 @@ INSERT INTO servicios_estudiantiles (nombre, descripcion, categoria, precio, tie
 ('Cambio de Carrera', 'Trámite para cambio de programa académico', 'TRAMITES', 25000.00, '15-20 días hábiles', 'PRESENCIAL', '["Cumplir requisitos académicos", "Entrevista", "Documentación completa"]', 'DISPONIBLE');
 
 -- =====================================================
--- REGISTROS DE ASISTENCIA (Datos de ejemplo)
+-- REGISTROS DE ASISTENCIA (Usando subconsultas)
 -- =====================================================
 
 INSERT INTO asistencia (usuario_id, curso_id, fecha, presente, justificada, observaciones) VALUES
-(1, 1, '2024-05-20', TRUE, FALSE, NULL),
-(1, 1, '2024-05-22', TRUE, FALSE, NULL),
-(1, 1, '2024-05-24', FALSE, TRUE, 'Cita médica justificada'),
-(1, 2, '2024-05-21', TRUE, FALSE, NULL),
-(1, 2, '2024-05-23', TRUE, FALSE, NULL),
-(2, 1, '2024-05-20', TRUE, FALSE, NULL),
-(2, 1, '2024-05-22', TRUE, FALSE, NULL),
-(2, 2, '2024-05-21', TRUE, FALSE, NULL);
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), (SELECT id FROM cursos WHERE codigo = 'INFO1166'), '2024-05-20', TRUE, FALSE, NULL),
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), (SELECT id FROM cursos WHERE codigo = 'INFO1166'), '2024-05-22', TRUE, FALSE, NULL),
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), (SELECT id FROM cursos WHERE codigo = 'INFO1166'), '2024-05-24', FALSE, TRUE, 'Cita médica justificada'),
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), (SELECT id FROM cursos WHERE codigo = 'INFO1277'), '2024-05-21', TRUE, FALSE, NULL),
+((SELECT id FROM usuarios WHERE rut = '19.234.567-8'), (SELECT id FROM cursos WHERE codigo = 'INFO1277'), '2024-05-23', TRUE, FALSE, NULL),
+((SELECT id FROM usuarios WHERE rut = '18.123.456-7'), (SELECT id FROM cursos WHERE codigo = 'INFO1166'), '2024-05-20', TRUE, FALSE, NULL),
+((SELECT id FROM usuarios WHERE rut = '18.123.456-7'), (SELECT id FROM cursos WHERE codigo = 'INFO1166'), '2024-05-22', TRUE, FALSE, NULL),
+((SELECT id FROM usuarios WHERE rut = '18.123.456-7'), (SELECT id FROM cursos WHERE codigo = 'INFO1277'), '2024-05-21', TRUE, FALSE, NULL);
 
 -- Commit de transacciones
 COMMIT;

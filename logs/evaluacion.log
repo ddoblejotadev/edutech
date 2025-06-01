@@ -1,0 +1,65 @@
+Picked up JAVA_TOOL_OPTIONS: -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------< com.edutech:microservicio_evaluacion >----------------
+[INFO] Building microservicio_evaluacion 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.3.0:run (default-cli) > test-compile @ microservicio_evaluacion >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ microservicio_evaluacion ---
+[INFO] Copying 3 resources from src\main\resources to target\classes
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ microservicio_evaluacion ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ microservicio_evaluacion ---
+[INFO] skip non existing resourceDirectory C:\Users\Administrator\Documents\edutech\microservicio_evaluacion\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ microservicio_evaluacion ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] <<< spring-boot:3.3.0:run (default-cli) < test-compile @ microservicio_evaluacion <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.3.0:run (default-cli) @ microservicio_evaluacion ---
+[INFO] Attaching agents: []
+Picked up JAVA_TOOL_OPTIONS: -Dstdout.encoding=UTF-8 -Dstderr.encoding=UTF-8
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.0)
+
+2025-06-01T00:19:03.422-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] c.e.m.MicroservicioEvaluacionApplication : Starting MicroservicioEvaluacionApplication using Java 21.0.7 with PID 8940 (C:\Users\Administrator\Documents\edutech\microservicio_evaluacion\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech\microservicio_evaluacion)
+2025-06-01T00:19:03.428-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] c.e.m.MicroservicioEvaluacionApplication : No active profile set, falling back to 1 default profile: "default"
+2025-06-01T00:19:06.204-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-01T00:19:06.461-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 238 ms. Found 5 JPA repository interfaces.
+2025-06-01T00:19:08.756-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8084 (http)
+2025-06-01T00:19:08.787-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-01T00:19:08.788-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.24]
+2025-06-01T00:19:08.940-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-01T00:19:08.941-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 5404 ms
+2025-06-01T00:19:09.431-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-01T00:19:09.559-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.2.Final
+2025-06-01T00:19:09.647-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-01T00:19:10.331-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-01T00:19:10.381-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-01T00:19:10.648-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@8383a14
+2025-06-01T00:19:10.664-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-01T00:19:10.730-04:00  WARN 8940 --- [microservicio_evaluacion] [           main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-01T00:19:10.745-04:00  WARN 8940 --- [microservicio_evaluacion] [           main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-01T00:19:12.402-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+Hibernate: 
+    alter table respuesta 
+       modify column texto_respuesta TEXT
+2025-06-01T00:19:12.574-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-01T00:19:13.306-04:00  WARN 8940 --- [microservicio_evaluacion] [           main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-01T00:19:13.837-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8084 (http) with context path '/'
+2025-06-01T00:19:13.848-04:00  INFO 8940 --- [microservicio_evaluacion] [           main] c.e.m.MicroservicioEvaluacionApplication : Started MicroservicioEvaluacionApplication in 11.695 seconds (process running for 13.655)
+^C

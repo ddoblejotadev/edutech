@@ -29,8 +29,8 @@ public class PersonaService {
         return personaRepository.findByCorreo(correo);
     }
 
-    public List<Persona> findByTipoPersona(Integer idTipoPersona) {
-        return personaRepository.findByTipoPersonaIdTipoPersona(idTipoPersona);
+    public List<Persona> findByTipoPersona(Long idTipoPersona) {
+        return personaRepository.findByTipoPersonaId(idTipoPersona);
     }
     
     public List<Persona> buscarPorNombre(String nombre) {

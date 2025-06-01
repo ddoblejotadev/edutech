@@ -27,7 +27,7 @@ public class TipoPersonaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TipoPersona> getTipoPersonaById(@PathVariable Integer id) {
+    public ResponseEntity<TipoPersona> getTipoPersonaById(@PathVariable Long id) {
         return tipoPersonaService.findById(id)
                 .map(tipoPersona -> new ResponseEntity<>(tipoPersona, HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -44,10 +44,10 @@ public class TipoPersonaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TipoPersona> updateTipoPersona(@PathVariable Integer id, @RequestBody TipoPersona tipoPersona) {
+    public ResponseEntity<TipoPersona> updateTipoPersona(@PathVariable Long id, @RequestBody TipoPersona tipoPersona) {
         return tipoPersonaService.findById(id)
                 .map(existingTipoPersona -> {
-                    tipoPersona.setIdTipoPersona(id);
+                    tipoPersona.setId(id);
                     TipoPersona updatedTipoPersona = tipoPersonaService.save(tipoPersona);
                     return new ResponseEntity<>(updatedTipoPersona, HttpStatus.OK);
                 })
@@ -55,7 +55,7 @@ public class TipoPersonaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTipoPersona(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteTipoPersona(@PathVariable Long id) {
         return tipoPersonaService.findById(id)
                 .map(tipoPersona -> {
                     tipoPersonaService.deleteById(id);

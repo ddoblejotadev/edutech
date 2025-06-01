@@ -18,7 +18,7 @@ public interface PersonaRepository extends JpaRepository<Persona, Integer> {
     
     Optional<Persona> findByCorreo(String correo);
     
-    List<Persona> findByTipoPersonaIdTipoPersona(Integer idTipoPersona);
+    List<Persona> findByTipoPersonaId(Long idTipoPersona);
     
     List<Persona> findByNombreContainingIgnoreCase(String nombre);
     

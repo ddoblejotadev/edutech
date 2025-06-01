@@ -21,7 +21,7 @@ public class TipoPersonaService {
         return tipoPersonaRepository.findAll();
     }
 
-    public Optional<TipoPersona> findById(Integer id) {
+    public Optional<TipoPersona> findById(Long id) {
         return tipoPersonaRepository.findById(id);
     }
 
@@ -31,7 +31,7 @@ public class TipoPersonaService {
     }
 
     @Transactional
-    public void deleteById(Integer id) {
+    public void deleteById(Long id) {
         tipoPersonaRepository.deleteById(id);
     }
 }

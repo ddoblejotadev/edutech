@@ -27,11 +27,11 @@ public class NotificacionService {
         return notificacionRepository.findById(id).orElse(null);
     }
     
-    public List<Notificacion> getNotificacionesByPersona(String idPersona) {
+    public List<Notificacion> getNotificacionesByPersona(Long idPersona) {
         return notificacionRepository.findByIdPersona(idPersona);
     }
     
-    public List<Notificacion> getNotificacionesNoLeidasByPersona(String idPersona) {
+    public List<Notificacion> getNotificacionesNoLeidasByPersona(Long idPersona) {
         return notificacionRepository.findByIdPersonaAndLeida(idPersona, false);
     }
     
