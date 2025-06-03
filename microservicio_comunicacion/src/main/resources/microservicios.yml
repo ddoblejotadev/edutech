@@ -1,4 +1,0 @@
-# URLs de microservicios
-microservicio:
-  persona:
-    url: http://localhost:8081/api/personas
