@@ -14,7 +14,7 @@
 	<artifactId>edutech-backend</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>edutech-backend</name>
-	<description>EduTech Backend Unificado - Sistema de Gestión Educativa</description>
+	<description>EduTech Backend Unificado - Sistema de GestiÃ³n Educativa</description>
 	
 	<properties>
 		<java.version>17</java.version>
