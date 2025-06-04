@@ -357,7 +357,6 @@ class EvaluacionServiceTest {
         evaluacion.setFechaInicio(LocalDateTime.now().minusHours(1));
         evaluacion.setFechaFin(LocalDateTime.now().plusHours(1));
         
-        LocalDateTime ahora = LocalDateTime.now();
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByActivoTrueAndPublicadaTrueAndFechaInicioBeforeAndFechaFinAfter(any(LocalDateTime.class)))
             .thenReturn(evaluaciones);
@@ -549,7 +548,6 @@ class EvaluacionServiceTest {
         Evaluacion evaluacion = new Evaluacion();
         evaluacion.setFechaFin(LocalDateTime.now().plusHours(12));
         
-        LocalDateTime limite = LocalDateTime.now().plusHours(24);
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByFechaFinBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
             .thenReturn(evaluaciones);
