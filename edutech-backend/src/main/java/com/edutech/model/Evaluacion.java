@@ -1,13 +1,15 @@
 package com.edutech.model;
 
+//Importaciones de Anotaciones JPA
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+
+//Importaciones para Lombok
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+//Importaciones Java
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,77 +18,62 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Evaluacion {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_ejecucion", nullable = false)
-    @NotNull(message = "La ejecución es obligatoria")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ejecucion_id", nullable = false)
     private Ejecucion ejecucion;
-    
+
     @Column(name = "titulo", nullable = false, length = 200)
-    @NotBlank(message = "El título es obligatorio")
-    @Size(min = 5, max = 200, message = "El título debe tener entre 5 y 200 caracteres")
     private String titulo;
-    
-    @Column(name = "descripcion", columnDefinition = "TEXT")
-    @Size(max = 1000, message = "La descripción no puede exceder 1000 caracteres")
+
+    @Column(name = "descripcion", length = 1000)
     private String descripcion;
-    
+
     @Column(name = "tipo", nullable = false, length = 50)
-    @NotBlank(message = "El tipo de evaluación es obligatorio")
-    @Pattern(regexp = "^(PARCIAL|FINAL|QUIZ|TAREA|PROYECTO|PRESENTACION)$", 
-             message = "El tipo debe ser PARCIAL, FINAL, QUIZ, TAREA, PROYECTO o PRESENTACION")
     private String tipo;
-    
-    @Column(name = "fecha_disponible", nullable = false)
-    @NotNull(message = "La fecha disponible es obligatoria")
-    private LocalDateTime fechaDisponible;
-    
-    @Column(name = "fecha_limite", nullable = false)
-    @NotNull(message = "La fecha límite es obligatoria")
-    private LocalDateTime fechaLimite;
-    
-    @Column(name = "duracion_minutos")
-    @Min(value = 1, message = "La duración debe ser al menos 1 minuto")
-    @Max(value = 480, message = "La duración no puede exceder 480 minutos (8 horas)")
+
+    @Column(name = "fecha_inicio", nullable = false)
+    private LocalDateTime fechaInicio;
+
+    @Column(name = "fecha_fin", nullable = false)
+    private LocalDateTime fechaFin;
+
+    @Column(name = "duracion_minutos", nullable = false)
     private Integer duracionMinutos;
-    
-    @Column(name = "puntaje_total", nullable = false)
-    @NotNull(message = "El puntaje total es obligatorio")
-    @DecimalMin(value = "1.0", message = "El puntaje total debe ser al menos 1.0")
-    @DecimalMax(value = "100.0", message = "El puntaje total no puede exceder 100.0")
+
+    @Column(name = "puntaje_total", nullable = false, precision = 5, scale = 2)
     private Double puntajeTotal;
-    
-    @Column(name = "ponderacion", nullable = false)
-    @NotNull(message = "La ponderación es obligatoria")
-    @DecimalMin(value = "0.01", message = "La ponderación debe ser al menos 0.01")
-    @DecimalMax(value = "1.0", message = "La ponderación no puede exceder 1.0")
-    private Double ponderacion;
-    
+
+    @Column(name = "nota_minima", nullable = false, precision = 5, scale = 2)
+    private Double notaMinima;
+
     @Column(name = "intentos_permitidos", nullable = false)
-    @NotNull(message = "Los intentos permitidos son obligatorios")
-    @Min(value = 1, message = "Debe permitir al menos 1 intento")
-    @Max(value = 10, message = "No puede permitir más de 10 intentos")
-    private Integer intentosPermitidos = 1;
-    
-    @Column(name = "activo", nullable = false)
+    private Integer intentosPermitidos;
+
+    @Column(name = "ponderacion", precision = 5, scale = 2)
+    private Double ponderacion;
+
+    @Column(name = "activo")
     private Boolean activo = true;
-    
-    @Column(name = "publicada", nullable = false)
+
+    @Column(name = "publicada")
     private Boolean publicada = false;
-    
+
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion;
-    
+
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
-    
+
     @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Pregunta> preguntas = new ArrayList<>();
-    
+    private List<Pregunta> preguntas;
+
+    @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Calificacion> calificaciones;
+
     @PrePersist
     protected void onCreate() {
         fechaCreacion = LocalDateTime.now();
@@ -104,7 +91,7 @@ public class Evaluacion {
             tipo = tipo.toUpperCase();
         }
     }
-    
+
     @PreUpdate
     protected void onUpdate() {
         fechaActualizacion = LocalDateTime.now();
@@ -112,21 +99,74 @@ public class Evaluacion {
             tipo = tipo.toUpperCase();
         }
     }
-    
+
     // Métodos auxiliares
     public Boolean isDisponible() {
         LocalDateTime now = LocalDateTime.now();
-        return publicada && activo && 
-               now.isAfter(fechaDisponible) && 
-               now.isBefore(fechaLimite);
+        return publicada && activo &&
+                now.isAfter(fechaInicio) &&
+                now.isBefore(fechaFin);
     }
-    
+
     public Boolean isVencida() {
-        return LocalDateTime.now().isAfter(fechaLimite);
+        return LocalDateTime.now().isAfter(fechaFin);
     }
-    
-    @AssertTrue(message = "La fecha límite debe ser posterior a la fecha disponible")
-    public boolean isFechaLimiteValida() {
-        return fechaLimite == null || fechaDisponible == null || fechaLimite.isAfter(fechaDisponible);
-    }
+
+    // Getters and Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public Ejecucion getEjecucion() { return ejecucion; }
+    public void setEjecucion(Ejecucion ejecucion) { this.ejecucion = ejecucion; }
+
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+
+    public LocalDateTime getFechaInicio() { return fechaInicio; }
+    public void setFechaInicio(LocalDateTime fechaInicio) { this.fechaInicio = fechaInicio; }
+
+    public LocalDateTime getFechaFin() { return fechaFin; }
+    public void setFechaFin(LocalDateTime fechaFin) { this.fechaFin = fechaFin; }
+
+    // Alias methods for compatibility
+    public LocalDateTime getFechaDisponible() { return fechaInicio; }
+    public void setFechaDisponible(LocalDateTime fechaDisponible) { this.fechaInicio = fechaDisponible; }
+
+    public LocalDateTime getFechaLimite() { return fechaFin; }
+    public void setFechaLimite(LocalDateTime fechaLimite) { this.fechaFin = fechaLimite; }
+
+    public Integer getDuracionMinutos() { return duracionMinutos; }
+    public void setDuracionMinutos(Integer duracionMinutos) { this.duracionMinutos = duracionMinutos; }
+
+    public Double getPuntajeTotal() { return puntajeTotal; }
+    public void setPuntajeTotal(Double puntajeTotal) { this.puntajeTotal = puntajeTotal; }
+
+    public Double getNotaMinima() { return notaMinima; }
+    public void setNotaMinima(Double notaMinima) { this.notaMinima = notaMinima; }
+
+    public Integer getIntentosPermitidos() { return intentosPermitidos; }
+    public void setIntentosPermitidos(Integer intentosPermitidos) { this.intentosPermitidos = intentosPermitidos; }
+
+    public Double getPonderacion() { return ponderacion; }
+    public void setPonderacion(Double ponderacion) { this.ponderacion = ponderacion; }
+
+    public Boolean getActivo() { return activo; }
+    public void setActivo(Boolean activo) { this.activo = activo; }
+    public void setActivo(boolean activo) { this.activo = activo; }
+
+    public Boolean getPublicada() { return publicada; }
+    public void setPublicada(Boolean publicada) { this.publicada = publicada; }
+    public void setPublicada(boolean publicada) { this.publicada = publicada; }
+
+    public List<Pregunta> getPreguntas() { return preguntas; }
+    public void setPreguntas(List<Pregunta> preguntas) { this.preguntas = preguntas; }
+
+    public List<Calificacion> getCalificaciones() { return calificaciones; }
+    public void setCalificaciones(List<Calificacion> calificaciones) { this.calificaciones = calificaciones; }
 }

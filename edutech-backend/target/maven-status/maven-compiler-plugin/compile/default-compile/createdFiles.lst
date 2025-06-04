@@ -1,7 +1,8 @@
 com\edutech\model\Ejecucion.class
-com\edutech\model\Persona.class
 com\edutech\model\TipoPersona.class
-com\edutech\model\Curso.class
-com\edutech\repository\InscripcionRepository.class
-com\edutech\model\Inscripcion.class
 com\edutech\repository\TipoPersonaRepository.class
+com\edutech\service\InscripcionService.class
+com\edutech\model\Persona.class
+com\edutech\repository\InscripcionRepository.class
+com\edutech\model\Curso.class
+com\edutech\model\Inscripcion.class

@@ -1,12 +1,20 @@
 package com.edutech.repository;
 
+//Importacion Clase Modelo
 import com.edutech.model.Evaluacion;
 import com.edutech.model.Ejecucion;
+
+//Importaciones para BD con SpringData JPA
 import org.springframework.data.jpa.repository.JpaRepository;
+
+//Importaciones personalizaciones JPA
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+//Importacion para funcionamiento de repository
 import org.springframework.stereotype.Repository;
 
+//Importacion de Java
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -92,4 +100,34 @@ public interface EvaluacionRepository extends JpaRepository<Evaluacion, Long> {
            "AND e.fechaHoraInicio > :ahora ORDER BY e.fechaHoraInicio ASC")
     List<Evaluacion> findProximasEvaluacionesDeEjecucion(@Param("ejecucionId") Long ejecucionId, 
                                                          @Param("ahora") LocalDateTime ahora);
+    
+    // Buscar evaluaciones por tipo (case insensitive)
+    List<Evaluacion> findByTipoIgnoreCase(String tipo);
+    
+    // Buscar evaluaciones activas
+    List<Evaluacion> findByActivoTrue();
+    
+    // Buscar evaluaciones publicadas
+    List<Evaluacion> findByPublicadaTrue();
+    
+    // Buscar evaluaciones disponibles (activas, publicadas y en rango de fechas)
+    @Query("SELECT e FROM Evaluacion e WHERE e.activo = true AND e.publicada = true " +
+           "AND e.fechaDisponible <= :ahora AND e.fechaLimite > :ahora")
+    List<Evaluacion> findByActivoTrueAndPublicadaTrueAndFechaDisponibleBeforeAndFechaLimiteAfter(
+            @Param("ahora") LocalDateTime fechaDisponible, @Param("ahora") LocalDateTime fechaLimite);
+    
+    // Buscar evaluaciones futuras por fecha disponible
+    List<Evaluacion> findByFechaDisponibleAfter(LocalDateTime fecha);
+    
+    // Buscar evaluaciones vencidas por fecha límite
+    List<Evaluacion> findByFechaLimiteBefore(LocalDateTime fecha);
+    
+    // Buscar evaluaciones por rango de fechas disponibles
+    List<Evaluacion> findByFechaDisponibleBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
+    
+    // Buscar evaluaciones por rango de puntaje total
+    List<Evaluacion> findByPuntajeTotalBetween(Double puntajeMin, Double puntajeMax);
+    
+    // Buscar evaluaciones por rango de fecha límite
+    List<Evaluacion> findByFechaLimiteBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
 }

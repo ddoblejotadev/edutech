@@ -1,11 +1,8 @@
 package com.edutech.service;
 
 import com.edutech.model.Ejecucion;
-import com.edutech.model.Curso;
-import com.edutech.model.Persona;
 import com.edutech.repository.EjecucionRepository;
 import com.edutech.repository.CursoRepository;
-import com.edutech.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,7 +20,6 @@ public class EjecucionService {
     
     private final EjecucionRepository ejecucionRepository;
     private final CursoRepository cursoRepository;
-    private final PersonaRepository personaRepository;
     
     /**
      * Obtener todas las ejecuciones

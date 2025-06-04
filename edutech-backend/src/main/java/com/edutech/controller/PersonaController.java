@@ -1,26 +1,39 @@
 package com.edutech.controller;
 
+//Importaciones Modelo y Service
 import com.edutech.model.Persona;
 import com.edutech.service.PersonaService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+//Importacion dependencias
+import org.springframework.beans.factory.annotation.Autowired;
+
+//Importaciones respuestas HTTP
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+//Importaciones Controladores REST
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
+//Importaciones para paginación
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+//Importaciones Java
 import java.util.List;
+
+//Importaciones para logging
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/personas")
-@RequiredArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
 public class PersonaController {
-    
-    private final PersonaService personaService;
+
+    private static final Logger log = LoggerFactory.getLogger(PersonaController.class);
+
+    @Autowired
+    private PersonaService personaService;
     
     /**
      * Obtener todas las personas con paginación
@@ -69,7 +82,7 @@ public class PersonaController {
      * Crear nueva persona
      */
     @PostMapping
-    public ResponseEntity<Persona> crear(@Valid @RequestBody Persona persona) {
+    public ResponseEntity<Persona> crearPersona(@RequestBody Persona persona) {
         log.info("POST /api/personas - Creando nueva persona");
         try {
             Persona nuevaPersona = personaService.crear(persona);
@@ -84,11 +97,12 @@ public class PersonaController {
      * Actualizar persona existente
      */
     @PutMapping("/{id}")
-    public ResponseEntity<Persona> actualizar(@PathVariable Long id, @Valid @RequestBody Persona persona) {
+    public ResponseEntity<Persona> actualizarPersona(@PathVariable Long id, @RequestBody Persona personaActualizada) {
         log.info("PUT /api/personas/{} - Actualizando persona", id);
         try {
-            Persona personaActualizada = personaService.actualizar(id, persona);
-            return ResponseEntity.ok(personaActualizada);
+            return personaService.actualizar(id, personaActualizada)
+                    .map(persona -> ResponseEntity.ok(persona))
+                    .orElse(ResponseEntity.notFound().build());
         } catch (IllegalArgumentException e) {
             log.error("Error al actualizar persona: {}", e.getMessage());
             return ResponseEntity.badRequest().build();

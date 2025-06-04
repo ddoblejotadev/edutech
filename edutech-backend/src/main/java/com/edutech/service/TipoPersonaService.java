@@ -67,7 +67,7 @@ public class TipoPersonaService {
         
         return tipoPersonaRepository.findById(id)
                 .map(tipoPersonaExistente -> {
-                    // Verificar que el nuevo nombre no esté en uso por otro tipo
+                    // Verificar que no exista ya otro tipo con ese nombre
                     if (!tipoPersonaExistente.getNombre().equalsIgnoreCase(tipoPersonaActualizado.getNombre()) &&
                         tipoPersonaRepository.existsByNombreIgnoreCase(tipoPersonaActualizado.getNombre())) {
                         throw new IllegalArgumentException("Ya existe un tipo de persona con el nombre: " + tipoPersonaActualizado.getNombre());
@@ -75,6 +75,7 @@ public class TipoPersonaService {
                     
                     tipoPersonaExistente.setNombre(tipoPersonaActualizado.getNombre());
                     tipoPersonaExistente.setDescripcion(tipoPersonaActualizado.getDescripcion());
+                    tipoPersonaExistente.setActivo(tipoPersonaActualizado.getActivo());
                     
                     return tipoPersonaRepository.save(tipoPersonaExistente);
                 })
@@ -87,15 +88,39 @@ public class TipoPersonaService {
     public void eliminar(Long id) {
         log.debug("Eliminando tipo de persona con ID: {}", id);
         
-        TipoPersona tipoPersona = tipoPersonaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Tipo de persona no encontrado con ID: " + id));
-        
-        // Verificar que no tenga personas asociadas
-        if (tipoPersonaRepository.countPersonasAsociadas(id) > 0) {
-            throw new IllegalStateException("No se puede eliminar el tipo de persona porque tiene personas asociadas");
+        if (!tipoPersonaRepository.existsById(id)) {
+            throw new IllegalArgumentException("Tipo de persona no encontrado con ID: " + id);
         }
         
-        tipoPersonaRepository.delete(tipoPersona);
+        // Verificar que no esté siendo usado por ninguna persona
+        Long personasConTipo = tipoPersonaRepository.countPersonasByTipoPersonaId(id);
+        if (personasConTipo > 0) {
+            throw new IllegalStateException("No se puede eliminar el tipo de persona porque está siendo usado por " + personasConTipo + " personas");
+        }
+        
+        tipoPersonaRepository.deleteById(id);
+    }
+    
+    /**
+     * Activar tipo de persona
+     */
+    public void activar(Long id) {
+        log.debug("Activando tipo de persona con ID: {}", id);
+        tipoPersonaRepository.findById(id).ifPresent(tipoPersona -> {
+            tipoPersona.setActivo(true);
+            tipoPersonaRepository.save(tipoPersona);
+        });
+    }
+    
+    /**
+     * Desactivar tipo de persona
+     */
+    public void desactivar(Long id) {
+        log.debug("Desactivando tipo de persona con ID: {}", id);
+        tipoPersonaRepository.findById(id).ifPresent(tipoPersona -> {
+            tipoPersona.setActivo(false);
+            tipoPersonaRepository.save(tipoPersona);
+        });
     }
     
     /**
@@ -116,11 +141,22 @@ public class TipoPersonaService {
     }
     
     /**
+     * Verificar si el tipo de persona está siendo usado
+     */
+    @Transactional(readOnly = true)
+    public boolean tienePersonasAsociadas(Long id) {
+        log.debug("Verificando si el tipo de persona {} tiene personas asociadas", id);
+        Long count = tipoPersonaRepository.countPersonasByTipoPersonaId(id);
+        return count > 0;
+    }
+    
+    /**
      * Contar personas asociadas a un tipo
      */
     @Transactional(readOnly = true)
-    public Long contarPersonasAsociadas(Long tipoPersonaId) {
-        return tipoPersonaRepository.countPersonasAsociadas(tipoPersonaId);
+    public Long contarPersonasAsociadas(Long id) {
+        log.debug("Contando personas asociadas al tipo de persona {}", id);
+        return tipoPersonaRepository.countPersonasByTipoPersonaId(id);
     }
     
     /**

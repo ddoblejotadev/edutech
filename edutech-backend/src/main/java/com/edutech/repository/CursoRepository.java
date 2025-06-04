@@ -1,52 +1,65 @@
 package com.edutech.repository;
 
+//Importacion Clase Modelo
 import com.edutech.model.Curso;
-import com.edutech.model.TipoPersona;
+
+//Importaciones para BD con SpringData JPA
 import org.springframework.data.jpa.repository.JpaRepository;
+
+//Importaciones personalizaciones JPA
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+//Importacion para funcionamiento de repository
 import org.springframework.stereotype.Repository;
 
+//Importacion de Java
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface CursoRepository extends JpaRepository<Curso, Long> {
     
-    // Buscar cursos por nombre (case insensitive)
+    Optional<Curso> findByCodigo(String codigo);
+    
     List<Curso> findByNombreContainingIgnoreCase(String nombre);
     
-    // Buscar cursos por descripción
     List<Curso> findByDescripcionContainingIgnoreCase(String descripcion);
     
-    // Buscar cursos por duración mínima
-    List<Curso> findByDuracionHorasGreaterThanEqual(Integer duracionMinima);
+    List<Curso> findByArea(String area);
     
-    // Buscar cursos por duración en un rango
-    List<Curso> findByDuracionHorasBetween(Integer duracionMin, Integer duracionMax);
+    List<Curso> findByModalidad(String modalidad);
     
-    // Buscar cursos sin prerequisitos
-    @Query("SELECT c FROM Curso c WHERE SIZE(c.prerequisitos) = 0")
-    List<Curso> findCursosSinPrerequisitos();
+    List<Curso> findByNivel(Integer nivel);
     
-    // Buscar cursos con prerequisitos específicos
-    @Query("SELECT c FROM Curso c JOIN c.prerequisitos p WHERE p.id = :prerequisitoId")
-    List<Curso> findCursosConPrerequisito(@Param("prerequisitoId") Long prerequisitoId);
+    List<Curso> findByCreditosBetween(Integer creditosMin, Integer creditosMax);
     
-    // Buscar cursos que pueden ser tomados después de completar un curso específico
-    @Query("SELECT c FROM Curso c WHERE c NOT MEMBER OF :cursoCompletado.prerequisitos")
-    List<Curso> findCursosDisponiblesDespuesDe(@Param("cursoCompletado") Curso cursoCompletado);
+    List<Curso> findByHorasTeoricas(Integer horasTeoricas);
     
-    // Contar cursos por rango de duración
-    @Query("SELECT COUNT(c) FROM Curso c WHERE c.duracionHoras BETWEEN :min AND :max")
-    Long countCursosByDuracionRange(@Param("min") Integer min, @Param("max") Integer max);
+    List<Curso> findByHorasPracticas(Integer horasPracticas);
     
-    // Buscar cursos ordenados por duración
-    List<Curso> findAllByOrderByDuracionHorasAsc();
-    List<Curso> findAllByOrderByDuracionHorasDesc();
+    List<Curso> findByActivoTrue();
     
-    // Buscar cursos ordenados por nombre
     List<Curso> findAllByOrderByNombreAsc();
     
-    // Verificar si un curso existe por nombre
+    List<Curso> findAllByOrderByNivelAsc();
+    
     boolean existsByNombreIgnoreCase(String nombre);
+    
+    boolean existsByCodigo(String codigo);
+    
+    @Query("SELECT c FROM Curso c WHERE c.prerequisitoCursoCodigo IS NULL")
+    List<Curso> findByPrerrequisitoIsNull();
+    
+    @Query("SELECT c FROM Curso c WHERE c.prerequisitoCursoCodigo = :prerequisitoCodigo")
+    List<Curso> findByPrerrequisitoId(@Param("prerequisitoCodigo") String prerequisitoCodigo);
+    
+    @Query("SELECT c FROM Curso c WHERE (c.horasTeoricas + c.horasPracticas) BETWEEN :duracionMin AND :duracionMax")
+    List<Curso> findByDuracionHorasBetween(@Param("duracionMin") Integer duracionMin, @Param("duracionMax") Integer duracionMax);
+    
+    @Query("SELECT c FROM Curso c ORDER BY (c.horasTeoricas + c.horasPracticas) ASC")
+    List<Curso> findAllByOrderByDuracionHorasAsc();
+    
+    @Query("SELECT c FROM Curso c ORDER BY (c.horasTeoricas + c.horasPracticas) DESC")
+    List<Curso> findAllByOrderByDuracionHorasDesc();
 }

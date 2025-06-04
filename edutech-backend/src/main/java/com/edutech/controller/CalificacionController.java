@@ -1,32 +1,35 @@
 package com.edutech.controller;
 
+//Importaciones Modelo y Service
 import com.edutech.model.Calificacion;
 import com.edutech.service.CalificacionService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+
+//Importacion dependencias
+import org.springframework.beans.factory.annotation.Autowired;
+
+//Importaciones respuestas HTTP
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+//Importaciones Controladores REST
 import org.springframework.web.bind.annotation.*;
 
-import jakarta.validation.Valid;
-import java.time.LocalDateTime;
+//Importaciones Java
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/calificaciones")
-@RequiredArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
 public class CalificacionController {
-    
-    private final CalificacionService calificacionService;
+
+    @Autowired
+    private CalificacionService calificacionService;
     
     /**
      * Obtener todas las calificaciones
      */
     @GetMapping
     public ResponseEntity<List<Calificacion>> obtenerTodas() {
-        log.info("GET /api/calificaciones - Obteniendo todas las calificaciones");
         List<Calificacion> calificaciones = calificacionService.obtenerTodas();
         return ResponseEntity.ok(calificaciones);
     }
@@ -36,7 +39,6 @@ public class CalificacionController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<Calificacion> obtenerPorId(@PathVariable Long id) {
-        log.info("GET /api/calificaciones/{} - Obteniendo calificación por ID", id);
         return calificacionService.obtenerPorId(id)
                 .map(calificacion -> ResponseEntity.ok(calificacion))
                 .orElse(ResponseEntity.notFound().build());
@@ -46,13 +48,11 @@ public class CalificacionController {
      * Registrar nueva calificación
      */
     @PostMapping
-    public ResponseEntity<Calificacion> registrar(@Valid @RequestBody Calificacion calificacion) {
-        log.info("POST /api/calificaciones - Registrando nueva calificación");
+    public ResponseEntity<Calificacion> registrar(@RequestBody Calificacion calificacion) {
         try {
             Calificacion nuevaCalificacion = calificacionService.registrar(calificacion);
             return ResponseEntity.status(HttpStatus.CREATED).body(nuevaCalificacion);
         } catch (IllegalArgumentException e) {
-            log.error("Error al registrar calificación: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -62,13 +62,11 @@ public class CalificacionController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<Calificacion> actualizar(@PathVariable Long id, 
-                                                  @Valid @RequestBody Calificacion calificacion) {
-        log.info("PUT /api/calificaciones/{} - Actualizando calificación", id);
+                                                  @RequestBody Calificacion calificacion) {
         try {
             Calificacion calificacionActualizada = calificacionService.actualizar(id, calificacion);
             return ResponseEntity.ok(calificacionActualizada);
         } catch (IllegalArgumentException e) {
-            log.error("Error al actualizar calificación: {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -78,12 +76,10 @@ public class CalificacionController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        log.info("DELETE /api/calificaciones/{} - Eliminando calificación", id);
         try {
             calificacionService.eliminar(id);
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
-            log.error("Error al eliminar calificación: {}", e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -93,7 +89,6 @@ public class CalificacionController {
      */
     @GetMapping("/estudiante/{estudianteId}")
     public ResponseEntity<List<Calificacion>> obtenerPorEstudiante(@PathVariable Long estudianteId) {
-        log.info("GET /api/calificaciones/estudiante/{} - Obteniendo calificaciones por estudiante", estudianteId);
         List<Calificacion> calificaciones = calificacionService.obtenerPorEstudiante(estudianteId);
         return ResponseEntity.ok(calificaciones);
     }
@@ -103,7 +98,6 @@ public class CalificacionController {
      */
     @GetMapping("/evaluacion/{evaluacionId}")
     public ResponseEntity<List<Calificacion>> obtenerPorEvaluacion(@PathVariable Long evaluacionId) {
-        log.info("GET /api/calificaciones/evaluacion/{} - Obteniendo calificaciones por evaluación", evaluacionId);
         List<Calificacion> calificaciones = calificacionService.obtenerPorEvaluacion(evaluacionId);
         return ResponseEntity.ok(calificaciones);
     }
@@ -115,8 +109,6 @@ public class CalificacionController {
     public ResponseEntity<Calificacion> obtenerCalificacionEspecifica(
             @PathVariable Long estudianteId, 
             @PathVariable Long evaluacionId) {
-        log.info("GET /api/calificaciones/estudiante/{}/evaluacion/{} - Obteniendo calificación específica", 
-                estudianteId, evaluacionId);
         return calificacionService.obtenerCalificacionEspecifica(estudianteId, evaluacionId)
                 .map(calificacion -> ResponseEntity.ok(calificacion))
                 .orElse(ResponseEntity.notFound().build());
@@ -129,8 +121,6 @@ public class CalificacionController {
     public ResponseEntity<List<Calificacion>> obtenerPorRangoPuntaje(
             @RequestParam Double puntajeMin,
             @RequestParam Double puntajeMax) {
-        log.info("GET /api/calificaciones/puntaje - Obteniendo calificaciones por rango de puntaje: {} - {}", 
-                puntajeMin, puntajeMax);
         List<Calificacion> calificaciones = calificacionService.obtenerPorRangoPuntaje(puntajeMin, puntajeMax);
         return ResponseEntity.ok(calificaciones);
     }
@@ -140,7 +130,6 @@ public class CalificacionController {
      */
     @GetMapping("/aprobadas")
     public ResponseEntity<List<Calificacion>> obtenerAprobadas() {
-        log.info("GET /api/calificaciones/aprobadas - Obteniendo calificaciones aprobadas");
         List<Calificacion> calificaciones = calificacionService.obtenerAprobadas();
         return ResponseEntity.ok(calificaciones);
     }
@@ -150,7 +139,6 @@ public class CalificacionController {
      */
     @GetMapping("/reprobadas")
     public ResponseEntity<List<Calificacion>> obtenerReprobadas() {
-        log.info("GET /api/calificaciones/reprobadas - Obteniendo calificaciones reprobadas");
         List<Calificacion> calificaciones = calificacionService.obtenerReprobadas();
         return ResponseEntity.ok(calificaciones);
     }
@@ -160,7 +148,6 @@ public class CalificacionController {
      */
     @GetMapping("/evaluacion/{evaluacionId}/promedio")
     public ResponseEntity<Double> calcularPromedioEvaluacion(@PathVariable Long evaluacionId) {
-        log.info("GET /api/calificaciones/evaluacion/{}/promedio - Calculando promedio de evaluación", evaluacionId);
         Double promedio = calificacionService.calcularPromedioEvaluacion(evaluacionId);
         return ResponseEntity.ok(promedio != null ? promedio : 0.0);
     }
@@ -170,7 +157,6 @@ public class CalificacionController {
      */
     @GetMapping("/estudiante/{estudianteId}/promedio")
     public ResponseEntity<Double> calcularPromedioEstudiante(@PathVariable Long estudianteId) {
-        log.info("GET /api/calificaciones/estudiante/{}/promedio - Calculando promedio de estudiante", estudianteId);
         Double promedio = calificacionService.calcularPromedioEstudiante(estudianteId);
         return ResponseEntity.ok(promedio != null ? promedio : 0.0);
     }
@@ -182,8 +168,6 @@ public class CalificacionController {
     public ResponseEntity<Boolean> existeCalificacion(
             @PathVariable Long estudianteId, 
             @PathVariable Long evaluacionId) {
-        log.info("GET /api/calificaciones/existe/estudiante/{}/evaluacion/{} - Verificando existencia de calificación", 
-                estudianteId, evaluacionId);
         boolean existe = calificacionService.existeCalificacion(estudianteId, evaluacionId);
         return ResponseEntity.ok(existe);
     }
@@ -193,12 +177,10 @@ public class CalificacionController {
      */
     @GetMapping("/{id}/porcentaje")
     public ResponseEntity<Double> calcularPorcentaje(@PathVariable Long id) {
-        log.info("GET /api/calificaciones/{}/porcentaje - Calculando porcentaje obtenido", id);
         try {
             Double porcentaje = calificacionService.calcularPorcentaje(id);
             return ResponseEntity.ok(porcentaje);
         } catch (Exception e) {
-            log.error("Error al calcular porcentaje: {}", e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }
@@ -208,12 +190,10 @@ public class CalificacionController {
      */
     @GetMapping("/{id}/aprobada")
     public ResponseEntity<Boolean> estaAprobada(@PathVariable Long id) {
-        log.info("GET /api/calificaciones/{}/aprobada - Verificando si calificación está aprobada", id);
         try {
             boolean aprobada = calificacionService.estaAprobada(id);
             return ResponseEntity.ok(aprobada);
         } catch (Exception e) {
-            log.error("Error al verificar aprobación: {}", e.getMessage());
             return ResponseEntity.notFound().build();
         }
     }

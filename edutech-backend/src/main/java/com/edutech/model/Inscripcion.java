@@ -1,55 +1,52 @@
 package com.edutech.model;
 
+//Importaciones de Anotaciones JPA
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
+//Importaciones para Lombok
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+//Importaciones Java
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "inscripciones", 
-       uniqueConstraints = @UniqueConstraint(columnNames = {"id_ejecucion", "rut_estudiante"}))
+@Table(name = "inscripciones")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Inscripcion {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_ejecucion", nullable = false)
-    @NotNull(message = "La ejecución es obligatoria")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "persona_id", nullable = false)
+    private Persona persona;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ejecucion_id", nullable = false)
     private Ejecucion ejecucion;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "rut_estudiante", nullable = false)
-    @NotNull(message = "El estudiante es obligatorio")
-    private Persona estudiante;
-    
-    @Column(name = "fecha_inscripcion", nullable = false, updatable = false)
-    private LocalDateTime fechaInscripcion;
-    
-    @Column(name = "estado", nullable = false, length = 20)
-    private String estado = "INSCRITO"; // INSCRITO, RETIRADO, REPROBADO, APROBADO
-    
-    @Column(name = "nota_final")
+
+    @Column(name = "fecha_inscripcion", nullable = false)
+    private LocalDateTime fechaInscripcion = LocalDateTime.now();
+
+    @Column(name = "estado", length = 20)
+    private String estado = "ACTIVO";
+
+    @Column(name = "nota_final", precision = 4, scale = 2)
     private Double notaFinal;
-    
-    @Column(name = "activo", nullable = false)
+
+    @Column(name = "activo")
     private Boolean activo = true;
-    
-    @PrePersist
-    protected void onCreate() {
-        fechaInscripcion = LocalDateTime.now();
-        if (activo == null) {
-            activo = true;
-        }
-        if (estado == null) {
-            estado = "INSCRITO";
-        }
+
+    // Alias methods for compatibility
+    public Persona getEstudiante() {
+        return persona;
+    }
+
+    public void setEstudiante(Persona estudiante) {
+        this.persona = estudiante;
     }
 }

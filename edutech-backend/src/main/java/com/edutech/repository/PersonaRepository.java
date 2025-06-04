@@ -1,23 +1,38 @@
 package com.edutech.repository;
 
+//Importacion Clase Modelo
 import com.edutech.model.Persona;
-import com.edutech.model.TipoPersona;
+
+//Importaciones para BD con SpringData JPA
 import org.springframework.data.jpa.repository.JpaRepository;
+
+//Importaciones personalizaciones JPA
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+//Importacion para funcionamiento de repository
 import org.springframework.stereotype.Repository;
 
+//Importacion de Java
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface PersonaRepository extends JpaRepository<Persona, Long> {
     
+    Optional<Persona> findByEmailIgnoreCase(String email);
+    
     Optional<Persona> findByRut(String rut);
     
-    Optional<Persona> findByCorreo(String correo);
+    List<Persona> findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(String nombres, String apellidos);
     
-    List<Persona> findByTipoPersona(TipoPersona tipoPersona);
+    List<Persona> findByTipoPersonaId(Long tipoPersonaId);
+    
+    List<Persona> findByTipoPersonaNombreIgnoreCase(String tipoNombre);
+    
+    boolean existsByRut(String rut);
+    
+    boolean existsByEmailIgnoreCase(String email);
     
     List<Persona> findByActivoTrue();
     
@@ -38,8 +53,4 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
     
     @Query("SELECT p FROM Persona p WHERE p.tipoPersona.nombre = 'PROFESOR' AND p.activo = true ORDER BY p.apellidoPaterno, p.nombres")
     List<Persona> findProfesores();
-    
-    boolean existsByRut(String rut);
-    
-    boolean existsByCorreo(String correo);
 }

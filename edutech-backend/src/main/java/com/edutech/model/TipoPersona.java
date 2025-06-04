@@ -1,11 +1,18 @@
 package com.edutech.model;
 
+//Importaciones de Anotaciones JPA
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+
+//Importaciones para Lombok
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+//Importaciones Java
+import java.util.List;
+
+//Importaciones de Jackson
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "tipos_persona")
@@ -13,27 +20,20 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TipoPersona {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(name = "nombre", unique = true, nullable = false, length = 50)
-    @NotBlank(message = "El nombre del tipo de persona es obligatorio")
-    @Size(min = 3, max = 50, message = "El nombre debe tener entre 3 y 50 caracteres")
     private String nombre;
-    
+
     @Column(name = "descripcion", length = 200)
-    @Size(max = 200, message = "La descripción no puede exceder 200 caracteres")
     private String descripcion;
-    
-    @Column(name = "activo", nullable = false)
+
+    @Column(name = "activo")
     private Boolean activo = true;
-    
-    @PrePersist
-    protected void onCreate() {
-        if (activo == null) {
-            activo = true;
-        }
-    }
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "tipoPersona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Persona> personas;
 }

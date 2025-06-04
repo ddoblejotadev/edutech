@@ -1,12 +1,20 @@
 package com.edutech.repository;
 
+//Importacion Clase Modelo
 import com.edutech.model.Ejecucion;
 import com.edutech.model.Curso;
+
+//Importaciones para BD con SpringData JPA
 import org.springframework.data.jpa.repository.JpaRepository;
+
+//Importaciones personalizaciones JPA
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+//Importacion para funcionamiento de repository
 import org.springframework.stereotype.Repository;
 
+//Importacion de Java
 import java.time.LocalDate;
 import java.util.List;
 
@@ -16,6 +24,13 @@ public interface EjecucionRepository extends JpaRepository<Ejecucion, Long> {
     // Buscar ejecuciones por curso
     List<Ejecucion> findByCurso(Curso curso);
     List<Ejecucion> findByCursoId(Long cursoId);
+    List<Ejecucion> findByCursoOrderByFechaInicioAsc(Curso curso);
+    List<Ejecucion> findByCursoOrderByFechaInicioDesc(Curso curso);
+    
+    boolean existsByCursoIdAndSeccionAndPeriodo(Long cursoId, String seccion, String periodo);
+    
+    @Query("SELECT COUNT(e) > 0 FROM Ejecucion e WHERE e.curso.id = :cursoId AND e.estado = 'ACTIVO'")
+    boolean existeEjecucionActivaParaCurso(@Param("cursoId") Long cursoId);
     
     // Buscar ejecuciones por fechas
     List<Ejecucion> findByFechaInicioBetween(LocalDate fechaInicio, LocalDate fechaFin);
@@ -55,12 +70,4 @@ public interface EjecucionRepository extends JpaRepository<Ejecucion, Long> {
     // Buscar ejecuciones ordenadas por fecha de inicio
     List<Ejecucion> findAllByOrderByFechaInicioAsc();
     List<Ejecucion> findAllByOrderByFechaInicioDesc();
-    
-    // Buscar ejecuciones de un curso ordenadas por fecha
-    List<Ejecucion> findByCursoOrderByFechaInicioAsc(Curso curso);
-    List<Ejecucion> findByCursoOrderByFechaInicioDesc(Curso curso);
-    
-    // Verificar si hay ejecuciones activas para un curso
-    @Query("SELECT COUNT(e) > 0 FROM Ejecucion e WHERE e.curso.id = :cursoId AND e.fechaInicio <= CURRENT_DATE AND e.fechaFin >= CURRENT_DATE")
-    boolean existeEjecucionActivaParaCurso(@Param("cursoId") Long cursoId);
 }

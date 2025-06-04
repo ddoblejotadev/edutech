@@ -1,13 +1,21 @@
 package com.edutech.repository;
 
+//Importacion Clase Modelo
 import com.edutech.model.Calificacion;
-import com.edutech.model.Evaluacion;
 import com.edutech.model.Persona;
+import com.edutech.model.Evaluacion;
+
+//Importaciones para BD con SpringData JPA
 import org.springframework.data.jpa.repository.JpaRepository;
+
+//Importaciones personalizaciones JPA
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+//Importacion para funcionamiento de repository
 import org.springframework.stereotype.Repository;
 
+//Importacion de Java
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

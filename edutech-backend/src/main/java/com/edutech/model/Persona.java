@@ -1,13 +1,19 @@
 package com.edutech.model;
 
+//Importaciones de Anotaciones JPA
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+
+//Importaciones para Lombok
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+//Importaciones Java
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.List;
+
+//Importaciones de Jackson
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "personas")
@@ -15,79 +21,83 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Persona {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @Column(name = "rut", unique = true, nullable = false, length = 12)
-    @NotBlank(message = "El RUT es obligatorio")
-    @Pattern(regexp = "^[0-9]{7,8}-[0-9Kk]$", message = "Formato de RUT inválido")
-    private String rut;
-    
+
+    @Column(name = "dni", unique = true, nullable = false, length = 8)
+    private String dni;
+
     @Column(name = "nombres", nullable = false, length = 100)
-    @NotBlank(message = "Los nombres son obligatorios")
-    @Size(min = 2, max = 100, message = "Los nombres deben tener entre 2 y 100 caracteres")
     private String nombres;
-    
-    @Column(name = "apellido_paterno", nullable = false, length = 50)
-    @NotBlank(message = "El apellido paterno es obligatorio")
-    @Size(min = 2, max = 50, message = "El apellido paterno debe tener entre 2 y 50 caracteres")
-    private String apellidoPaterno;
-    
-    @Column(name = "apellido_materno", length = 50)
-    @Size(max = 50, message = "El apellido materno no puede exceder 50 caracteres")
-    private String apellidoMaterno;
-    
-    @Column(name = "correo", unique = true, nullable = false, length = 100)
-    @NotBlank(message = "El correo es obligatorio")
-    @Email(message = "Formato de correo inválido")
-    @Size(max = 100, message = "El correo no puede exceder 100 caracteres")
-    private String correo;
-    
+
+    @Column(name = "apellidos", nullable = false, length = 100)
+    private String apellidos;
+
+    @Column(name = "direccion", length = 200)
+    private String direccion;
+
+    @Column(name = "email", unique = true, nullable = false, length = 150)
+    private String email;
+
     @Column(name = "telefono", length = 15)
-    @Pattern(regexp = "^[+]?[0-9\\s-()]{8,15}$", message = "Formato de teléfono inválido")
     private String telefono;
-    
+
     @Column(name = "fecha_nacimiento")
-    @Past(message = "La fecha de nacimiento debe ser anterior a hoy")
     private LocalDate fechaNacimiento;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_tipo_persona", nullable = false)
-    @NotNull(message = "El tipo de persona es obligatorio")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "tipo_persona_id", nullable = false)
     private TipoPersona tipoPersona;
-    
-    @Column(name = "activo", nullable = false)
+
+    @Column(name = "activo")
     private Boolean activo = true;
-    
-    @Column(name = "fecha_creacion", nullable = false, updatable = false)
-    private LocalDateTime fechaCreacion;
-    
-    @Column(name = "fecha_actualizacion")
-    private LocalDateTime fechaActualizacion;
-    
-    @PrePersist
-    protected void onCreate() {
-        fechaCreacion = LocalDateTime.now();
-        fechaActualizacion = LocalDateTime.now();
-        if (activo == null) {
-            activo = true;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Inscripcion> inscripciones;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Calificacion> calificaciones;
+
+    // Alias methods for compatibility
+    public String getApellidoPaterno() {
+        if (apellidos != null && apellidos.contains(" ")) {
+            return apellidos.split(" ")[0];
+        }
+        return apellidos;
+    }
+
+    public void setApellidoPaterno(String apellidoPaterno) {
+        String materno = getApellidoMaterno();
+        if (materno != null && !materno.isEmpty()) {
+            this.apellidos = apellidoPaterno + " " + materno;
+        } else {
+            this.apellidos = apellidoPaterno;
         }
     }
-    
-    @PreUpdate
-    protected void onUpdate() {
-        fechaActualizacion = LocalDateTime.now();
-    }
-    
-    // Método auxiliar para obtener nombre completo
-    public String getNombreCompleto() {
-        StringBuilder nombreCompleto = new StringBuilder();
-        nombreCompleto.append(nombres).append(" ").append(apellidoPaterno);
-        if (apellidoMaterno != null && !apellidoMaterno.trim().isEmpty()) {
-            nombreCompleto.append(" ").append(apellidoMaterno);
+
+    public String getApellidoMaterno() {
+        if (apellidos != null && apellidos.contains(" ")) {
+            String[] parts = apellidos.split(" ");
+            return parts.length > 1 ? parts[1] : "";
         }
-        return nombreCompleto.toString();
+        return "";
+    }
+
+    public void setApellidoMaterno(String apellidoMaterno) {
+        String paterno = getApellidoPaterno();
+        if (paterno != null && !paterno.isEmpty()) {
+            this.apellidos = paterno + " " + apellidoMaterno;
+        }
+    }
+
+    public String getCorreo() {
+        return email;
+    }
+
+    public void setCorreo(String correo) {
+        this.email = correo;
     }
 }

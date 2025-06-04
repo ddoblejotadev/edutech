@@ -1,7 +1,6 @@
 package com.edutech.service;
 
 import com.edutech.model.Evaluacion;
-import com.edutech.model.Ejecucion;
 import com.edutech.repository.EvaluacionRepository;
 import com.edutech.repository.EjecucionRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,10 +45,10 @@ public class EvaluacionService {
     public Evaluacion crear(Evaluacion evaluacion) {
         log.debug("Creando nueva evaluación: {}", evaluacion.getTitulo());
         
-        // Validaciones de negocio
+        // Validaciones
         validarEjecucion(evaluacion.getEjecucion().getId());
-        validarDatos(evaluacion);
-        validarFechaHora(evaluacion.getFechaHoraInicio(), evaluacion.getEjecucion());
+        validarFechas(evaluacion.getFechaDisponible(), evaluacion.getFechaLimite());
+        validarPuntaje(evaluacion.getPuntajeTotal());
         
         return evaluacionRepository.save(evaluacion);
     }
@@ -64,23 +63,27 @@ public class EvaluacionService {
                 .map(evaluacionExistente -> {
                     // Validaciones
                     validarEjecucion(evaluacionActualizada.getEjecucion().getId());
-                    validarDatos(evaluacionActualizada);
+                    validarFechas(evaluacionActualizada.getFechaDisponible(), evaluacionActualizada.getFechaLimite());
                     
                     // Verificar que no haya comenzado si se cambia la fecha
-                    if (!evaluacionExistente.getFechaHoraInicio().equals(evaluacionActualizada.getFechaHoraInicio())) {
-                        if (evaluacionExistente.getFechaHoraInicio().isBefore(LocalDateTime.now())) {
+                    if (!evaluacionExistente.getFechaDisponible().equals(evaluacionActualizada.getFechaDisponible())) {
+                        if (evaluacionExistente.getFechaDisponible().isBefore(LocalDateTime.now())) {
                             throw new IllegalStateException("No se puede modificar la fecha de una evaluación que ya comenzó");
                         }
-                        validarFechaHora(evaluacionActualizada.getFechaHoraInicio(), evaluacionActualizada.getEjecucion());
                     }
                     
                     // Actualizar campos
                     evaluacionExistente.setTitulo(evaluacionActualizada.getTitulo());
                     evaluacionExistente.setDescripcion(evaluacionActualizada.getDescripcion());
-                    evaluacionExistente.setFechaHoraInicio(evaluacionActualizada.getFechaHoraInicio());
+                    evaluacionExistente.setTipo(evaluacionActualizada.getTipo());
+                    evaluacionExistente.setFechaDisponible(evaluacionActualizada.getFechaDisponible());
+                    evaluacionExistente.setFechaLimite(evaluacionActualizada.getFechaLimite());
                     evaluacionExistente.setDuracionMinutos(evaluacionActualizada.getDuracionMinutos());
-                    evaluacionExistente.setPuntajeMaximo(evaluacionActualizada.getPuntajeMaximo());
-                    evaluacionExistente.setEjecucion(evaluacionActualizada.getEjecucion());
+                    evaluacionExistente.setPuntajeTotal(evaluacionActualizada.getPuntajeTotal());
+                    evaluacionExistente.setPonderacion(evaluacionActualizada.getPonderacion());
+                    evaluacionExistente.setIntentosPermitidos(evaluacionActualizada.getIntentosPermitidos());
+                    evaluacionExistente.setActivo(evaluacionActualizada.getActivo());
+                    evaluacionExistente.setPublicada(evaluacionActualizada.getPublicada());
                     
                     return evaluacionRepository.save(evaluacionExistente);
                 })
@@ -97,12 +100,9 @@ public class EvaluacionService {
                 .orElseThrow(() -> new IllegalArgumentException("Evaluación no encontrada con ID: " + id));
         
         // Verificar que no haya comenzado
-        if (evaluacion.getFechaHoraInicio().isBefore(LocalDateTime.now())) {
+        if (evaluacion.getFechaDisponible().isBefore(LocalDateTime.now())) {
             throw new IllegalStateException("No se puede eliminar una evaluación que ya comenzó");
         }
-        
-        // Verificar que no tenga calificaciones asociadas
-        // (Esta validación se implementaría con el CalificacionRepository)
         
         evaluacionRepository.delete(evaluacion);
     }
@@ -117,15 +117,6 @@ public class EvaluacionService {
     }
     
     /**
-     * Obtener evaluaciones por curso
-     */
-    @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerPorCurso(Long cursoId) {
-        log.debug("Obteniendo evaluaciones del curso: {}", cursoId);
-        return evaluacionRepository.findEvaluacionesByCurso(cursoId);
-    }
-    
-    /**
      * Buscar evaluaciones por título
      */
     @Transactional(readOnly = true)
@@ -135,12 +126,12 @@ public class EvaluacionService {
     }
     
     /**
-     * Buscar evaluaciones por descripción
+     * Buscar evaluaciones por tipo
      */
     @Transactional(readOnly = true)
-    public List<Evaluacion> buscarPorDescripcion(String descripcion) {
-        log.debug("Buscando evaluaciones por descripción: {}", descripcion);
-        return evaluacionRepository.findByDescripcionContainingIgnoreCase(descripcion);
+    public List<Evaluacion> obtenerPorTipo(String tipo) {
+        log.debug("Obteniendo evaluaciones por tipo: {}", tipo);
+        return evaluacionRepository.findByTipoIgnoreCase(tipo);
     }
     
     /**
@@ -149,7 +140,26 @@ public class EvaluacionService {
     @Transactional(readOnly = true)
     public List<Evaluacion> obtenerActivas() {
         log.debug("Obteniendo evaluaciones activas");
-        return evaluacionRepository.findEvaluacionesActivas(LocalDateTime.now());
+        return evaluacionRepository.findByActivoTrue();
+    }
+    
+    /**
+     * Obtener evaluaciones publicadas
+     */
+    @Transactional(readOnly = true)
+    public List<Evaluacion> obtenerPublicadas() {
+        log.debug("Obteniendo evaluaciones publicadas");
+        return evaluacionRepository.findByPublicadaTrue();
+    }
+    
+    /**
+     * Obtener evaluaciones disponibles
+     */
+    @Transactional(readOnly = true)
+    public List<Evaluacion> obtenerDisponibles() {
+        log.debug("Obteniendo evaluaciones disponibles");
+        LocalDateTime ahora = LocalDateTime.now();
+        return evaluacionRepository.findByActivoTrueAndPublicadaTrueAndFechaDisponibleBeforeAndFechaLimiteAfter(ahora, ahora);
     }
     
     /**
@@ -158,34 +168,25 @@ public class EvaluacionService {
     @Transactional(readOnly = true)
     public List<Evaluacion> obtenerFuturas() {
         log.debug("Obteniendo evaluaciones futuras");
-        return evaluacionRepository.findEvaluacionesFuturas(LocalDateTime.now());
+        return evaluacionRepository.findByFechaDisponibleAfter(LocalDateTime.now());
     }
     
     /**
-     * Obtener evaluaciones pasadas
+     * Obtener evaluaciones vencidas
      */
     @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerPasadas() {
-        log.debug("Obteniendo evaluaciones pasadas");
-        return evaluacionRepository.findEvaluacionesPasadas(LocalDateTime.now());
+    public List<Evaluacion> obtenerVencidas() {
+        log.debug("Obteniendo evaluaciones vencidas");
+        return evaluacionRepository.findByFechaLimiteBefore(LocalDateTime.now());
     }
     
     /**
-     * Obtener evaluaciones por rango de fechas
+     * Obtener evaluaciones por rango de fechas disponibles
      */
     @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerPorRangoFechas(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
-        log.debug("Obteniendo evaluaciones entre {} y {}", fechaInicio, fechaFin);
-        return evaluacionRepository.findByFechaHoraInicioBetween(fechaInicio, fechaFin);
-    }
-    
-    /**
-     * Obtener evaluaciones por rango de duración
-     */
-    @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerPorRangoDuracion(Integer duracionMin, Integer duracionMax) {
-        log.debug("Obteniendo evaluaciones con duración entre {} y {} minutos", duracionMin, duracionMax);
-        return evaluacionRepository.findByDuracionMinutosBetween(duracionMin, duracionMax);
+    public List<Evaluacion> obtenerPorRangoFechasDisponibles(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+        log.debug("Obteniendo evaluaciones con fecha disponible entre {} y {}", fechaInicio, fechaFin);
+        return evaluacionRepository.findByFechaDisponibleBetween(fechaInicio, fechaFin);
     }
     
     /**
@@ -194,39 +195,42 @@ public class EvaluacionService {
     @Transactional(readOnly = true)
     public List<Evaluacion> obtenerPorRangoPuntaje(Double puntajeMin, Double puntajeMax) {
         log.debug("Obteniendo evaluaciones con puntaje entre {} y {}", puntajeMin, puntajeMax);
-        return evaluacionRepository.findByPuntajeMaximoBetween(puntajeMin, puntajeMax);
+        return evaluacionRepository.findByPuntajeTotalBetween(puntajeMin, puntajeMax);
     }
     
     /**
-     * Obtener evaluaciones de una ejecución ordenadas por fecha
+     * Verificar si una evaluación está disponible
      */
     @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerPorEjecucionOrdenadas(Long ejecucionId, boolean ascendente) {
-        log.debug("Obteniendo evaluaciones de ejecución {} ordenadas por fecha: {}", ejecucionId, ascendente ? "ascendente" : "descendente");
-        
-        return ejecucionRepository.findById(ejecucionId)
-                .map(ejecucion -> ascendente ? 
-                     evaluacionRepository.findByEjecucionOrderByFechaHoraInicioAsc(ejecucion) : 
-                     evaluacionRepository.findByEjecucionOrderByFechaHoraInicioDesc(ejecucion))
-                .orElse(List.of());
+    public boolean estaDisponible(Long evaluacionId) {
+        return evaluacionRepository.findById(evaluacionId)
+                .map(Evaluacion::isDisponible)
+                .orElse(false);
     }
     
     /**
-     * Obtener evaluaciones con preguntas
+     * Verificar si una evaluación está vencida
      */
     @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerConPreguntas() {
-        log.debug("Obteniendo evaluaciones que tienen preguntas");
-        return evaluacionRepository.findEvaluacionesConPreguntas();
+    public boolean estaVencida(Long evaluacionId) {
+        return evaluacionRepository.findById(evaluacionId)
+                .map(Evaluacion::isVencida)
+                .orElse(true);
     }
     
     /**
-     * Obtener evaluaciones sin preguntas
+     * Obtener tiempo restante para una evaluación
      */
     @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerSinPreguntas() {
-        log.debug("Obteniendo evaluaciones sin preguntas");
-        return evaluacionRepository.findEvaluacionesSinPreguntas();
+    public Optional<Long> obtenerTiempoRestante(Long evaluacionId) {
+        return evaluacionRepository.findById(evaluacionId)
+                .map(evaluacion -> {
+                    LocalDateTime ahora = LocalDateTime.now();
+                    if (evaluacion.getFechaLimite().isAfter(ahora)) {
+                        return java.time.Duration.between(ahora, evaluacion.getFechaLimite()).toMinutes();
+                    }
+                    return 0L;
+                });
     }
     
     /**
@@ -238,43 +242,57 @@ public class EvaluacionService {
     }
     
     /**
-     * Contar preguntas en una evaluación
+     * Obtener evaluaciones próximas a vencer
      */
     @Transactional(readOnly = true)
-    public Integer contarPreguntas(Long evaluacionId) {
-        return evaluacionRepository.countPreguntasEnEvaluacion(evaluacionId);
+    public List<Evaluacion> obtenerProximasAVencer(int horas) {
+        log.debug("Obteniendo evaluaciones que vencen en las próximas {} horas", horas);
+        LocalDateTime limite = LocalDateTime.now().plusHours(horas);
+        return evaluacionRepository.findByFechaLimiteBetween(LocalDateTime.now(), limite);
     }
     
     /**
-     * Obtener próximas evaluaciones de una ejecución
+     * Activar evaluación
      */
-    @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerProximasEvaluaciones(Long ejecucionId) {
-        log.debug("Obteniendo próximas evaluaciones de la ejecución: {}", ejecucionId);
-        return evaluacionRepository.findProximasEvaluacionesDeEjecucion(ejecucionId, LocalDateTime.now());
+    public void activar(Long id) {
+        log.debug("Activando evaluación con ID: {}", id);
+        evaluacionRepository.findById(id).ifPresent(evaluacion -> {
+            evaluacion.setActivo(true);
+            evaluacionRepository.save(evaluacion);
+        });
     }
     
     /**
-     * Verificar si una evaluación está activa
+     * Desactivar evaluación
      */
-    @Transactional(readOnly = true)
-    public boolean estaActiva(Long evaluacionId) {
-        return evaluacionRepository.findById(evaluacionId)
-                .map(evaluacion -> {
-                    LocalDateTime ahora = LocalDateTime.now();
-                    LocalDateTime fin = evaluacion.getFechaHoraInicio().plusMinutes(evaluacion.getDuracionMinutos());
-                    return !ahora.isBefore(evaluacion.getFechaHoraInicio()) && ahora.isBefore(fin);
-                })
-                .orElse(false);
+    public void desactivar(Long id) {
+        log.debug("Desactivando evaluación con ID: {}", id);
+        evaluacionRepository.findById(id).ifPresent(evaluacion -> {
+            evaluacion.setActivo(false);
+            evaluacionRepository.save(evaluacion);
+        });
     }
     
     /**
-     * Obtener fecha y hora de fin de una evaluación
+     * Publicar evaluación
      */
-    @Transactional(readOnly = true)
-    public Optional<LocalDateTime> obtenerFechaHoraFin(Long evaluacionId) {
-        return evaluacionRepository.findById(evaluacionId)
-                .map(evaluacion -> evaluacion.getFechaHoraInicio().plusMinutes(evaluacion.getDuracionMinutos()));
+    public void publicar(Long id) {
+        log.debug("Publicando evaluación con ID: {}", id);
+        evaluacionRepository.findById(id).ifPresent(evaluacion -> {
+            evaluacion.setPublicada(true);
+            evaluacionRepository.save(evaluacion);
+        });
+    }
+    
+    /**
+     * Despublicar evaluación
+     */
+    public void despublicar(Long id) {
+        log.debug("Despublicando evaluación con ID: {}", id);
+        evaluacionRepository.findById(id).ifPresent(evaluacion -> {
+            evaluacion.setPublicada(false);
+            evaluacionRepository.save(evaluacion);
+        });
     }
     
     // Métodos de validación privados
@@ -285,37 +303,29 @@ public class EvaluacionService {
         }
     }
     
-    private void validarDatos(Evaluacion evaluacion) {
-        if (evaluacion.getTitulo() == null || evaluacion.getTitulo().trim().isEmpty()) {
-            throw new IllegalArgumentException("El título de la evaluación es obligatorio");
+    private void validarFechas(LocalDateTime fechaDisponible, LocalDateTime fechaLimite) {
+        LocalDateTime ahora = LocalDateTime.now();
+        
+        if (fechaDisponible == null || fechaLimite == null) {
+            throw new IllegalArgumentException("Las fechas de disponibilidad y límite son obligatorias");
         }
         
-        if (evaluacion.getDuracionMinutos() == null || evaluacion.getDuracionMinutos() <= 0) {
-            throw new IllegalArgumentException("La duración debe ser mayor a 0 minutos");
+        if (fechaDisponible.isBefore(ahora)) {
+            throw new IllegalArgumentException("La fecha de disponibilidad no puede ser anterior al momento actual");
         }
         
-        if (evaluacion.getDuracionMinutos() > 480) { // 8 horas máximo
-            throw new IllegalArgumentException("La duración no puede exceder 480 minutos (8 horas)");
-        }
-        
-        if (evaluacion.getPuntajeMaximo() == null || evaluacion.getPuntajeMaximo() <= 0) {
-            throw new IllegalArgumentException("El puntaje máximo debe ser mayor a 0");
+        if (fechaLimite.isBefore(fechaDisponible)) {
+            throw new IllegalArgumentException("La fecha límite no puede ser anterior a la fecha de disponibilidad");
         }
     }
     
-    private void validarFechaHora(LocalDateTime fechaHora, Ejecucion ejecucion) {
-        if (fechaHora == null) {
-            throw new IllegalArgumentException("La fecha y hora de inicio son obligatorias");
+    private void validarPuntaje(Double puntajeTotal) {
+        if (puntajeTotal == null || puntajeTotal <= 0) {
+            throw new IllegalArgumentException("El puntaje total debe ser mayor a 0");
         }
         
-        if (fechaHora.isBefore(LocalDateTime.now())) {
-            throw new IllegalArgumentException("La fecha y hora de inicio no pueden ser anteriores al momento actual");
-        }
-        
-        // Verificar que esté dentro del período de la ejecución
-        if (fechaHora.toLocalDate().isBefore(ejecucion.getFechaInicio()) || 
-            fechaHora.toLocalDate().isAfter(ejecucion.getFechaFin())) {
-            throw new IllegalArgumentException("La evaluación debe realizarse durante el período de la ejecución");
+        if (puntajeTotal > 100.0) {
+            throw new IllegalArgumentException("El puntaje total no puede exceder 100.0");
         }
     }
 }

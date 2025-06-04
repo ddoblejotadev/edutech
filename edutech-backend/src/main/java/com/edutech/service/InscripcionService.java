@@ -1,17 +1,16 @@
 package com.edutech.service;
 
 import com.edutech.model.Inscripcion;
-import com.edutech.model.Ejecucion;
 import com.edutech.model.Persona;
 import com.edutech.repository.InscripcionRepository;
-import com.edutech.repository.EjecucionRepository;
 import com.edutech.repository.PersonaRepository;
+import com.edutech.repository.EjecucionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +21,8 @@ import java.util.Optional;
 public class InscripcionService {
     
     private final InscripcionRepository inscripcionRepository;
-    private final EjecucionRepository ejecucionRepository;
     private final PersonaRepository personaRepository;
+    private final EjecucionRepository ejecucionRepository;
     
     /**
      * Obtener todas las inscripciones
@@ -44,79 +43,105 @@ public class InscripcionService {
     }
     
     /**
+     * Crear nueva inscripción
+     */
+    public Inscripcion crear(Inscripcion inscripcion) {
+        log.debug("Creando nueva inscripción");
+        
+        // Validaciones básicas
+        validarInscripcion(inscripcion);
+        
+        // Establecer fecha de inscripción
+        inscripcion.setFechaInscripcion(LocalDateTime.now());
+        
+        return inscripcionRepository.save(inscripcion);
+    }
+    
+    /**
+     * Actualizar inscripción existente
+     */
+    public Optional<Inscripcion> actualizar(Long id, Inscripcion inscripcionActualizada) {
+        log.debug("Actualizando inscripción con ID: {}", id);
+        
+        return inscripcionRepository.findById(id)
+                .map(inscripcionExistente -> {
+                    inscripcionExistente.setEjecucion(inscripcionActualizada.getEjecucion());
+                    inscripcionExistente.setEstudiante(inscripcionActualizada.getEstudiante());
+                    inscripcionExistente.setEstado(inscripcionActualizada.getEstado());
+                    inscripcionExistente.setNotaFinal(inscripcionActualizada.getNotaFinal());
+                    inscripcionExistente.setActivo(inscripcionActualizada.getActivo());
+                    return inscripcionRepository.save(inscripcionExistente);
+                });
+    }
+    
+    /**
+     * Eliminar inscripción
+     */
+    public boolean eliminar(Long id) {
+        log.debug("Eliminando inscripción con ID: {}", id);
+        if (inscripcionRepository.existsById(id)) {
+            inscripcionRepository.deleteById(id);
+            return true;
+        }
+        return false;
+    }
+    
+    /**
      * Inscribir estudiante en una ejecución
      */
     public Inscripcion inscribir(Long estudianteId, Long ejecucionId) {
         log.debug("Inscribiendo estudiante {} en ejecución {}", estudianteId, ejecucionId);
         
-        // Validar que el estudiante y la ejecución existan
+        // Verificar que el estudiante existe
         Persona estudiante = personaRepository.findById(estudianteId)
-                .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado con ID: " + estudianteId));
+                .orElseThrow(() -> new IllegalArgumentException("Estudiante no encontrado"));
         
-        Ejecucion ejecucion = ejecucionRepository.findById(ejecucionId)
-                .orElseThrow(() -> new IllegalArgumentException("Ejecución no encontrada con ID: " + ejecucionId));
+        // Verificar que la ejecución existe
+        var ejecucion = ejecucionRepository.findById(ejecucionId)
+                .orElseThrow(() -> new IllegalArgumentException("Ejecución no encontrada"));
         
-        // Validaciones de negocio
-        validarInscripcion(estudiante, ejecucion);
+        // Verificar que no esté ya inscrito
+        if (inscripcionRepository.existsByEstudianteIdAndEjecucionId(estudianteId, ejecucionId)) {
+            throw new IllegalStateException("El estudiante ya está inscrito en esta ejecución");
+        }
         
-        // Crear la inscripción
+        // Crear inscripción
         Inscripcion inscripcion = new Inscripcion();
         inscripcion.setEstudiante(estudiante);
         inscripcion.setEjecucion(ejecucion);
-        inscripcion.setFechaInscripcion(LocalDate.now());
+        inscripcion.setFechaInscripcion(LocalDateTime.now());
+        inscripcion.setEstado("ACTIVA");
+        inscripcion.setActivo(true);
         
         return inscripcionRepository.save(inscripcion);
     }
     
     /**
-     * Crear inscripción con fecha específica
+     * Cancelar inscripción por ID
      */
-    public Inscripcion crear(Inscripcion inscripcion) {
-        log.debug("Creando inscripción para estudiante {} en ejecución {}", 
-                  inscripcion.getEstudiante().getId(), inscripcion.getEjecucion().getId());
+    public void cancelarInscripcion(Long inscripcionId) {
+        log.debug("Cancelando inscripción con ID: {}", inscripcionId);
         
-        // Validar que el estudiante y la ejecución existan
-        validarEstudianteYEjecucion(inscripcion.getEstudiante().getId(), inscripcion.getEjecucion().getId());
+        Inscripcion inscripcion = inscripcionRepository.findById(inscripcionId)
+                .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada"));
         
-        // Validaciones de negocio
-        validarInscripcion(inscripcion.getEstudiante(), inscripcion.getEjecucion());
-        
-        // Asignar fecha de inscripción si no está definida
-        if (inscripcion.getFechaInscripcion() == null) {
-            inscripcion.setFechaInscripcion(LocalDate.now());
-        }
-        
-        return inscripcionRepository.save(inscripcion);
-    }
-    
-    /**
-     * Cancelar inscripción
-     */
-    public void cancelarInscripcion(Long id) {
-        log.debug("Cancelando inscripción con ID: {}", id);
-        
-        Inscripcion inscripcion = inscripcionRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada con ID: " + id));
-        
-        // Verificar que la ejecución no haya comenzado
-        if (inscripcion.getEjecucion().getFechaInicio().isBefore(LocalDate.now()) || 
-            inscripcion.getEjecucion().getFechaInicio().isEqual(LocalDate.now())) {
-            throw new IllegalStateException("No se puede cancelar la inscripción porque la ejecución ya comenzó");
-        }
-        
-        inscripcionRepository.delete(inscripcion);
+        inscripcion.setEstado("CANCELADA");
+        inscripcion.setActivo(false);
+        inscripcionRepository.save(inscripcion);
     }
     
     /**
      * Cancelar inscripción por estudiante y ejecución
      */
     public void cancelarInscripcion(Long estudianteId, Long ejecucionId) {
-        log.debug("Cancelando inscripción del estudiante {} en ejecución {}", estudianteId, ejecucionId);
+        log.debug("Cancelando inscripción de estudiante {} en ejecución {}", estudianteId, ejecucionId);
         
         Inscripcion inscripcion = inscripcionRepository.findByEstudianteIdAndEjecucionId(estudianteId, ejecucionId)
                 .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada"));
         
-        cancelarInscripcion(inscripcion.getId());
+        inscripcion.setEstado("CANCELADA");
+        inscripcion.setActivo(false);
+        inscripcionRepository.save(inscripcion);
     }
     
     /**
@@ -142,8 +167,7 @@ public class InscripcionService {
      */
     @Transactional(readOnly = true)
     public List<Inscripcion> obtenerActivasDeEstudiante(Long estudianteId) {
-        log.debug("Obteniendo inscripciones activas del estudiante: {}", estudianteId);
-        return inscripcionRepository.findInscripcionesActivasDeEstudiante(estudianteId);
+        return inscripcionRepository.findByEstudianteIdAndActivoTrue(estudianteId);
     }
     
     /**
@@ -151,8 +175,7 @@ public class InscripcionService {
      */
     @Transactional(readOnly = true)
     public List<Inscripcion> obtenerFuturasDeEstudiante(Long estudianteId) {
-        log.debug("Obteniendo inscripciones futuras del estudiante: {}", estudianteId);
-        return inscripcionRepository.findInscripcionesFuturasDeEstudiante(estudianteId);
+        return inscripcionRepository.findInscripcionesFuturasByEstudiante(estudianteId);
     }
     
     /**
@@ -160,17 +183,7 @@ public class InscripcionService {
      */
     @Transactional(readOnly = true)
     public List<Inscripcion> obtenerPasadasDeEstudiante(Long estudianteId) {
-        log.debug("Obteniendo inscripciones pasadas del estudiante: {}", estudianteId);
-        return inscripcionRepository.findInscripcionesPasadasDeEstudiante(estudianteId);
-    }
-    
-    /**
-     * Obtener inscripciones por rango de fechas
-     */
-    @Transactional(readOnly = true)
-    public List<Inscripcion> obtenerPorRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) {
-        log.debug("Obteniendo inscripciones entre {} y {}", fechaInicio, fechaFin);
-        return inscripcionRepository.findByFechaInscripcionBetween(fechaInicio, fechaFin);
+        return inscripcionRepository.findInscripcionesPasadasByEstudiante(estudianteId);
     }
     
     /**
@@ -178,8 +191,7 @@ public class InscripcionService {
      */
     @Transactional(readOnly = true)
     public List<Persona> obtenerEstudiantesInscritos(Long ejecucionId) {
-        log.debug("Obteniendo estudiantes inscritos en ejecución: {}", ejecucionId);
-        return inscripcionRepository.findEstudiantesInscritosEnEjecucion(ejecucionId);
+        return inscripcionRepository.findEstudiantesByEjecucionId(ejecucionId);
     }
     
     /**
@@ -187,8 +199,7 @@ public class InscripcionService {
      */
     @Transactional(readOnly = true)
     public List<Inscripcion> obtenerPorCurso(Long cursoId) {
-        log.debug("Obteniendo inscripciones del curso: {}", cursoId);
-        return inscripcionRepository.findInscripcionesByCurso(cursoId);
+        return inscripcionRepository.findByCursoId(cursoId);
     }
     
     /**
@@ -212,7 +223,7 @@ public class InscripcionService {
      */
     @Transactional(readOnly = true)
     public boolean estaInscrito(Long estudianteId, Long ejecucionId) {
-        return inscripcionRepository.existsByEstudianteIdAndEjecucionId(estudianteId, ejecucionId);
+        return inscripcionRepository.existsByEstudianteIdAndEjecucionIdAndActivoTrue(estudianteId, ejecucionId);
     }
     
     /**
@@ -220,7 +231,7 @@ public class InscripcionService {
      */
     @Transactional(readOnly = true)
     public boolean estaInscritoEnCurso(Long estudianteId, Long cursoId) {
-        return inscripcionRepository.existeInscripcionEnCurso(estudianteId, cursoId);
+        return inscripcionRepository.existsByEstudianteIdAndCursoId(estudianteId, cursoId);
     }
     
     /**
@@ -228,54 +239,18 @@ public class InscripcionService {
      */
     @Transactional(readOnly = true)
     public List<Inscripcion> obtenerUltimas() {
-        log.debug("Obteniendo últimas inscripciones");
-        return inscripcionRepository.findUltimasInscripciones();
-    }
-    
-    /**
-     * Obtener inscripciones de un estudiante ordenadas por fecha
-     */
-    @Transactional(readOnly = true)
-    public List<Inscripcion> obtenerPorEstudianteOrdenadas(Long estudianteId) {
-        log.debug("Obteniendo inscripciones del estudiante {} ordenadas por fecha", estudianteId);
-        return inscripcionRepository.findByEstudianteIdOrderByFechaInscripcionDesc(estudianteId);
+        return inscripcionRepository.findTop10ByOrderByFechaInscripcionDesc();
     }
     
     // Métodos de validación privados
     
-    private void validarInscripcion(Persona estudiante, Ejecucion ejecucion) {
-        // Verificar que sea un estudiante
-        if (!estudiante.getTipoPersona().getNombre().equalsIgnoreCase("Estudiante")) {
-            throw new IllegalArgumentException("Solo los estudiantes pueden inscribirse en cursos");
+    private void validarInscripcion(Inscripcion inscripcion) {
+        if (inscripcion.getEstudiante() == null || inscripcion.getEstudiante().getId() == null) {
+            throw new IllegalArgumentException("El estudiante es obligatorio");
         }
         
-        // Verificar que no esté ya inscrito
-        if (inscripcionRepository.existsByEstudianteIdAndEjecucionId(estudiante.getId(), ejecucion.getId())) {
-            throw new IllegalArgumentException("El estudiante ya está inscrito en esta ejecución");
-        }
-        
-        // Verificar que la ejecución no esté llena
-        Integer inscritosActuales = inscripcionRepository.countByEjecucionId(ejecucion.getId());
-        if (inscritosActuales >= ejecucion.getCuposDisponibles()) {
-            throw new IllegalArgumentException("La ejecución está llena (cupo máximo: " + ejecucion.getCuposDisponibles() + ")");
-        }
-        
-        // Verificar que la ejecución no haya comenzado
-        if (ejecucion.getFechaInicio().isBefore(LocalDate.now())) {
-            throw new IllegalArgumentException("No se puede inscribir en una ejecución que ya comenzó");
-        }
-        
-        // Verificar prerequisitos del curso
-        // TODO: Implementar validación de prerequisitos cuando tengamos historial académico
-    }
-    
-    private void validarEstudianteYEjecucion(Long estudianteId, Long ejecucionId) {
-        if (!personaRepository.existsById(estudianteId)) {
-            throw new IllegalArgumentException("Estudiante no encontrado con ID: " + estudianteId);
-        }
-        
-        if (!ejecucionRepository.existsById(ejecucionId)) {
-            throw new IllegalArgumentException("Ejecución no encontrada con ID: " + ejecucionId);
+        if (inscripcion.getEjecucion() == null || inscripcion.getEjecucion().getId() == null) {
+            throw new IllegalArgumentException("La ejecución es obligatoria");
         }
     }
 }

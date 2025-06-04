@@ -1,11 +1,14 @@
 package com.edutech.model;
 
+//Importaciones de Anotaciones JPA
 import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+
+//Importaciones para Lombok
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+//Importaciones Java
 import java.time.LocalDateTime;
 
 @Entity
@@ -14,98 +17,67 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Calificacion {
-    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_evaluacion", nullable = false)
-    @NotNull(message = "La evaluación es obligatoria")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "persona_id", nullable = false)
+    private Persona persona;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "evaluacion_id", nullable = false)
     private Evaluacion evaluacion;
-    
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "rut_estudiante", nullable = false)
-    @NotNull(message = "El estudiante es obligatorio")
-    private Persona estudiante;
-    
-    @Column(name = "intento", nullable = false)
-    @NotNull(message = "El número de intento es obligatorio")
-    @Min(value = 1, message = "El intento debe ser al menos 1")
-    private Integer intento = 1;
-    
-    @Column(name = "puntaje_obtenido", nullable = false)
-    @NotNull(message = "El puntaje obtenido es obligatorio")
-    @DecimalMin(value = "0.0", message = "El puntaje no puede ser negativo")
+
+    @Column(name = "numero_intento", nullable = false)
+    private Integer numeroIntento;
+
+    @Column(name = "puntaje_obtenido", nullable = false, precision = 5, scale = 2)
     private Double puntajeObtenido;
-    
-    @Column(name = "nota", nullable = false)
-    @NotNull(message = "La nota es obligatoria")
-    @DecimalMin(value = "1.0", message = "La nota mínima es 1.0")
-    @DecimalMax(value = "7.0", message = "La nota máxima es 7.0")
-    private Double nota;
-    
-    @Column(name = "fecha_inicio", nullable = false)
-    @NotNull(message = "La fecha de inicio es obligatoria")
-    private LocalDateTime fechaInicio;
-    
-    @Column(name = "fecha_entrega")
-    private LocalDateTime fechaEntrega;
-    
-    @Column(name = "tiempo_utilizado_minutos")
-    @Min(value = 0, message = "El tiempo utilizado no puede ser negativo")
-    private Integer tiempoUtilizadoMinutos;
-    
-    @Column(name = "estado", nullable = false, length = 20)
-    @NotBlank(message = "El estado es obligatorio")
-    @Pattern(regexp = "^(EN_PROGRESO|ENTREGADA|CALIFICADA|VENCIDA)$", 
-             message = "El estado debe ser EN_PROGRESO, ENTREGADA, CALIFICADA o VENCIDA")
-    private String estado = "EN_PROGRESO";
-    
-    @Column(name = "observaciones", columnDefinition = "TEXT")
-    @Size(max = 1000, message = "Las observaciones no pueden exceder 1000 caracteres")
+
+    @Column(name = "puntaje_maximo", nullable = false, precision = 5, scale = 2)
+    private Double puntajeMaximo;
+
+    @Column(name = "fecha_realizacion", nullable = false)
+    private LocalDateTime fechaRealizacion;
+
+    @Column(name = "tiempo_empleado")
+    private Integer tiempoEmpleado;
+
+    @Column(name = "estado", length = 20)
+    private String estado;
+
+    @Column(name = "observaciones", length = 500)
     private String observaciones;
+
+    @Column(name = "nota", precision = 4, scale = 2)
+    private Double nota;
+
+    // Alias methods for compatibility
+    public Persona getEstudiante() { return persona; }
+    public void setEstudiante(Persona estudiante) { this.persona = estudiante; }
     
-    @Column(name = "fecha_calificacion")
-    private LocalDateTime fechaCalificacion;
+    public Integer getIntento() { return numeroIntento; }
+    public void setIntento(Integer intento) { this.numeroIntento = intento; }
     
-    @PrePersist
-    protected void onCreate() {
-        if (fechaInicio == null) {
-            fechaInicio = LocalDateTime.now();
-        }
-        if (intento == null) {
-            intento = 1;
-        }
-        if (estado == null) {
-            estado = "EN_PROGRESO";
-        }
-    }
+    public LocalDateTime getFechaEntrega() { return fechaRealizacion; }
+    public void setFechaEntrega(LocalDateTime fechaEntrega) { this.fechaRealizacion = fechaEntrega; }
     
-    @PreUpdate
-    protected void onUpdate() {
-        if ("CALIFICADA".equals(estado) && fechaCalificacion == null) {
-            fechaCalificacion = LocalDateTime.now();
-        }
-    }
-    
-    // Métodos auxiliares
-    public Boolean isAprobada() {
-        return nota != null && nota >= 4.0;
-    }
-    
-    public Boolean isEntregada() {
-        return "ENTREGADA".equals(estado) || "CALIFICADA".equals(estado);
-    }
-    
-    public Boolean isVencida() {
-        return "VENCIDA".equals(estado);
-    }
-    
+    public Integer getTiempoUtilizadoMinutos() { return tiempoEmpleado; }
+    public void setTiempoUtilizadoMinutos(Integer tiempo) { this.tiempoEmpleado = tiempo; }
+
+    // Business methods
     public Double getPorcentajeObtenido() {
-        if (puntajeObtenido == null || evaluacion == null || evaluacion.getPuntajeTotal() == null) {
-            return 0.0;
+        if (puntajeMaximo != null && puntajeMaximo > 0) {
+            return (puntajeObtenido / puntajeMaximo) * 100;
         }
-        return (puntajeObtenido / evaluacion.getPuntajeTotal()) * 100.0;
+        return 0.0;
+    }
+
+    public boolean isAprobada() {
+        if (evaluacion != null && evaluacion.getNotaMinima() != null && nota != null) {
+            return nota >= evaluacion.getNotaMinima();
+        }
+        return false;
     }
 }
