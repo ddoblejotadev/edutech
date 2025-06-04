@@ -81,6 +81,11 @@ public class InscripcionService {
         // Validaciones de negocio
         validarInscripcion(inscripcion.getEstudiante(), inscripcion.getEjecucion());
         
+        // Asignar fecha de inscripción si no está definida
+        if (inscripcion.getFechaInscripcion() == null) {
+            inscripcion.setFechaInscripcion(LocalDate.now());
+        }
+        
         return inscripcionRepository.save(inscripcion);
     }
     
@@ -94,9 +99,7 @@ public class InscripcionService {
                 .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada con ID: " + id));
         
         // Verificar que la ejecución no haya comenzado
-        if (inscripcion.getEjecucion().getFecha
-
-Inicio().isBefore(LocalDate.now()) || 
+        if (inscripcion.getEjecucion().getFechaInicio().isBefore(LocalDate.now()) || 
             inscripcion.getEjecucion().getFechaInicio().isEqual(LocalDate.now())) {
             throw new IllegalStateException("No se puede cancelar la inscripción porque la ejecución ya comenzó");
         }
@@ -253,8 +256,8 @@ Inicio().isBefore(LocalDate.now()) ||
         
         // Verificar que la ejecución no esté llena
         Integer inscritosActuales = inscripcionRepository.countByEjecucionId(ejecucion.getId());
-        if (inscritosActuales >= ejecucion.getCupoMaximo()) {
-            throw new IllegalArgumentException("La ejecución está llena (cupo máximo: " + ejecucion.getCupoMaximo() + ")");
+        if (inscritosActuales >= ejecucion.getCuposDisponibles()) {
+            throw new IllegalArgumentException("La ejecución está llena (cupo máximo: " + ejecucion.getCuposDisponibles() + ")");
         }
         
         // Verificar que la ejecución no haya comenzado

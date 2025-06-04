@@ -45,18 +45,19 @@ public class PreguntaService {
     public Pregunta crear(Pregunta pregunta) {
         log.debug("Creando nueva pregunta para evaluación: {}", pregunta.getEvaluacion().getId());
         
-        // Validaciones de negocio
+        // Validaciones
         validarEvaluacion(pregunta.getEvaluacion().getId());
         validarDatos(pregunta);
         
-        // Asignar orden automáticamente si no se especifica
-        if (pregunta.getOrden() == null) {
-            Integer maxOrden = preguntaRepository.findMaxOrdenByEvaluacionId(pregunta.getEvaluacion().getId());
-            pregunta.setOrden(maxOrden != null ? maxOrden + 1 : 1);
+        // Asignar número de pregunta automáticamente si no se especifica
+        if (pregunta.getNumeroPregunta() == null) {
+            Integer maxNumero = preguntaRepository.findMaxNumeroPreguntaByEvaluacionId(pregunta.getEvaluacion().getId());
+            pregunta.setNumeroPregunta(maxNumero != null ? maxNumero + 1 : 1);
         } else {
-            // Verificar que el orden no esté ocupado
-            if (preguntaRepository.existsByEvaluacionIdAndOrden(pregunta.getEvaluacion().getId(), pregunta.getOrden())) {
-                throw new IllegalArgumentException("Ya existe una pregunta con el orden " + pregunta.getOrden() + " en esta evaluación");
+            // Verificar que el número no esté ocupado
+            if (preguntaRepository.existsByEvaluacionIdAndNumeroPregunta(
+                    pregunta.getEvaluacion().getId(), pregunta.getNumeroPregunta())) {
+                throw new IllegalArgumentException("Ya existe una pregunta con el número " + pregunta.getNumeroPregunta() + " en esta evaluación");
             }
         }
         
@@ -75,18 +76,20 @@ public class PreguntaService {
                     validarEvaluacion(preguntaActualizada.getEvaluacion().getId());
                     validarDatos(preguntaActualizada);
                     
-                    // Verificar cambio de orden
-                    if (!preguntaExistente.getOrden().equals(preguntaActualizada.getOrden())) {
-                        if (preguntaRepository.existsByEvaluacionIdAndOrden(
-                                preguntaActualizada.getEvaluacion().getId(), preguntaActualizada.getOrden())) {
-                            throw new IllegalArgumentException("Ya existe una pregunta con el orden " + preguntaActualizada.getOrden());
+                    // Verificar cambio de número
+                    if (!preguntaExistente.getNumeroPregunta().equals(preguntaActualizada.getNumeroPregunta())) {
+                        if (preguntaRepository.existsByEvaluacionIdAndNumeroPregunta(
+                                preguntaActualizada.getEvaluacion().getId(), preguntaActualizada.getNumeroPregunta())) {
+                            throw new IllegalArgumentException("Ya existe una pregunta con el número " + preguntaActualizada.getNumeroPregunta());
                         }
                     }
                     
                     // Actualizar campos
-                    preguntaExistente.setTexto(preguntaActualizada.getTexto());
+                    preguntaExistente.setEnunciado(preguntaActualizada.getEnunciado());
+                    preguntaExistente.setTipo(preguntaActualizada.getTipo());
                     preguntaExistente.setPuntaje(preguntaActualizada.getPuntaje());
-                    preguntaExistente.setOrden(preguntaActualizada.getOrden());
+                    preguntaExistente.setExplicacion(preguntaActualizada.getExplicacion());
+                    preguntaExistente.setNumeroPregunta(preguntaActualizada.getNumeroPregunta());
                     preguntaExistente.setEvaluacion(preguntaActualizada.getEvaluacion());
                     
                     return preguntaRepository.save(preguntaExistente);
@@ -102,9 +105,6 @@ public class PreguntaService {
         
         Pregunta pregunta = preguntaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Pregunta no encontrada con ID: " + id));
-        
-        // Verificar que la evaluación no haya comenzado
-        // (Esta validación se podría implementar verificando la fecha de la evaluación)
         
         preguntaRepository.delete(pregunta);
     }

@@ -2,8 +2,10 @@ package com.edutech.service;
 
 import com.edutech.model.Ejecucion;
 import com.edutech.model.Curso;
+import com.edutech.model.Persona;
 import com.edutech.repository.EjecucionRepository;
 import com.edutech.repository.CursoRepository;
+import com.edutech.repository.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,7 @@ public class EjecucionService {
     
     private final EjecucionRepository ejecucionRepository;
     private final CursoRepository cursoRepository;
+    private final PersonaRepository personaRepository;
     
     /**
      * Obtener todas las ejecuciones
@@ -46,14 +49,20 @@ public class EjecucionService {
     public Ejecucion crear(Ejecucion ejecucion) {
         log.debug("Creando nueva ejecución para curso: {}", ejecucion.getCurso().getId());
         
-        // Validaciones de negocio
-        validarFechas(ejecucion.getFechaInicio(), ejecucion.getFechaFin());
+        // Validaciones
         validarCurso(ejecucion.getCurso().getId());
-        validarCupoMaximo(ejecucion.getCupoMaximo());
+        validarFechas(ejecucion.getFechaInicio(), ejecucion.getFechaFin());
+        validarCupoMaximo(ejecucion.getCuposDisponibles());
+        
+        // Verificar que no exista otra ejecución del mismo curso con la misma sección en el mismo período
+        if (ejecucionRepository.existsByCursoIdAndSeccionAndPeriodo(
+                ejecucion.getCurso().getId(), ejecucion.getSeccion(), ejecucion.getPeriodo())) {
+            throw new IllegalArgumentException("Ya existe una ejecución del curso con la misma sección en este período");
+        }
         
         return ejecucionRepository.save(ejecucion);
     }
-    
+
     /**
      * Actualizar ejecución existente
      */
@@ -63,21 +72,34 @@ public class EjecucionService {
         return ejecucionRepository.findById(id)
                 .map(ejecucionExistente -> {
                     // Validaciones
-                    validarFechas(ejecucionActualizada.getFechaInicio(), ejecucionActualizada.getFechaFin());
                     validarCurso(ejecucionActualizada.getCurso().getId());
-                    validarCupoMaximo(ejecucionActualizada.getCupoMaximo());
+                    validarFechas(ejecucionActualizada.getFechaInicio(), ejecucionActualizada.getFechaFin());
+                    validarCupoMaximo(ejecucionActualizada.getCuposDisponibles());
                     
-                    // Verificar que el nuevo cupo no sea menor a las inscripciones actuales
-                    Integer inscripcionesActuales = ejecucionRepository.countEstudiantesInscritos(id);
-                    if (ejecucionActualizada.getCupoMaximo() < inscripcionesActuales) {
-                        throw new IllegalArgumentException("El cupo máximo no puede ser menor a las inscripciones actuales: " + inscripcionesActuales);
+                    // Verificar conflictos si cambió curso, sección o período
+                    if (!ejecucionExistente.getCurso().getId().equals(ejecucionActualizada.getCurso().getId()) ||
+                        !ejecucionExistente.getSeccion().equals(ejecucionActualizada.getSeccion()) ||
+                        !ejecucionExistente.getPeriodo().equals(ejecucionActualizada.getPeriodo())) {
+                        
+                        if (ejecucionRepository.existsByCursoIdAndSeccionAndPeriodo(
+                                ejecucionActualizada.getCurso().getId(), 
+                                ejecucionActualizada.getSeccion(), 
+                                ejecucionActualizada.getPeriodo())) {
+                            throw new IllegalArgumentException("Ya existe una ejecución del curso con esa sección en ese período");
+                        }
                     }
                     
                     // Actualizar campos
                     ejecucionExistente.setCurso(ejecucionActualizada.getCurso());
+                    ejecucionExistente.setPeriodo(ejecucionActualizada.getPeriodo());
+                    ejecucionExistente.setSeccion(ejecucionActualizada.getSeccion());
                     ejecucionExistente.setFechaInicio(ejecucionActualizada.getFechaInicio());
                     ejecucionExistente.setFechaFin(ejecucionActualizada.getFechaFin());
-                    ejecucionExistente.setCupoMaximo(ejecucionActualizada.getCupoMaximo());
+                    ejecucionExistente.setProfesor(ejecucionActualizada.getProfesor());
+                    ejecucionExistente.setSala(ejecucionActualizada.getSala());
+                    ejecucionExistente.setHorario(ejecucionActualizada.getHorario());
+                    ejecucionExistente.setCuposDisponibles(ejecucionActualizada.getCuposDisponibles());
+                    ejecucionExistente.setEstado(ejecucionActualizada.getEstado());
                     
                     return ejecucionRepository.save(ejecucionExistente);
                 })
@@ -213,7 +235,7 @@ public class EjecucionService {
         return ejecucionRepository.findById(ejecucionId)
                 .map(ejecucion -> {
                     Integer inscritos = ejecucionRepository.countEstudiantesInscritos(ejecucionId);
-                    return inscritos < ejecucion.getCupoMaximo();
+                    return inscritos < ejecucion.getCuposDisponibles();
                 })
                 .orElse(false);
     }
@@ -226,7 +248,7 @@ public class EjecucionService {
         return ejecucionRepository.findById(ejecucionId)
                 .map(ejecucion -> {
                     Integer inscritos = ejecucionRepository.countEstudiantesInscritos(ejecucionId);
-                    return ejecucion.getCupoMaximo() - inscritos;
+                    return ejecucion.getCuposDisponibles() - inscritos;
                 })
                 .orElse(0);
     }

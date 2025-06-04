@@ -1,0 +1,36 @@
+{
+    "folders": [
+        {
+            "path": "./edutech-backend"
+        },
+        {
+            "path": "./edutech-app"
+        },
+        {
+            "path": "./database"
+        }
+    ],
+    "settings": {
+        "java.configuration.updateBuildConfiguration": "automatic",
+        "java.compile.nullAnalysis.mode": "automatic",
+        "java.configuration.maven.userSettings": "",
+        "java.import.maven.enabled": true,
+        "java.maven.downloadSources": true,
+        "java.maven.downloadJavadoc": true,
+        "files.exclude": {
+            "**/target": true,
+            "**/.classpath": true,
+            "**/.project": true,
+            "**/.settings": true,
+            "**/.factorypath": true
+        }
+    },
+    "extensions": {
+        "recommendations": [
+            "vscjava.vscode-java-pack",
+            "vscjava.vscode-maven",
+            "vscjava.vscode-spring-boot-dashboard",
+            "gabrielbb.vscode-lombok"
+        ]
+    }
+}
