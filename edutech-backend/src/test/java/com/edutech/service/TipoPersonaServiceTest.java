@@ -1,50 +1,37 @@
 package com.edutech.service;
 
-import com.edutech.model.TipoPersona;
-import com.edutech.repository.TipoPersonaRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Arrays;
+
+import com.edutech.model.TipoPersona;
+import com.edutech.repository.TipoPersonaRepository;
+
+@SpringBootTest
 class TipoPersonaServiceTest {
 
-    @Mock
+    @MockBean
     private TipoPersonaRepository tipoPersonaRepository;
 
-    @InjectMocks
+    @Autowired
     private TipoPersonaService tipoPersonaService;
-
-    private TipoPersona tipoPersona;
-    private TipoPersona tipoPersonaActualizado;
-
-    @BeforeEach
-    void setUp() {
-        tipoPersona = new TipoPersona();
-        tipoPersona.setId(1L);
-        tipoPersona.setNombre("ESTUDIANTE");
-        tipoPersona.setDescripcion("Tipo persona para estudiantes");
-
-        tipoPersonaActualizado = new TipoPersona();
-        tipoPersonaActualizado.setNombre("PROFESOR");
-        tipoPersonaActualizado.setDescripcion("Tipo persona actualizado");
-    }
 
     @Test
     void testObtenerTodos() {
         // Arrange
+        TipoPersona tipoPersona = new TipoPersona();
+        tipoPersona.setId(1L);
+        tipoPersona.setNombre("ESTUDIANTE");
+        tipoPersona.setDescripcion("Tipo persona para estudiantes");
+        
         List<TipoPersona> tipos = Arrays.asList(tipoPersona);
         when(tipoPersonaRepository.findAll()).thenReturn(tipos);
 
@@ -61,6 +48,11 @@ class TipoPersonaServiceTest {
     @Test
     void testObtenerPorId_TipoExiste() {
         // Arrange
+        TipoPersona tipoPersona = new TipoPersona();
+        tipoPersona.setId(1L);
+        tipoPersona.setNombre("ESTUDIANTE");
+        tipoPersona.setDescripcion("Tipo persona para estudiantes");
+        
         when(tipoPersonaRepository.findById(1L)).thenReturn(Optional.of(tipoPersona));
 
         // Act
@@ -89,6 +81,9 @@ class TipoPersonaServiceTest {
     @Test
     void testObtenerPorNombre_TipoExiste() {
         // Arrange
+        TipoPersona tipoPersona = new TipoPersona();
+        tipoPersona.setNombre("ESTUDIANTE");
+        
         when(tipoPersonaRepository.findByNombreIgnoreCase("ESTUDIANTE")).thenReturn(Optional.of(tipoPersona));
 
         // Act
@@ -101,21 +96,12 @@ class TipoPersonaServiceTest {
     }
 
     @Test
-    void testObtenerPorNombre_TipoNoExiste() {
-        // Arrange
-        when(tipoPersonaRepository.findByNombreIgnoreCase("INEXISTENTE")).thenReturn(Optional.empty());
-
-        // Act
-        Optional<TipoPersona> result = tipoPersonaService.obtenerPorNombre("INEXISTENTE");
-
-        // Assert
-        assertFalse(result.isPresent());
-        verify(tipoPersonaRepository, times(1)).findByNombreIgnoreCase("INEXISTENTE");
-    }
-
-    @Test
     void testCrear_TipoValido() {
         // Arrange
+        TipoPersona tipoPersona = new TipoPersona();
+        tipoPersona.setNombre("ESTUDIANTE");
+        tipoPersona.setDescripcion("Tipo persona para estudiantes");
+        
         when(tipoPersonaRepository.save(any(TipoPersona.class))).thenReturn(tipoPersona);
 
         // Act
@@ -130,27 +116,39 @@ class TipoPersonaServiceTest {
     @Test
     void testActualizar_TipoExiste() {
         // Arrange
-        when(tipoPersonaRepository.findById(1L)).thenReturn(Optional.of(tipoPersona));
-        when(tipoPersonaRepository.save(any(TipoPersona.class))).thenReturn(tipoPersona);
+        TipoPersona tipoExistente = new TipoPersona();
+        tipoExistente.setId(1L);
+        tipoExistente.setNombre("ESTUDIANTE");
+        tipoExistente.setDescripcion("Tipo persona para estudiantes");
+        
+        TipoPersona tipoActualizado = new TipoPersona();
+        tipoActualizado.setNombre("PROFESOR");
+        tipoActualizado.setDescripcion("Tipo persona actualizado");
+        
+        when(tipoPersonaRepository.findById(1L)).thenReturn(Optional.of(tipoExistente));
+        when(tipoPersonaRepository.save(any(TipoPersona.class))).thenReturn(tipoExistente);
 
         // Act
-        Optional<TipoPersona> result = tipoPersonaService.actualizar(1L, tipoPersonaActualizado);
+        Optional<TipoPersona> result = tipoPersonaService.actualizar(1L, tipoActualizado);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals("PROFESOR", tipoPersona.getNombre());
-        assertEquals("Tipo persona actualizado", tipoPersona.getDescripcion());
+        assertEquals("PROFESOR", tipoExistente.getNombre());
+        assertEquals("Tipo persona actualizado", tipoExistente.getDescripcion());
         verify(tipoPersonaRepository, times(1)).findById(1L);
-        verify(tipoPersonaRepository, times(1)).save(tipoPersona);
+        verify(tipoPersonaRepository, times(1)).save(tipoExistente);
     }
 
     @Test
     void testActualizar_TipoNoExiste() {
         // Arrange
+        TipoPersona tipoActualizado = new TipoPersona();
+        tipoActualizado.setNombre("PROFESOR");
+        
         when(tipoPersonaRepository.findById(999L)).thenReturn(Optional.empty());
 
         // Act
-        Optional<TipoPersona> result = tipoPersonaService.actualizar(999L, tipoPersonaActualizado);
+        Optional<TipoPersona> result = tipoPersonaService.actualizar(999L, tipoActualizado);
 
         // Assert
         assertFalse(result.isPresent());

@@ -62,7 +62,7 @@ public class InscripcionService {
         return inscripcionRepository.findById(id)
                 .map(inscripcionExistente -> {
                     inscripcionExistente.setEjecucion(inscripcionActualizada.getEjecucion());
-                    inscripcionExistente.setEstudiante(inscripcionActualizada.getEstudiante());
+                    inscripcionExistente.setPersona(inscripcionActualizada.getPersona());
                     inscripcionExistente.setEstado(inscripcionActualizada.getEstado());
                     inscripcionExistente.setNotaFinal(inscripcionActualizada.getNotaFinal());
                     inscripcionExistente.setActivo(inscripcionActualizada.getActivo());
@@ -101,7 +101,7 @@ public class InscripcionService {
         
         // Crear inscripción
         Inscripcion inscripcion = new Inscripcion();
-        inscripcion.setEstudiante(estudiante);
+        inscripcion.setPersona(estudiante);
         inscripcion.setEjecucion(ejecucion);
         inscripcion.setFechaInscripcion(LocalDateTime.now());
         inscripcion.setEstado("ACTIVA");
@@ -203,6 +203,13 @@ public class InscripcionService {
      * Verificar si estudiante está inscrito en ejecución
      */
     public boolean estaInscrito(Long estudianteId, Long ejecucionId) {
+        return inscripcionRepository.existsByPersonaIdAndEjecucionId(estudianteId, ejecucionId);
+    }
+    
+    /**
+     * Verificar si estudiante está inscrito activo en ejecución
+     */
+    public boolean estaInscritoActivo(Long estudianteId, Long ejecucionId) {
         return inscripcionRepository.existsByPersonaIdAndEjecucionIdAndActivoTrue(estudianteId, ejecucionId);
     }
     
@@ -223,7 +230,7 @@ public class InscripcionService {
     // Métodos de validación privados
     
     private void validarInscripcion(Inscripcion inscripcion) {
-        if (inscripcion.getEstudiante() == null || inscripcion.getEstudiante().getId() == null) {
+        if (inscripcion.getPersona() == null || inscripcion.getPersona().getId() == null) {
             throw new IllegalArgumentException("El estudiante es obligatorio");
         }
         

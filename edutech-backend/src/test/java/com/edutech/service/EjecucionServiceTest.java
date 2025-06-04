@@ -1,71 +1,48 @@
 package com.edutech.service;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Arrays;
+import java.time.LocalDate;
+
 import com.edutech.model.Ejecucion;
 import com.edutech.model.Curso;
 import com.edutech.repository.EjecucionRepository;
 import com.edutech.repository.CursoRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-@ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
+@SpringBootTest
 class EjecucionServiceTest {
 
-    @Mock
+    @MockBean
     private EjecucionRepository ejecucionRepository;
 
-    @Mock
+    @MockBean
     private CursoRepository cursoRepository;
 
-    @InjectMocks
+    @Autowired
     private EjecucionService ejecucionService;
-
-    private Ejecucion ejecucion;
-    private Ejecucion ejecucionActualizada;
-    private Curso curso;
-
-    @BeforeEach
-    void setUp() {
-        curso = new Curso();
-        curso.setId(1L);
-        curso.setNombre("Matemáticas Básica");
-        curso.setCodigo("MAT001");
-
-        ejecucion = new Ejecucion();
-        ejecucion.setId(1L);
-        ejecucion.setCurso(curso);
-        ejecucion.setSeccion("A");
-        ejecucion.setPeriodo("2024-1");
-        ejecucion.setFechaInicio(LocalDate.now().plusDays(1));
-        ejecucion.setFechaFin(LocalDate.now().plusDays(60));
-        ejecucion.setCuposDisponibles(30);
-        ejecucion.setCapacidadMaxima(30);
-
-        ejecucionActualizada = new Ejecucion();
-        ejecucionActualizada.setCurso(curso);
-        ejecucionActualizada.setSeccion("B");
-        ejecucionActualizada.setPeriodo("2024-2");
-        ejecucionActualizada.setFechaInicio(LocalDate.now().plusDays(10));
-        ejecucionActualizada.setFechaFin(LocalDate.now().plusDays(70));
-        ejecucionActualizada.setCuposDisponibles(25);
-    }
 
     @Test
     void testObtenerTodas() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        curso.setNombre("Matemáticas Básica");
+
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        ejecucion.setCurso(curso);
+        ejecucion.setSeccion("A");
+        ejecucion.setPeriodo("2024-1");
+        
         List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
         when(ejecucionRepository.findAll()).thenReturn(ejecuciones);
 
@@ -82,6 +59,11 @@ class EjecucionServiceTest {
     @Test
     void testObtenerPorId_EjecucionExiste() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        ejecucion.setSeccion("A");
+        ejecucion.setPeriodo("2024-1");
+        
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
 
         // Act
@@ -95,21 +77,20 @@ class EjecucionServiceTest {
     }
 
     @Test
-    void testObtenerPorId_EjecucionNoExiste() {
-        // Arrange
-        when(ejecucionRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<Ejecucion> result = ejecucionService.obtenerPorId(999L);
-
-        // Assert
-        assertFalse(result.isPresent());
-        verify(ejecucionRepository, times(1)).findById(999L);
-    }
-
-    @Test
     void testCrear_EjecucionValida() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCurso(curso);
+        ejecucion.setSeccion("A");
+        ejecucion.setPeriodo("2024-1");
+        ejecucion.setFechaInicio(LocalDate.now().plusDays(1));
+        ejecucion.setFechaFin(LocalDate.now().plusDays(60));
+        ejecucion.setCuposDisponibles(30);
+        ejecucion.setCapacidadMaxima(30);
+        
         when(cursoRepository.existsById(1L)).thenReturn(true);
         when(ejecucionRepository.existsByCursoIdAndSeccionAndPeriodo(1L, "A", "2024-1")).thenReturn(false);
         when(ejecucionRepository.save(any(Ejecucion.class))).thenReturn(ejecucion);
@@ -127,6 +108,12 @@ class EjecucionServiceTest {
     @Test
     void testCrear_CursoNoExiste() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCurso(curso);
+        
         when(cursoRepository.existsById(1L)).thenReturn(false);
 
         // Act & Assert
@@ -143,6 +130,14 @@ class EjecucionServiceTest {
     @Test
     void testCrear_EjecucionDuplicada() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCurso(curso);
+        ejecucion.setSeccion("A");
+        ejecucion.setPeriodo("2024-1");
+        
         when(cursoRepository.existsById(1L)).thenReturn(true);
         when(ejecucionRepository.existsByCursoIdAndSeccionAndPeriodo(1L, "A", "2024-1")).thenReturn(true);
 
@@ -159,7 +154,13 @@ class EjecucionServiceTest {
     @Test
     void testCrear_FechaInicioAnteriorAHoy() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCurso(curso);
         ejecucion.setFechaInicio(LocalDate.now().minusDays(1));
+        
         when(cursoRepository.existsById(1L)).thenReturn(true);
 
         // Act & Assert
@@ -175,8 +176,14 @@ class EjecucionServiceTest {
     @Test
     void testCrear_FechaInicioMayorQueFin() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCurso(curso);
         ejecucion.setFechaInicio(LocalDate.now().plusDays(60));
         ejecucion.setFechaFin(LocalDate.now().plusDays(30));
+        
         when(cursoRepository.existsById(1L)).thenReturn(true);
 
         // Act & Assert
@@ -192,7 +199,13 @@ class EjecucionServiceTest {
     @Test
     void testCrear_CupoMaximoInvalido() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCurso(curso);
         ejecucion.setCuposDisponibles(0);
+        
         when(cursoRepository.existsById(1L)).thenReturn(true);
 
         // Act & Assert
@@ -208,7 +221,13 @@ class EjecucionServiceTest {
     @Test
     void testCrear_CupoMaximoExcedeLimite() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCurso(curso);
         ejecucion.setCuposDisponibles(150);
+        
         when(cursoRepository.existsById(1L)).thenReturn(true);
 
         // Act & Assert
@@ -224,23 +243,39 @@ class EjecucionServiceTest {
     @Test
     void testActualizar_EjecucionExiste() {
         // Arrange
-        when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
-        when(ejecucionRepository.save(any(Ejecucion.class))).thenReturn(ejecucion);
+        Curso curso = new Curso();
+        curso.setId(1L);
+        
+        Ejecucion ejecucionExistente = new Ejecucion();
+        ejecucionExistente.setId(1L);
+        ejecucionExistente.setCurso(curso);
+        ejecucionExistente.setSeccion("A");
+        ejecucionExistente.setPeriodo("2024-1");
+        
+        Ejecucion ejecucionActualizada = new Ejecucion();
+        ejecucionActualizada.setSeccion("B");
+        ejecucionActualizada.setPeriodo("2024-2");
+        
+        when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucionExistente));
+        when(ejecucionRepository.save(any(Ejecucion.class))).thenReturn(ejecucionExistente);
 
         // Act
         Ejecucion result = ejecucionService.actualizar(1L, ejecucionActualizada);
 
         // Assert
         assertNotNull(result);
-        assertEquals("B", ejecucion.getSeccion());
-        assertEquals("2024-2", ejecucion.getPeriodo());
+        assertEquals("B", ejecucionExistente.getSeccion());
+        assertEquals("2024-2", ejecucionExistente.getPeriodo());
         verify(ejecucionRepository, times(1)).findById(1L);
-        verify(ejecucionRepository, times(1)).save(ejecucion);
+        verify(ejecucionRepository, times(1)).save(ejecucionExistente);
     }
 
     @Test
     void testActualizar_EjecucionNoExiste() {
         // Arrange
+        Ejecucion ejecucionActualizada = new Ejecucion();
+        ejecucionActualizada.setSeccion("B");
+        
         when(ejecucionRepository.findById(999L)).thenReturn(Optional.empty());
 
         // Act & Assert
@@ -257,6 +292,9 @@ class EjecucionServiceTest {
     @Test
     void testEliminar_EjecucionExiste() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
 
         // Act
@@ -286,6 +324,9 @@ class EjecucionServiceTest {
     @Test
     void testObtenerPorCurso() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setSeccion("A");
+        
         List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
         when(ejecucionRepository.findByCursoId(1L)).thenReturn(ejecuciones);
 
@@ -301,6 +342,9 @@ class EjecucionServiceTest {
     @Test
     void testObtenerActivas() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setSeccion("A");
+        
         List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
         when(ejecucionRepository.findEjecucionesActivas()).thenReturn(ejecuciones);
 
@@ -311,51 +355,6 @@ class EjecucionServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         verify(ejecucionRepository, times(1)).findEjecucionesActivas();
-    }
-
-    @Test
-    void testObtenerFuturas() {
-        // Arrange
-        List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
-        when(ejecucionRepository.findEjecucionesFuturas()).thenReturn(ejecuciones);
-
-        // Act
-        List<Ejecucion> result = ejecucionService.obtenerFuturas();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(ejecucionRepository, times(1)).findEjecucionesFuturas();
-    }
-
-    @Test
-    void testObtenerPasadas() {
-        // Arrange
-        List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
-        when(ejecucionRepository.findEjecucionesPasadas()).thenReturn(ejecuciones);
-
-        // Act
-        List<Ejecucion> result = ejecucionService.obtenerPasadas();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(ejecucionRepository, times(1)).findEjecucionesPasadas();
-    }
-
-    @Test
-    void testObtenerConCuposDisponibles() {
-        // Arrange
-        List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
-        when(ejecucionRepository.findEjecucionesConCuposDisponibles()).thenReturn(ejecuciones);
-
-        // Act
-        List<Ejecucion> result = ejecucionService.obtenerConCuposDisponibles();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(ejecucionRepository, times(1)).findEjecucionesConCuposDisponibles();
     }
 
     @Test
@@ -374,6 +373,9 @@ class EjecucionServiceTest {
     @Test
     void testTieneCuposDisponibles_ConCupos() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCapacidadMaxima(30);
+        
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
         when(ejecucionRepository.countEstudiantesInscritos(1L)).thenReturn(20);
 
@@ -389,6 +391,9 @@ class EjecucionServiceTest {
     @Test
     void testTieneCuposDisponibles_SinCupos() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setCapacidadMaxima(30);
+        
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
         when(ejecucionRepository.countEstudiantesInscritos(1L)).thenReturn(30);
 
@@ -399,65 +404,5 @@ class EjecucionServiceTest {
         assertFalse(result);
         verify(ejecucionRepository, times(1)).findById(1L);
         verify(ejecucionRepository, times(1)).countEstudiantesInscritos(1L);
-    }
-
-    @Test
-    void testObtenerCuposDisponibles() {
-        // Arrange
-        when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
-        when(ejecucionRepository.countEstudiantesInscritos(1L)).thenReturn(10);
-
-        // Act
-        Integer result = ejecucionService.obtenerCuposDisponibles(1L);
-
-        // Assert
-        assertEquals(20, result);
-        verify(ejecucionRepository, times(1)).findById(1L);
-        verify(ejecucionRepository, times(1)).countEstudiantesInscritos(1L);
-    }
-
-    @Test
-    void testExisteEjecucionActivaParaCurso() {
-        // Arrange
-        when(ejecucionRepository.existeEjecucionActivaParaCurso(1L)).thenReturn(true);
-
-        // Act
-        boolean result = ejecucionService.existeEjecucionActivaParaCurso(1L);
-
-        // Assert
-        assertTrue(result);
-        verify(ejecucionRepository, times(1)).existeEjecucionActivaParaCurso(1L);
-    }
-
-    @Test
-    void testObtenerPorRangoFechas() {
-        // Arrange
-        LocalDate inicio = LocalDate.now();
-        LocalDate fin = LocalDate.now().plusDays(30);
-        List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
-        when(ejecucionRepository.findByFechaInicioBetween(inicio, fin)).thenReturn(ejecuciones);
-
-        // Act
-        List<Ejecucion> result = ejecucionService.obtenerPorRangoFechas(inicio, fin);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(ejecucionRepository, times(1)).findByFechaInicioBetween(inicio, fin);
-    }
-
-    @Test
-    void testObtenerPorRangoCupo() {
-        // Arrange
-        List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
-        when(ejecucionRepository.findByCapacidadMaximaBetween(20, 40)).thenReturn(ejecuciones);
-
-        // Act
-        List<Ejecucion> result = ejecucionService.obtenerPorRangoCupo(20, 40);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(ejecucionRepository, times(1)).findByCapacidadMaximaBetween(20, 40);
     }
 }

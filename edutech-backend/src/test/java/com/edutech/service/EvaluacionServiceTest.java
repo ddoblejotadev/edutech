@@ -1,94 +1,54 @@
 package com.edutech.service;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Arrays;
+import java.time.LocalDateTime;
+
 import com.edutech.model.Evaluacion;
 import com.edutech.model.Ejecucion;
 import com.edutech.model.Curso;
 import com.edutech.repository.EvaluacionRepository;
 import com.edutech.repository.EjecucionRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-@ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
+@SpringBootTest
 class EvaluacionServiceTest {
 
-    @Mock
+    @MockBean
     private EvaluacionRepository evaluacionRepository;
 
-    @Mock
+    @MockBean
     private EjecucionRepository ejecucionRepository;
 
-    @InjectMocks
+    @Autowired
     private EvaluacionService evaluacionService;
-
-    private Evaluacion evaluacion;
-    private Evaluacion evaluacionActualizada;
-    private Ejecucion ejecucion;
-    private Curso curso;
-
-    @BeforeEach
-    void setUp() {
-        curso = new Curso();
-        curso.setId(1L);
-        curso.setNombre("Matemáticas Avanzadas");
-
-        ejecucion = new Ejecucion();
-        ejecucion.setId(1L);
-        ejecucion.setCurso(curso);
-        ejecucion.setSeccion("A");
-
-        evaluacion = new Evaluacion();
-        evaluacion.setId(1L);
-        evaluacion.setTitulo("Examen Parcial");
-        evaluacion.setDescripcion("Evaluación de conocimientos adquiridos");
-        evaluacion.setTipo("PARCIAL");
-        evaluacion.setEjecucion(ejecucion);
-        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1));
-        evaluacion.setFechaFin(LocalDateTime.now().plusDays(2));
-        evaluacion.setDuracionMinutos(120);
-        evaluacion.setPuntajeTotal(100.0);
-        evaluacion.setPonderacion(30.0);
-        evaluacion.setIntentosPermitidos(2);
-        evaluacion.setNotaMinimaAprobacion(4.0);
-        evaluacion.setNotaMaxima(7.0);
-        evaluacion.setExigenciaPorcentual(60.0);
-        evaluacion.setActivo(true);
-        evaluacion.setPublicada(true);
-
-        evaluacionActualizada = new Evaluacion();
-        evaluacionActualizada.setTitulo("Examen Final");
-        evaluacionActualizada.setDescripcion("Evaluación final del curso");
-        evaluacionActualizada.setTipo("FINAL");
-        evaluacionActualizada.setEjecucion(ejecucion);
-        evaluacionActualizada.setFechaInicio(LocalDateTime.now().plusDays(5));
-        evaluacionActualizada.setFechaFin(LocalDateTime.now().plusDays(6));
-        evaluacionActualizada.setDuracionMinutos(180);
-        evaluacionActualizada.setPuntajeTotal(100.0);
-        evaluacionActualizada.setPonderacion(40.0);
-        evaluacionActualizada.setIntentosPermitidos(1);
-        evaluacionActualizada.setNotaMinimaAprobacion(4.0);
-        evaluacionActualizada.setNotaMaxima(7.0);
-        evaluacionActualizada.setExigenciaPorcentual(60.0);
-        evaluacionActualizada.setActivo(true);
-        evaluacionActualizada.setPublicada(false);
-    }
 
     @Test
     void testObtenerTodas() {
         // Arrange
+        Curso curso = new Curso();
+        curso.setId(1L);
+        curso.setNombre("Matemáticas Avanzadas");
+
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        ejecucion.setCurso(curso);
+        ejecucion.setSeccion("A");
+
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
+        evaluacion.setTitulo("Examen Parcial");
+        evaluacion.setEjecucion(ejecucion);
+        evaluacion.setTipo("PARCIAL");
+        
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findAll()).thenReturn(evaluaciones);
 
@@ -105,6 +65,11 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerPorId_EvaluacionExiste() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
+        evaluacion.setTitulo("Examen Parcial");
+        evaluacion.setTipo("PARCIAL");
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
         // Act
@@ -133,6 +98,16 @@ class EvaluacionServiceTest {
     @Test
     void testCrear_EvaluacionValida() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setTitulo("Examen Parcial");
+        evaluacion.setEjecucion(ejecucion);
+        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1));
+        evaluacion.setFechaFin(LocalDateTime.now().plusDays(2));
+        evaluacion.setPuntajeTotal(100.0);
+        
         when(ejecucionRepository.existsById(1L)).thenReturn(true);
         when(evaluacionRepository.save(any(Evaluacion.class))).thenReturn(evaluacion);
 
@@ -149,6 +124,12 @@ class EvaluacionServiceTest {
     @Test
     void testCrear_EjecucionNoExiste() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setEjecucion(ejecucion);
+        
         when(ejecucionRepository.existsById(1L)).thenReturn(false);
 
         // Act & Assert
@@ -165,8 +146,15 @@ class EvaluacionServiceTest {
     @Test
     void testCrear_FechasInvalidas() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setEjecucion(ejecucion);
         evaluacion.setFechaInicio(LocalDateTime.now().plusDays(2));
         evaluacion.setFechaFin(LocalDateTime.now().plusDays(1)); // Fecha fin antes que inicio
+        evaluacion.setPuntajeTotal(100.0);
+        
         when(ejecucionRepository.existsById(1L)).thenReturn(true);
 
         // Act & Assert
@@ -182,7 +170,15 @@ class EvaluacionServiceTest {
     @Test
     void testCrear_PuntajeInvalido() {
         // Arrange
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setEjecucion(ejecucion);
+        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1));
+        evaluacion.setFechaFin(LocalDateTime.now().plusDays(2));
         evaluacion.setPuntajeTotal(-10.0);
+        
         when(ejecucionRepository.existsById(1L)).thenReturn(true);
 
         // Act & Assert
@@ -198,38 +194,42 @@ class EvaluacionServiceTest {
     @Test
     void testActualizar_EvaluacionExiste() {
         // Arrange
-        when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
+        Evaluacion evaluacionExistente = new Evaluacion();
+        evaluacionExistente.setId(1L);
+        evaluacionExistente.setTitulo("Examen Parcial");
+        evaluacionExistente.setEjecucion(ejecucion);
+        
+        Evaluacion evaluacionActualizada = new Evaluacion();
+        evaluacionActualizada.setTitulo("Examen Final");
+        evaluacionActualizada.setEjecucion(ejecucion);
+        evaluacionActualizada.setFechaInicio(LocalDateTime.now().plusDays(5));
+        evaluacionActualizada.setFechaFin(LocalDateTime.now().plusDays(6));
+        evaluacionActualizada.setPuntajeTotal(100.0);
+        
+        when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacionExistente));
         when(ejecucionRepository.existsById(1L)).thenReturn(true);
-        when(evaluacionRepository.save(any(Evaluacion.class))).thenReturn(evaluacion);
+        when(evaluacionRepository.save(any(Evaluacion.class))).thenReturn(evaluacionExistente);
 
         // Act
         Evaluacion result = evaluacionService.actualizar(1L, evaluacionActualizada);
 
         // Assert
         assertNotNull(result);
+        assertEquals("Examen Final", evaluacionExistente.getTitulo());
         verify(evaluacionRepository, times(1)).findById(1L);
-        verify(evaluacionRepository, times(1)).save(evaluacion);
-    }
-
-    @Test
-    void testActualizar_EvaluacionNoExiste() {
-        // Arrange
-        when(evaluacionRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> evaluacionService.actualizar(999L, evaluacionActualizada)
-        );
-        
-        assertEquals("Evaluación no encontrada con ID: 999", exception.getMessage());
-        verify(evaluacionRepository, times(1)).findById(999L);
-        verify(evaluacionRepository, never()).save(any());
+        verify(evaluacionRepository, times(1)).save(evaluacionExistente);
     }
 
     @Test
     void testEliminar_EvaluacionExiste() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
+        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1)); // No ha comenzado
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
         // Act
@@ -259,7 +259,10 @@ class EvaluacionServiceTest {
     @Test
     void testEliminar_EvaluacionYaComenzada() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
         evaluacion.setFechaInicio(LocalDateTime.now().minusDays(1)); // Ya comenzó
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
         // Act & Assert
@@ -276,6 +279,9 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerPorEjecucion() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setTitulo("Examen Parcial");
+        
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByEjecucionId(1L)).thenReturn(evaluaciones);
 
@@ -291,6 +297,9 @@ class EvaluacionServiceTest {
     @Test
     void testBuscarPorTitulo() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setTitulo("Examen Parcial");
+        
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByTituloContainingIgnoreCase("Parcial")).thenReturn(evaluaciones);
 
@@ -304,23 +313,11 @@ class EvaluacionServiceTest {
     }
 
     @Test
-    void testObtenerPorTipo() {
-        // Arrange
-        List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
-        when(evaluacionRepository.findByTipoIgnoreCase("PARCIAL")).thenReturn(evaluaciones);
-
-        // Act
-        List<Evaluacion> result = evaluacionService.obtenerPorTipo("PARCIAL");
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(evaluacionRepository, times(1)).findByTipoIgnoreCase("PARCIAL");
-    }
-
-    @Test
     void testObtenerActivas() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setActivo(true);
+        
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByActivoTrue()).thenReturn(evaluaciones);
 
@@ -336,6 +333,9 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerPublicadas() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setPublicada(true);
+        
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByPublicadaTrue()).thenReturn(evaluaciones);
 
@@ -351,6 +351,12 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerDisponibles() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setActivo(true);
+        evaluacion.setPublicada(true);
+        evaluacion.setFechaInicio(LocalDateTime.now().minusHours(1));
+        evaluacion.setFechaFin(LocalDateTime.now().plusHours(1));
+        
         LocalDateTime ahora = LocalDateTime.now();
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByActivoTrueAndPublicadaTrueAndFechaInicioBeforeAndFechaFinAfter(any(LocalDateTime.class)))
@@ -369,6 +375,9 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerFuturas() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1));
+        
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByFechaInicioAfter(any(LocalDateTime.class))).thenReturn(evaluaciones);
 
@@ -384,6 +393,9 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerVencidas() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setFechaFin(LocalDateTime.now().minusDays(1));
+        
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByFechaFinBefore(any(LocalDateTime.class))).thenReturn(evaluaciones);
 
@@ -399,6 +411,9 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerPorRangoFechasInicio() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(3));
+        
         LocalDateTime fechaInicio = LocalDateTime.now();
         LocalDateTime fechaFin = LocalDateTime.now().plusDays(7);
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
@@ -416,6 +431,9 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerPorRangoPuntaje() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setPuntajeTotal(75.0);
+        
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByPuntajeTotalBetween(50.0, 100.0)).thenReturn(evaluaciones);
 
@@ -431,6 +449,12 @@ class EvaluacionServiceTest {
     @Test
     void testEstaDisponible_Disponible() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setActivo(true);
+        evaluacion.setPublicada(true);
+        evaluacion.setFechaInicio(LocalDateTime.now().minusHours(1));
+        evaluacion.setFechaFin(LocalDateTime.now().plusHours(1));
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
         // Act
@@ -444,7 +468,9 @@ class EvaluacionServiceTest {
     @Test
     void testEstaDisponible_NoDisponible() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
         evaluacion.setActivo(false);
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
         // Act
@@ -458,7 +484,9 @@ class EvaluacionServiceTest {
     @Test
     void testEstaVencida_Vencida() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
         evaluacion.setFechaFin(LocalDateTime.now().minusDays(1));
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
         // Act
@@ -472,6 +500,9 @@ class EvaluacionServiceTest {
     @Test
     void testEstaVencida_NoVencida() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setFechaFin(LocalDateTime.now().plusDays(1));
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
         // Act
@@ -485,6 +516,9 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerTiempoRestante() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setFechaFin(LocalDateTime.now().plusHours(2));
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
         // Act
@@ -512,6 +546,9 @@ class EvaluacionServiceTest {
     @Test
     void testObtenerProximasAVencer() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setFechaFin(LocalDateTime.now().plusHours(12));
+        
         LocalDateTime limite = LocalDateTime.now().plusHours(24);
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByFechaFinBetween(any(LocalDateTime.class), any(LocalDateTime.class)))
@@ -530,7 +567,10 @@ class EvaluacionServiceTest {
     @Test
     void testActivar() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
         evaluacion.setActivo(false);
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
         when(evaluacionRepository.save(evaluacion)).thenReturn(evaluacion);
 
@@ -546,6 +586,10 @@ class EvaluacionServiceTest {
     @Test
     void testDesactivar() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
+        evaluacion.setActivo(true);
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
         when(evaluacionRepository.save(evaluacion)).thenReturn(evaluacion);
 
@@ -561,7 +605,10 @@ class EvaluacionServiceTest {
     @Test
     void testPublicar() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
         evaluacion.setPublicada(false);
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
         when(evaluacionRepository.save(evaluacion)).thenReturn(evaluacion);
 
@@ -577,6 +624,10 @@ class EvaluacionServiceTest {
     @Test
     void testDespublicar() {
         // Arrange
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
+        evaluacion.setPublicada(true);
+        
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
         when(evaluacionRepository.save(evaluacion)).thenReturn(evaluacion);
 

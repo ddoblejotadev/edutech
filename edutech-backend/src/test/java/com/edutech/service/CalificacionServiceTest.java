@@ -1,10 +1,8 @@
 package com.edutech.service;
 
 import com.edutech.model.Calificacion;
-import com.edutech.model.Inscripcion;
+import com.edutech.model.Evaluacion;
 import com.edutech.model.Persona;
-import com.edutech.model.Ejecucion;
-import com.edutech.model.Curso;
 import com.edutech.repository.CalificacionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,18 +10,17 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
 class CalificacionServiceTest {
 
     @Mock
@@ -33,47 +30,146 @@ class CalificacionServiceTest {
     private CalificacionService calificacionService;
 
     private Calificacion calificacion;
-    private Calificacion calificacionActualizada;
-    private Inscripcion inscripcion;
-    private Persona estudiante;
-    private Ejecucion ejecucion;
-    private Curso curso;
+    private Persona persona;
+    private Evaluacion evaluacion;
 
     @BeforeEach
     void setUp() {
-        curso = new Curso();
-        curso.setId(1L);
-        curso.setNombre("Matemáticas Básica");
+        // Configurar persona de prueba
+        persona = new Persona();
+        persona.setId(1L);
+        persona.setNombres("Juan");
+        persona.setApellidoPaterno("Pérez");
+        persona.setCorreo("juan.perez@test.com");
 
-        estudiante = new Persona();
-        estudiante.setId(1L);
-        estudiante.setRut("12345678-9");
-        estudiante.setNombres("Juan Carlos");
+        // Configurar evaluación de prueba
+        evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
+        evaluacion.setTitulo("Evaluación Test");
+        evaluacion.setPuntajeTotal(100.0);
 
-        ejecucion = new Ejecucion();
-        ejecucion.setId(1L);
-        ejecucion.setCurso(curso);
-        ejecucion.setSeccion("A");
-
-        inscripcion = new Inscripcion();
-        inscripcion.setId(1L);
-        inscripcion.setEstudiante(estudiante);
-        inscripcion.setEjecucion(ejecucion);
-
+        // Configurar calificación de prueba
         calificacion = new Calificacion();
         calificacion.setId(1L);
-        calificacion.setInscripcion(inscripcion);
-        calificacion.setTipoEvaluacion("PARCIAL");
-        calificacion.setNota(6.5);
-        calificacion.setFechaEvaluacion(LocalDate.now());
+        calificacion.setPersona(persona);
+        calificacion.setEvaluacion(evaluacion);
+        calificacion.setPuntajeObtenido(85.0);
+        calificacion.setPuntajeMaximo(100.0);
+        calificacion.setNumeroIntento(1);
+        calificacion.setFechaRealizacion(LocalDateTime.now());
+        calificacion.setTiempoEmpleado(60);
+        calificacion.setEstado("COMPLETADA");
         calificacion.setObservaciones("Buen desempeño");
+    }
 
-        calificacionActualizada = new Calificacion();
-        calificacionActualizada.setInscripcion(inscripcion);
-        calificacionActualizada.setTipoEvaluacion("FINAL");
-        calificacionActualizada.setNota(7.0);
-        calificacionActualizada.setFechaEvaluacion(LocalDate.now());
+    @Test
+    void testRegistrarCalificacion() {
+        // Arrange
+        when(calificacionRepository.save(any(Calificacion.class))).thenReturn(calificacion);
+
+        // Act
+        Calificacion resultado = calificacionService.registrar(calificacion);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(calificacion.getId(), resultado.getId());
+        assertEquals(calificacion.getPuntajeObtenido(), resultado.getPuntajeObtenido());
+        verify(calificacionRepository, times(1)).save(any(Calificacion.class));
+    }
+
+    @Test
+    void testObtenerPorId() {
+        // Arrange
+        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
+
+        // Act
+        Optional<Calificacion> resultado = calificacionService.obtenerPorId(1L);
+
+        // Assert
+        assertTrue(resultado.isPresent());
+        assertEquals(calificacion.getId(), resultado.get().getId());
+        verify(calificacionRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void testObtenerPorIdNoEncontrado() {
+        // Arrange
+        when(calificacionRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act
+        Optional<Calificacion> resultado = calificacionService.obtenerPorId(1L);
+
+        // Assert
+        assertFalse(resultado.isPresent());
+        verify(calificacionRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void testActualizarCalificacion() {
+        // Arrange
+        Calificacion calificacionActualizada = new Calificacion();
+        calificacionActualizada.setPersona(persona);
+        calificacionActualizada.setEvaluacion(evaluacion);
+        calificacionActualizada.setPuntajeObtenido(90.0);
+        calificacionActualizada.setPuntajeMaximo(100.0);
+        calificacionActualizada.setNumeroIntento(1);
+        calificacionActualizada.setFechaRealizacion(LocalDateTime.now());
+        calificacionActualizada.setTiempoEmpleado(45);
+        calificacionActualizada.setEstado("COMPLETADA");
         calificacionActualizada.setObservaciones("Excelente desempeño");
+
+        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
+        when(calificacionRepository.save(any(Calificacion.class))).thenReturn(calificacionActualizada);
+
+        // Act
+        Calificacion resultado = calificacionService.actualizar(1L, calificacionActualizada);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(90.0, resultado.getPuntajeObtenido());
+        verify(calificacionRepository, times(1)).findById(1L);
+        verify(calificacionRepository, times(1)).save(any(Calificacion.class));
+    }
+
+    @Test
+    void testActualizarCalificacionNoEncontrada() {
+        // Arrange
+        Calificacion calificacionActualizada = new Calificacion();
+        when(calificacionRepository.findById(1L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            calificacionService.actualizar(1L, calificacionActualizada);
+        });
+        verify(calificacionRepository, times(1)).findById(1L);
+        verify(calificacionRepository, never()).save(any(Calificacion.class));
+    }
+
+    @Test
+    void testEliminarCalificacion() {
+        // Arrange
+        when(calificacionRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(calificacionRepository).deleteById(1L);
+
+        // Act
+        assertDoesNotThrow(() -> calificacionService.eliminar(1L));
+
+        // Assert
+        verify(calificacionRepository, times(1)).existsById(1L);
+        verify(calificacionRepository, times(1)).deleteById(1L);
+    }
+
+    @Test
+    void testEliminarCalificacionNoEncontrada() {
+        // Arrange
+        when(calificacionRepository.existsById(1L)).thenReturn(false);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            calificacionService.eliminar(1L);
+        });
+        verify(calificacionRepository, times(1)).existsById(1L);
+        verify(calificacionRepository, never()).deleteById(1L);
     }
 
     @Test
@@ -83,393 +179,125 @@ class CalificacionServiceTest {
         when(calificacionRepository.findAll()).thenReturn(calificaciones);
 
         // Act
-        List<Calificacion> result = calificacionService.obtenerTodas();
+        List<Calificacion> resultado = calificacionService.obtenerTodas();
 
         // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(6.5, result.get(0).getNota());
-        assertEquals("PARCIAL", result.get(0).getTipoEvaluacion());
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(calificacion.getId(), resultado.get(0).getId());
         verify(calificacionRepository, times(1)).findAll();
-    }
-
-    @Test
-    void testObtenerPorId_CalificacionExiste() {
-        // Arrange
-        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
-
-        // Act
-        Optional<Calificacion> result = calificacionService.obtenerPorId(1L);
-
-        // Assert
-        assertTrue(result.isPresent());
-        assertEquals(6.5, result.get().getNota());
-        assertEquals("PARCIAL", result.get().getTipoEvaluacion());
-        assertEquals("Buen desempeño", result.get().getObservaciones());
-        verify(calificacionRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    void testObtenerPorId_CalificacionNoExiste() {
-        // Arrange
-        when(calificacionRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act
-        Optional<Calificacion> result = calificacionService.obtenerPorId(999L);
-
-        // Assert
-        assertFalse(result.isPresent());
-        verify(calificacionRepository, times(1)).findById(999L);
-    }
-
-    @Test
-    void testRegistrar_CalificacionValida() {
-        // Arrange
-        when(calificacionRepository.save(any(Calificacion.class))).thenReturn(calificacion);
-
-        // Act
-        Calificacion result = calificacionService.registrar(calificacion);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(6.5, result.getNota());
-        assertEquals("PARCIAL", result.getTipoEvaluacion());
-        verify(calificacionRepository, times(1)).save(calificacion);
-    }
-
-    @Test
-    void testRegistrar_InscripcionVacia() {
-        // Arrange
-        calificacion.setInscripcion(null);
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> calificacionService.registrar(calificacion)
-        );
-        
-        assertEquals("La inscripción es obligatoria", exception.getMessage());
-        verify(calificacionRepository, never()).save(any());
-    }
-
-    @Test
-    void testRegistrar_NotaNula() {
-        // Arrange
-        calificacion.setNota(null);
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> calificacionService.registrar(calificacion)
-        );
-        
-        assertEquals("La nota es obligatoria", exception.getMessage());
-        verify(calificacionRepository, never()).save(any());
-    }
-
-    @Test
-    void testRegistrar_NotaFueraDeRango_Menor() {
-        // Arrange
-        calificacion.setNota(0.5);
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> calificacionService.registrar(calificacion)
-        );
-        
-        assertEquals("La nota debe estar entre 1.0 y 7.0", exception.getMessage());
-        verify(calificacionRepository, never()).save(any());
-    }
-
-    @Test
-    void testRegistrar_NotaFueraDeRango_Mayor() {
-        // Arrange
-        calificacion.setNota(7.5);
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> calificacionService.registrar(calificacion)
-        );
-        
-        assertEquals("La nota debe estar entre 1.0 y 7.0", exception.getMessage());
-        verify(calificacionRepository, never()).save(any());
-    }
-
-    @Test
-    void testRegistrar_TipoEvaluacionVacio() {
-        // Arrange
-        calificacion.setTipoEvaluacion("");
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> calificacionService.registrar(calificacion)
-        );
-        
-        assertEquals("El tipo de evaluación es obligatorio", exception.getMessage());
-        verify(calificacionRepository, never()).save(any());
-    }
-
-    @Test
-    void testActualizar_CalificacionExiste() {
-        // Arrange
-        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
-        when(calificacionRepository.save(any(Calificacion.class))).thenReturn(calificacion);
-
-        // Act
-        Calificacion result = calificacionService.actualizar(1L, calificacionActualizada);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(7.0, calificacion.getNota());
-        assertEquals("FINAL", calificacion.getTipoEvaluacion());
-        assertEquals("Excelente desempeño", calificacion.getObservaciones());
-        verify(calificacionRepository, times(1)).findById(1L);
-        verify(calificacionRepository, times(1)).save(calificacion);
-    }
-
-    @Test
-    void testActualizar_CalificacionNoExiste() {
-        // Arrange
-        when(calificacionRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> calificacionService.actualizar(999L, calificacionActualizada)
-        );
-        
-        assertEquals("Calificación no encontrada con ID: 999", exception.getMessage());
-        verify(calificacionRepository, times(1)).findById(999L);
-        verify(calificacionRepository, never()).save(any());
-    }
-
-    @Test
-    void testEliminar_CalificacionExiste() {
-        // Arrange
-        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
-
-        // Act
-        assertDoesNotThrow(() -> calificacionService.eliminar(1L));
-
-        // Assert
-        verify(calificacionRepository, times(1)).findById(1L);
-        verify(calificacionRepository, times(1)).delete(calificacion);
-    }
-
-    @Test
-    void testEliminar_CalificacionNoExiste() {
-        // Arrange
-        when(calificacionRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act & Assert
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class,
-            () -> calificacionService.eliminar(999L)
-        );
-        
-        assertEquals("Calificación no encontrada con ID: 999", exception.getMessage());
-        verify(calificacionRepository, times(1)).findById(999L);
-        verify(calificacionRepository, never()).delete(any());
     }
 
     @Test
     void testObtenerPorEstudiante() {
         // Arrange
         List<Calificacion> calificaciones = Arrays.asList(calificacion);
-        when(calificacionRepository.findByInscripcionPersonaId(1L)).thenReturn(calificaciones);
+        when(calificacionRepository.findByPersonaId(1L)).thenReturn(calificaciones);
 
         // Act
-        List<Calificacion> result = calificacionService.obtenerPorEstudiante(1L);
+        List<Calificacion> resultado = calificacionService.obtenerPorEstudiante(1L);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(calificacionRepository, times(1)).findByInscripcionPersonaId(1L);
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(calificacion.getId(), resultado.get(0).getId());
+        verify(calificacionRepository, times(1)).findByPersonaId(1L);
     }
 
     @Test
-    void testObtenerPorEjecucion() {
+    void testObtenerPorEvaluacion() {
         // Arrange
         List<Calificacion> calificaciones = Arrays.asList(calificacion);
-        when(calificacionRepository.findByInscripcionEjecucionId(1L)).thenReturn(calificaciones);
+        when(calificacionRepository.findByEvaluacionId(1L)).thenReturn(calificaciones);
 
         // Act
-        List<Calificacion> result = calificacionService.obtenerPorEjecucion(1L);
+        List<Calificacion> resultado = calificacionService.obtenerPorEvaluacion(1L);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(calificacionRepository, times(1)).findByInscripcionEjecucionId(1L);
+        assertNotNull(resultado);
+        assertEquals(1, resultado.size());
+        assertEquals(calificacion.getId(), resultado.get(0).getId());
+        verify(calificacionRepository, times(1)).findByEvaluacionId(1L);
     }
 
     @Test
-    void testObtenerPorTipoEvaluacion() {
+    void testValidarCalificacionConEstudianteNulo() {
         // Arrange
-        List<Calificacion> calificaciones = Arrays.asList(calificacion);
-        when(calificacionRepository.findByTipoEvaluacionIgnoreCase("PARCIAL")).thenReturn(calificaciones);
+        Calificacion calificacionInvalida = new Calificacion();
+        calificacionInvalida.setEvaluacion(evaluacion);
+        calificacionInvalida.setPuntajeObtenido(85.0);
 
-        // Act
-        List<Calificacion> result = calificacionService.obtenerPorTipoEvaluacion("PARCIAL");
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(calificacionRepository, times(1)).findByTipoEvaluacionIgnoreCase("PARCIAL");
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            calificacionService.registrar(calificacionInvalida);
+        });
     }
 
     @Test
-    void testObtenerPorRangoNotas() {
+    void testValidarCalificacionConEvaluacionNula() {
         // Arrange
-        List<Calificacion> calificaciones = Arrays.asList(calificacion);
-        when(calificacionRepository.findByNotaBetween(6.0, 7.0)).thenReturn(calificaciones);
+        Calificacion calificacionInvalida = new Calificacion();
+        calificacionInvalida.setPersona(persona);
+        calificacionInvalida.setPuntajeObtenido(85.0);
 
-        // Act
-        List<Calificacion> result = calificacionService.obtenerPorRangoNotas(6.0, 7.0);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(calificacionRepository, times(1)).findByNotaBetween(6.0, 7.0);
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            calificacionService.registrar(calificacionInvalida);
+        });
     }
 
     @Test
-    void testObtenerAprobadas() {
+    void testValidarCalificacionConPuntajeNegativo() {
         // Arrange
-        List<Calificacion> calificaciones = Arrays.asList(calificacion);
-        when(calificacionRepository.findByNotaGreaterThanEqual(4.0)).thenReturn(calificaciones);
+        Calificacion calificacionInvalida = new Calificacion();
+        calificacionInvalida.setPersona(persona);
+        calificacionInvalida.setEvaluacion(evaluacion);
+        calificacionInvalida.setPuntajeObtenido(-10.0);
 
-        // Act
-        List<Calificacion> result = calificacionService.obtenerAprobadas();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(calificacionRepository, times(1)).findByNotaGreaterThanEqual(4.0);
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> {
+            calificacionService.registrar(calificacionInvalida);
+        });
     }
 
     @Test
-    void testObtenerReprobadas() {
+    void testExisteCalificacion() {
         // Arrange
-        calificacion.setNota(3.5);
-        List<Calificacion> calificaciones = Arrays.asList(calificacion);
-        when(calificacionRepository.findByNotaLessThan(4.0)).thenReturn(calificaciones);
+        when(calificacionRepository.existsByPersonaIdAndEvaluacionId(1L, 1L)).thenReturn(true);
 
         // Act
-        List<Calificacion> result = calificacionService.obtenerReprobadas();
+        boolean resultado = calificacionService.existeCalificacion(1L, 1L);
 
         // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(calificacionRepository, times(1)).findByNotaLessThan(4.0);
+        assertTrue(resultado);
+        verify(calificacionRepository, times(1)).existsByPersonaIdAndEvaluacionId(1L, 1L);
     }
 
     @Test
-    void testCalcularPromedio() {
+    void testCalcularPromedioEvaluacion() {
         // Arrange
-        when(calificacionRepository.calcularPromedioEstudiante(1L)).thenReturn(6.2);
+        when(calificacionRepository.calcularPromedioByEvaluacion(1L)).thenReturn(85.5);
 
         // Act
-        Double result = calificacionService.calcularPromedio(1L);
+        Double resultado = calificacionService.calcularPromedioEvaluacion(1L);
 
         // Assert
-        assertEquals(6.2, result);
-        verify(calificacionRepository, times(1)).calcularPromedioEstudiante(1L);
+        assertNotNull(resultado);
+        assertEquals(85.5, resultado);
+        verify(calificacionRepository, times(1)).calcularPromedioByEvaluacion(1L);
     }
 
     @Test
-    void testCalcularPromedioPorEjecucion() {
+    void testCalcularPromedioEstudiante() {
         // Arrange
-        when(calificacionRepository.calcularPromedioEjecucion(1L)).thenReturn(6.8);
+        when(calificacionRepository.calcularPromedioByEstudiante(1L)).thenReturn(87.3);
 
         // Act
-        Double result = calificacionService.calcularPromedioPorEjecucion(1L);
+        Double resultado = calificacionService.calcularPromedioEstudiante(1L);
 
         // Assert
-        assertEquals(6.8, result);
-        verify(calificacionRepository, times(1)).calcularPromedioEjecucion(1L);
-    }
-
-    @Test
-    void testObtenerMejoresCalificaciones() {
-        // Arrange
-        List<Calificacion> calificaciones = Arrays.asList(calificacion);
-        when(calificacionRepository.findTop10ByOrderByNotaDesc()).thenReturn(calificaciones);
-
-        // Act
-        List<Calificacion> result = calificacionService.obtenerMejoresCalificaciones();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(calificacionRepository, times(1)).findTop10ByOrderByNotaDesc();
-    }
-
-    @Test
-    void testContarAprobados() {
-        // Arrange
-        when(calificacionRepository.countByNotaGreaterThanEqual(4.0)).thenReturn(25L);
-
-        // Act
-        Long result = calificacionService.contarAprobados();
-
-        // Assert
-        assertEquals(25L, result);
-        verify(calificacionRepository, times(1)).countByNotaGreaterThanEqual(4.0);
-    }
-
-    @Test
-    void testContarReprobados() {
-        // Arrange
-        when(calificacionRepository.countByNotaLessThan(4.0)).thenReturn(5L);
-
-        // Act
-        Long result = calificacionService.contarReprobados();
-
-        // Assert
-        assertEquals(5L, result);
-        verify(calificacionRepository, times(1)).countByNotaLessThan(4.0);
-    }
-
-    @Test
-    void testEstaAprobada_Aprobada() {
-        // Arrange
-        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
-
-        // Act
-        boolean result = calificacionService.estaAprobada(1L);
-
-        // Assert
-        assertTrue(result);
-        verify(calificacionRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    void testEstaAprobada_Reprobada() {
-        // Arrange
-        calificacion.setNota(3.5);
-        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
-
-        // Act
-        boolean result = calificacionService.estaAprobada(1L);
-
-        // Assert
-        assertFalse(result);
-        verify(calificacionRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    void testEstaAprobada_CalificacionNoExiste() {
-        // Arrange
-        when(calificacionRepository.findById(999L)).thenReturn(Optional.empty());
-
-        // Act
-        boolean result = calificacionService.estaAprobada(999L);
-
-        // Assert
-        assertFalse(result);
-        verify(calificacionRepository, times(1)).findById(999L);
+        assertNotNull(resultado);
+        assertEquals(87.3, resultado);
+        verify(calificacionRepository, times(1)).calcularPromedioByEstudiante(1L);
     }
 }

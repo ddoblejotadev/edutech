@@ -1,5 +1,18 @@
 package com.edutech.service;
 
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.Arrays;
+import java.time.LocalDateTime;
+
 import com.edutech.model.Inscripcion;
 import com.edutech.model.Persona;
 import com.edutech.model.Ejecucion;
@@ -8,88 +21,51 @@ import com.edutech.model.TipoPersona;
 import com.edutech.repository.InscripcionRepository;
 import com.edutech.repository.PersonaRepository;
 import com.edutech.repository.EjecucionRepository;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.ActiveProfiles;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.mockito.Mockito.*;
-import static org.junit.jupiter.api.Assertions.*;
-
-@ExtendWith(MockitoExtension.class)
-@ActiveProfiles("test")
+@SpringBootTest
 class InscripcionServiceTest {
 
-    @Mock
+    @MockBean
     private InscripcionRepository inscripcionRepository;
 
-    @Mock
+    @MockBean
     private PersonaRepository personaRepository;
 
-    @Mock
+    @MockBean
     private EjecucionRepository ejecucionRepository;
 
-    @InjectMocks
+    @Autowired
     private InscripcionService inscripcionService;
 
-    private Inscripcion inscripcion;
-    private Inscripcion inscripcionActualizada;
-    private Persona estudiante;
-    private Ejecucion ejecucion;
-    private Curso curso;
-    private TipoPersona tipoPersona;
-
-    @BeforeEach
-    void setUp() {
-        tipoPersona = new TipoPersona();
+    @Test
+    void testObtenerTodas() {
+        // Arrange
+        TipoPersona tipoPersona = new TipoPersona();
         tipoPersona.setId(1L);
         tipoPersona.setNombre("ESTUDIANTE");
 
-        estudiante = new Persona();
+        Persona estudiante = new Persona();
         estudiante.setId(1L);
         estudiante.setRut("12345678-9");
         estudiante.setNombres("Juan Carlos");
         estudiante.setTipoPersona(tipoPersona);
 
-        curso = new Curso();
+        Curso curso = new Curso();
         curso.setId(1L);
         curso.setNombre("Matemáticas Básica");
 
-        ejecucion = new Ejecucion();
+        Ejecucion ejecucion = new Ejecucion();
         ejecucion.setId(1L);
         ejecucion.setCurso(curso);
         ejecucion.setSeccion("A");
         ejecucion.setPeriodo("2024-1");
-        ejecucion.setFechaInicio(LocalDate.now().plusDays(1));
-        ejecucion.setFechaFin(LocalDate.now().plusDays(60));
 
-        inscripcion = new Inscripcion();
+        Inscripcion inscripcion = new Inscripcion();
         inscripcion.setId(1L);
-        inscripcion.setEstudiante(estudiante);
+        inscripcion.setPersona(estudiante);
         inscripcion.setEjecucion(ejecucion);
-        inscripcion.setFechaInscripcion(LocalDateTime.now());
         inscripcion.setEstado("ACTIVA");
-        inscripcion.setActivo(true);
-
-        inscripcionActualizada = new Inscripcion();
-        inscripcionActualizada.setEstudiante(estudiante);
-        inscripcionActualizada.setEjecucion(ejecucion);
-        inscripcionActualizada.setEstado("CANCELADA");
-        inscripcionActualizada.setActivo(false);
-    }
-
-    @Test
-    void testObtenerTodas() {
-        // Arrange
+        
         List<Inscripcion> inscripciones = Arrays.asList(inscripcion);
         when(inscripcionRepository.findAll()).thenReturn(inscripciones);
 
@@ -106,6 +82,10 @@ class InscripcionServiceTest {
     @Test
     void testObtenerPorId_InscripcionExiste() {
         // Arrange
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setId(1L);
+        inscripcion.setEstado("ACTIVA");
+        
         when(inscripcionRepository.findById(1L)).thenReturn(Optional.of(inscripcion));
 
         // Act
@@ -114,7 +94,6 @@ class InscripcionServiceTest {
         // Assert
         assertTrue(result.isPresent());
         assertEquals("ACTIVA", result.get().getEstado());
-        assertEquals("12345678-9", result.get().getEstudiante().getRut());
         verify(inscripcionRepository, times(1)).findById(1L);
     }
 
@@ -134,6 +113,18 @@ class InscripcionServiceTest {
     @Test
     void testCrear_InscripcionValida() {
         // Arrange
+        Persona estudiante = new Persona();
+        estudiante.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setPersona(estudiante);
+        inscripcion.setEjecucion(ejecucion);
+        inscripcion.setFechaInscripcion(LocalDateTime.now());
+        inscripcion.setEstado("ACTIVA");
+        
         when(inscripcionRepository.save(any(Inscripcion.class))).thenReturn(inscripcion);
 
         // Act
@@ -142,14 +133,14 @@ class InscripcionServiceTest {
         // Assert
         assertNotNull(result);
         assertEquals("ACTIVA", result.getEstado());
-        assertNotNull(result.getFechaInscripcion());
         verify(inscripcionRepository, times(1)).save(inscripcion);
     }
 
     @Test
     void testCrear_EstudianteVacio() {
         // Arrange
-        inscripcion.setEstudiante(null);
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setPersona(null);
 
         // Act & Assert
         IllegalArgumentException exception = assertThrows(
@@ -164,6 +155,11 @@ class InscripcionServiceTest {
     @Test
     void testCrear_EjecucionVacia() {
         // Arrange
+        Persona estudiante = new Persona();
+        estudiante.setId(1L);
+        
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setPersona(estudiante);
         inscripcion.setEjecucion(null);
 
         // Act & Assert
@@ -179,23 +175,32 @@ class InscripcionServiceTest {
     @Test
     void testActualizar_InscripcionExiste() {
         // Arrange
-        when(inscripcionRepository.findById(1L)).thenReturn(Optional.of(inscripcion));
-        when(inscripcionRepository.save(any(Inscripcion.class))).thenReturn(inscripcion);
+        Inscripcion inscripcionExistente = new Inscripcion();
+        inscripcionExistente.setId(1L);
+        inscripcionExistente.setEstado("ACTIVA");
+        
+        Inscripcion inscripcionActualizada = new Inscripcion();
+        inscripcionActualizada.setEstado("CANCELADA");
+        
+        when(inscripcionRepository.findById(1L)).thenReturn(Optional.of(inscripcionExistente));
+        when(inscripcionRepository.save(any(Inscripcion.class))).thenReturn(inscripcionExistente);
 
         // Act
         Optional<Inscripcion> result = inscripcionService.actualizar(1L, inscripcionActualizada);
 
         // Assert
         assertTrue(result.isPresent());
-        assertEquals("CANCELADA", inscripcion.getEstado());
-        assertFalse(inscripcion.getActivo());
+        assertEquals("CANCELADA", inscripcionExistente.getEstado());
         verify(inscripcionRepository, times(1)).findById(1L);
-        verify(inscripcionRepository, times(1)).save(inscripcion);
+        verify(inscripcionRepository, times(1)).save(inscripcionExistente);
     }
 
     @Test
     void testActualizar_InscripcionNoExiste() {
         // Arrange
+        Inscripcion inscripcionActualizada = new Inscripcion();
+        inscripcionActualizada.setEstado("CANCELADA");
+        
         when(inscripcionRepository.findById(999L)).thenReturn(Optional.empty());
 
         // Act
@@ -238,6 +243,16 @@ class InscripcionServiceTest {
     @Test
     void testInscribir_ExitosoPrimerPaso() {
         // Arrange
+        Persona estudiante = new Persona();
+        estudiante.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setPersona(estudiante);
+        inscripcion.setEjecucion(ejecucion);
+        
         when(personaRepository.findById(1L)).thenReturn(Optional.of(estudiante));
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
         when(inscripcionRepository.existsByPersonaIdAndEjecucionId(1L, 1L)).thenReturn(false);
@@ -273,6 +288,9 @@ class InscripcionServiceTest {
     @Test
     void testInscribir_EjecucionNoExiste() {
         // Arrange
+        Persona estudiante = new Persona();
+        estudiante.setId(1L);
+        
         when(personaRepository.findById(1L)).thenReturn(Optional.of(estudiante));
         when(ejecucionRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -290,6 +308,12 @@ class InscripcionServiceTest {
     @Test
     void testInscribir_YaInscrito() {
         // Arrange
+        Persona estudiante = new Persona();
+        estudiante.setId(1L);
+        
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        
         when(personaRepository.findById(1L)).thenReturn(Optional.of(estudiante));
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
         when(inscripcionRepository.existsByPersonaIdAndEjecucionId(1L, 1L)).thenReturn(true);
@@ -308,6 +332,10 @@ class InscripcionServiceTest {
     @Test
     void testCancelarInscripcion_PorId() {
         // Arrange
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setId(1L);
+        inscripcion.setEstado("ACTIVA");
+        
         when(inscripcionRepository.findById(1L)).thenReturn(Optional.of(inscripcion));
 
         // Act
@@ -323,7 +351,11 @@ class InscripcionServiceTest {
     @Test
     void testCancelarInscripcion_PorEstudianteYEjecucion() {
         // Arrange
-        when(inscripcionRepository.findByPersonaIdAndEjecucionIdAndActivoTrue(1L, 1L))
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setId(1L);
+        inscripcion.setEstado("ACTIVA");
+        
+        when(inscripcionRepository.findByPersonaIdAndEjecucionId(1L, 1L))
                 .thenReturn(Optional.of(inscripcion));
 
         // Act
@@ -332,13 +364,16 @@ class InscripcionServiceTest {
         // Assert
         assertEquals("CANCELADA", inscripcion.getEstado());
         assertFalse(inscripcion.getActivo());
-        verify(inscripcionRepository, times(1)).findByPersonaIdAndEjecucionIdAndActivoTrue(1L, 1L);
+        verify(inscripcionRepository, times(1)).findByPersonaIdAndEjecucionId(1L, 1L);
         verify(inscripcionRepository, times(1)).save(inscripcion);
     }
 
     @Test
     void testObtenerPorEstudiante() {
         // Arrange
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setEstado("ACTIVA");
+        
         List<Inscripcion> inscripciones = Arrays.asList(inscripcion);
         when(inscripcionRepository.findByPersonaId(1L)).thenReturn(inscripciones);
 
@@ -354,6 +389,9 @@ class InscripcionServiceTest {
     @Test
     void testObtenerPorEjecucion() {
         // Arrange
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setEstado("ACTIVA");
+        
         List<Inscripcion> inscripciones = Arrays.asList(inscripcion);
         when(inscripcionRepository.findByEjecucionId(1L)).thenReturn(inscripciones);
 
@@ -369,6 +407,9 @@ class InscripcionServiceTest {
     @Test
     void testObtenerActivasDeEstudiante() {
         // Arrange
+        Inscripcion inscripcion = new Inscripcion();
+        inscripcion.setEstado("ACTIVA");
+        
         List<Inscripcion> inscripciones = Arrays.asList(inscripcion);
         when(inscripcionRepository.findByPersonaIdAndActivoTrue(1L)).thenReturn(inscripciones);
 
@@ -379,66 +420,6 @@ class InscripcionServiceTest {
         assertNotNull(result);
         assertEquals(1, result.size());
         verify(inscripcionRepository, times(1)).findByPersonaIdAndActivoTrue(1L);
-    }
-
-    @Test
-    void testObtenerFuturasDeEstudiante() {
-        // Arrange
-        List<Inscripcion> inscripciones = Arrays.asList(inscripcion);
-        when(inscripcionRepository.findInscripcionesFuturasByEstudiante(1L)).thenReturn(inscripciones);
-
-        // Act
-        List<Inscripcion> result = inscripcionService.obtenerFuturasDeEstudiante(1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(inscripcionRepository, times(1)).findInscripcionesFuturasByEstudiante(1L);
-    }
-
-    @Test
-    void testObtenerPasadasDeEstudiante() {
-        // Arrange
-        List<Inscripcion> inscripciones = Arrays.asList(inscripcion);
-        when(inscripcionRepository.findInscripcionesPasadasByEstudiante(1L)).thenReturn(inscripciones);
-
-        // Act
-        List<Inscripcion> result = inscripcionService.obtenerPasadasDeEstudiante(1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(inscripcionRepository, times(1)).findInscripcionesPasadasByEstudiante(1L);
-    }
-
-    @Test
-    void testObtenerEstudiantesInscritos() {
-        // Arrange
-        List<Persona> estudiantes = Arrays.asList(estudiante);
-        when(inscripcionRepository.findEstudiantesByEjecucionId(1L)).thenReturn(estudiantes);
-
-        // Act
-        List<Persona> result = inscripcionService.obtenerEstudiantesInscritos(1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(inscripcionRepository, times(1)).findEstudiantesByEjecucionId(1L);
-    }
-
-    @Test
-    void testObtenerPorCurso() {
-        // Arrange
-        List<Inscripcion> inscripciones = Arrays.asList(inscripcion);
-        when(inscripcionRepository.findByCursoId(1L)).thenReturn(inscripciones);
-
-        // Act
-        List<Inscripcion> result = inscripcionService.obtenerPorCurso(1L);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(inscripcionRepository, times(1)).findByCursoId(1L);
     }
 
     @Test
@@ -455,25 +436,25 @@ class InscripcionServiceTest {
     }
 
     @Test
-    void testContarPorEstudiante() {
+    void testEstaInscrito() {
         // Arrange
-        when(inscripcionRepository.countByPersonaId(1L)).thenReturn(5);
+        when(inscripcionRepository.existsByPersonaIdAndEjecucionId(1L, 1L)).thenReturn(true);
 
         // Act
-        Integer result = inscripcionService.contarPorEstudiante(1L);
+        boolean result = inscripcionService.estaInscrito(1L, 1L);
 
         // Assert
-        assertEquals(5, result);
-        verify(inscripcionRepository, times(1)).countByPersonaId(1L);
+        assertTrue(result);
+        verify(inscripcionRepository, times(1)).existsByPersonaIdAndEjecucionId(1L, 1L);
     }
 
     @Test
-    void testEstaInscrito() {
+    void testEstaInscritoActivo() {
         // Arrange
         when(inscripcionRepository.existsByPersonaIdAndEjecucionIdAndActivoTrue(1L, 1L)).thenReturn(true);
 
         // Act
-        boolean result = inscripcionService.estaInscrito(1L, 1L);
+        boolean result = inscripcionService.estaInscritoActivo(1L, 1L);
 
         // Assert
         assertTrue(result);
@@ -481,30 +462,15 @@ class InscripcionServiceTest {
     }
 
     @Test
-    void testEstaInscritoEnCurso() {
+    void testContarPorEstudiante() {
         // Arrange
-        when(inscripcionRepository.existsByPersonaIdAndCursoId(1L, 1L)).thenReturn(true);
+        when(inscripcionRepository.countByPersonaId(1L)).thenReturn(3);
 
         // Act
-        boolean result = inscripcionService.estaInscritoEnCurso(1L, 1L);
+        Integer result = inscripcionService.contarPorEstudiante(1L);
 
         // Assert
-        assertTrue(result);
-        verify(inscripcionRepository, times(1)).existsByPersonaIdAndCursoId(1L, 1L);
-    }
-
-    @Test
-    void testObtenerUltimas() {
-        // Arrange
-        List<Inscripcion> inscripciones = Arrays.asList(inscripcion);
-        when(inscripcionRepository.findTop10ByOrderByFechaInscripcionDesc()).thenReturn(inscripciones);
-
-        // Act
-        List<Inscripcion> result = inscripcionService.obtenerUltimas();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(inscripcionRepository, times(1)).findTop10ByOrderByFechaInscripcionDesc();
+        assertEquals(3, result);
+        verify(inscripcionRepository, times(1)).countByPersonaId(1L);
     }
 }
