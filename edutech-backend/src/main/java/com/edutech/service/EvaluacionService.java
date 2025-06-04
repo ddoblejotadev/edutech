@@ -163,7 +163,7 @@ public class EvaluacionService {
     public List<Evaluacion> obtenerDisponibles() {
         log.debug("Obteniendo evaluaciones disponibles");
         LocalDateTime ahora = LocalDateTime.now();
-        return evaluacionRepository.findByActivoTrueAndPublicadaTrueAndFechaDisponibleBeforeAndFechaLimiteAfter(ahora, ahora);
+        return evaluacionRepository.findByActivoTrueAndPublicadaTrueAndFechaInicioBeforeAndFechaFinAfter(ahora);
     }
     
     /**
@@ -172,7 +172,7 @@ public class EvaluacionService {
     @Transactional(readOnly = true)
     public List<Evaluacion> obtenerFuturas() {
         log.debug("Obteniendo evaluaciones futuras");
-        return evaluacionRepository.findByFechaDisponibleAfter(LocalDateTime.now());
+        return evaluacionRepository.findByFechaInicioAfter(LocalDateTime.now());
     }
     
     /**
@@ -181,16 +181,16 @@ public class EvaluacionService {
     @Transactional(readOnly = true)
     public List<Evaluacion> obtenerVencidas() {
         log.debug("Obteniendo evaluaciones vencidas");
-        return evaluacionRepository.findByFechaLimiteBefore(LocalDateTime.now());
+        return evaluacionRepository.findByFechaFinBefore(LocalDateTime.now());
     }
     
     /**
-     * Obtener evaluaciones por rango de fechas disponibles
+     * Obtener evaluaciones por rango de fechas de inicio
      */
     @Transactional(readOnly = true)
-    public List<Evaluacion> obtenerPorRangoFechasDisponibles(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
-        log.debug("Obteniendo evaluaciones con fecha disponible entre {} y {}", fechaInicio, fechaFin);
-        return evaluacionRepository.findByFechaDisponibleBetween(fechaInicio, fechaFin);
+    public List<Evaluacion> obtenerPorRangoFechasInicio(LocalDateTime fechaInicio, LocalDateTime fechaFin) {
+        log.debug("Obteniendo evaluaciones con fecha de inicio entre {} y {}", fechaInicio, fechaFin);
+        return evaluacionRepository.findByFechaInicioBetween(fechaInicio, fechaFin);
     }
     
     /**
@@ -252,7 +252,7 @@ public class EvaluacionService {
     public List<Evaluacion> obtenerProximasAVencer(int horas) {
         log.debug("Obteniendo evaluaciones que vencen en las próximas {} horas", horas);
         LocalDateTime limite = LocalDateTime.now().plusHours(horas);
-        return evaluacionRepository.findByFechaLimiteBetween(LocalDateTime.now(), limite);
+        return evaluacionRepository.findByFechaFinBetween(LocalDateTime.now(), limite);
     }
     
     /**

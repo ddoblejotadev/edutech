@@ -20,11 +20,11 @@ import java.util.Optional;
 @Repository
 public interface PersonaRepository extends JpaRepository<Persona, Long> {
     
-    Optional<Persona> findByEmailIgnoreCase(String email);
+    Optional<Persona> findByCorreoIgnoreCase(String correo);
     
     Optional<Persona> findByRut(String rut);
     
-    List<Persona> findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(String nombres, String apellidos);
+    List<Persona> findByNombresContainingIgnoreCaseOrApellidoPaternoContainingIgnoreCaseOrApellidoMaternoContainingIgnoreCase(String nombres, String apellidoPaterno, String apellidoMaterno);
     
     List<Persona> findByTipoPersonaId(Long tipoPersonaId);
     
@@ -32,7 +32,7 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
     
     boolean existsByRut(String rut);
     
-    boolean existsByEmailIgnoreCase(String email);
+    boolean existsByCorreoIgnoreCase(String correo);
     
     List<Persona> findByActivoTrue();
     

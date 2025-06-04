@@ -47,13 +47,13 @@ public class Evaluacion {
     @Column(name = "puntaje_total", nullable = false, precision = 5)
     private Double puntajeTotal;
 
-    @Column(name = "nota_minima_aprobacion", nullable = false, precision = 3, scale = 1)
+    @Column(name = "nota_minima_aprobacion", nullable = false, precision = 3)
     private Double notaMinimaAprobacion = 4.0;
 
-    @Column(name = "nota_maxima", nullable = false, precision = 3, scale = 1)
+    @Column(name = "nota_maxima", nullable = false, precision = 3)
     private Double notaMaxima = 7.0;
 
-    @Column(name = "exigencia_porcentual", nullable = false, precision = 5, scale = 2)
+    @Column(name = "exigencia_porcentual", nullable = false, precision = 5)
     private Double exigenciaPorcentual = 60.0;
 
     @Column(name = "intentos_permitidos", nullable = false)

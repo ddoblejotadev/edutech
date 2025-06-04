@@ -32,10 +32,10 @@ public class Calificacion {
     @Column(name = "numero_intento", nullable = false)
     private Integer numeroIntento;
 
-    @Column(name = "puntaje_obtenido", nullable = false, precision = 5, scale = 2)
+    @Column(name = "puntaje_obtenido", nullable = false, precision = 5)
     private Double puntajeObtenido;
 
-    @Column(name = "puntaje_maximo", nullable = false, precision = 5, scale = 2)
+    @Column(name = "puntaje_maximo", nullable = false, precision = 5)
     private Double puntajeMaximo;
 
     @Column(name = "fecha_realizacion", nullable = false)
@@ -53,7 +53,7 @@ public class Calificacion {
     @Column(name = "nota", precision = 4)
     private Double nota;
 
-    @Column(name = "nota_chilena", precision = 3, scale = 1)
+    @Column(name = "nota_chilena", precision = 3)
     private Double notaChilena;
 
     // Alias methods for compatibility

@@ -114,24 +114,6 @@ public class CursoController {
     }
 
     /**
-     * Obtener cursos sin prerequisitos
-     */
-    @GetMapping("/sin-prerequisitos")
-    public ResponseEntity<List<Curso>> obtenerSinPrerequisitos() {
-        List<Curso> cursos = cursoService.obtenerSinPrerequisitos();
-        return ResponseEntity.ok(cursos);
-    }
-
-    /**
-     * Obtener cursos que requieren un prerequisito específico
-     */
-    @GetMapping("/prerequisito/{prerequisitoCodigo}")
-    public ResponseEntity<List<Curso>> obtenerConPrerequisito(@PathVariable String prerequisitoCodigo) {
-        List<Curso> cursos = cursoService.obtenerConPrerequisito(prerequisitoCodigo);
-        return ResponseEntity.ok(cursos);
-    }
-
-    /**
      * Obtener cursos ordenados por nombre
      */
     @GetMapping("/ordenados/nombre")

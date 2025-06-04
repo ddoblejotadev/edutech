@@ -43,7 +43,7 @@ public class PersonaService {
      * Obtener persona por email
      */
     public Optional<Persona> obtenerPorEmail(String email) {
-        return Optional.empty(); // Implementación básica
+        return personaRepository.findByCorreoIgnoreCase(email);
     }
     
     /**
@@ -100,7 +100,8 @@ public class PersonaService {
      * Buscar personas por nombre o apellido
      */
     public List<Persona> buscarPorNombreOApellido(String termino) {
-        return personaRepository.findAll(); // Implementación básica
+        // Usar la consulta personalizada que ya maneja la búsqueda completa
+        return personaRepository.buscarPersonas(termino);
     }
     
     /**
@@ -135,7 +136,7 @@ public class PersonaService {
      * Verificar si existe persona por email
      */
     public boolean existePorEmail(String email) {
-        return false; // Implementación básica
+        return personaRepository.existsByCorreoIgnoreCase(email);
     }
     
     // Métodos de validación privados

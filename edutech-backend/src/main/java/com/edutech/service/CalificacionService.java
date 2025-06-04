@@ -86,7 +86,7 @@ public class CalificacionService {
      * Obtener calificaciones por estudiante
      */
     public List<Calificacion> obtenerPorEstudiante(Long estudianteId) {
-        return calificacionRepository.findByEstudianteId(estudianteId);
+        return calificacionRepository.findByPersonaId(estudianteId);
     }
     
     /**
@@ -100,7 +100,7 @@ public class CalificacionService {
      * Obtener calificación específica de un estudiante en una evaluación
      */
     public Optional<Calificacion> obtenerCalificacionEspecifica(Long estudianteId, Long evaluacionId) {
-        return calificacionRepository.findByEstudianteIdAndEvaluacionId(estudianteId, evaluacionId);
+        return calificacionRepository.findByPersonaIdAndEvaluacionId(estudianteId, evaluacionId);
     }
     
     /**
@@ -142,7 +142,7 @@ public class CalificacionService {
      * Verificar si estudiante ya tiene calificación en evaluación
      */
     public boolean existeCalificacion(Long estudianteId, Long evaluacionId) {
-        return calificacionRepository.existsByEstudianteIdAndEvaluacionId(estudianteId, evaluacionId);
+        return calificacionRepository.existsByPersonaIdAndEvaluacionId(estudianteId, evaluacionId);
     }
     
     /**

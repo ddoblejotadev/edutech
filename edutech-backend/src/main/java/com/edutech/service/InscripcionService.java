@@ -95,7 +95,7 @@ public class InscripcionService {
                 .orElseThrow(() -> new IllegalArgumentException("Ejecución no encontrada"));
         
         // Verificar que no esté ya inscrito
-        if (inscripcionRepository.existsByEstudianteIdAndEjecucionId(estudianteId, ejecucionId)) {
+        if (inscripcionRepository.existsByPersonaIdAndEjecucionId(estudianteId, ejecucionId)) {
             throw new IllegalStateException("El estudiante ya está inscrito en esta ejecución");
         }
         
@@ -128,7 +128,7 @@ public class InscripcionService {
      */
     public void cancelarInscripcion(Long estudianteId, Long ejecucionId) {
         
-        Inscripcion inscripcion = inscripcionRepository.findByEstudianteIdAndEjecucionId(estudianteId, ejecucionId)
+        Inscripcion inscripcion = inscripcionRepository.findByPersonaIdAndEjecucionId(estudianteId, ejecucionId)
                 .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada"));
         
         inscripcion.setEstado("CANCELADA");
@@ -140,7 +140,7 @@ public class InscripcionService {
      * Obtener inscripciones por estudiante
      */
     public List<Inscripcion> obtenerPorEstudiante(Long estudianteId) {
-        return inscripcionRepository.findByEstudianteId(estudianteId);
+        return inscripcionRepository.findByPersonaId(estudianteId);
     }
     
     /**
@@ -154,7 +154,7 @@ public class InscripcionService {
      * Obtener inscripciones activas de un estudiante
      */
     public List<Inscripcion> obtenerActivasDeEstudiante(Long estudianteId) {
-        return inscripcionRepository.findByEstudianteIdAndActivoTrue(estudianteId);
+        return inscripcionRepository.findByPersonaIdAndActivoTrue(estudianteId);
     }
     
     /**
@@ -196,21 +196,21 @@ public class InscripcionService {
      * Contar inscripciones por estudiante
      */
     public Integer contarPorEstudiante(Long estudianteId) {
-        return inscripcionRepository.countByEstudianteId(estudianteId);
+        return inscripcionRepository.countByPersonaId(estudianteId);
     }
     
     /**
      * Verificar si estudiante está inscrito en ejecución
      */
     public boolean estaInscrito(Long estudianteId, Long ejecucionId) {
-        return inscripcionRepository.existsByEstudianteIdAndEjecucionIdAndActivoTrue(estudianteId, ejecucionId);
+        return inscripcionRepository.existsByPersonaIdAndEjecucionIdAndActivoTrue(estudianteId, ejecucionId);
     }
     
     /**
      * Verificar si estudiante está inscrito en alguna ejecución de un curso
      */
     public boolean estaInscritoEnCurso(Long estudianteId, Long cursoId) {
-        return inscripcionRepository.existsByEstudianteIdAndCursoId(estudianteId, cursoId);
+        return inscripcionRepository.existsByPersonaIdAndCursoId(estudianteId, cursoId);
     }
     
     /**

@@ -24,16 +24,16 @@ import java.util.Optional;
 public interface CalificacionRepository extends JpaRepository<Calificacion, Long> {
     
     // Buscar calificaciones por estudiante
-    List<Calificacion> findByEstudiante(Persona estudiante);
-    List<Calificacion> findByEstudianteId(Long estudianteId);
+    List<Calificacion> findByPersona(Persona estudiante);
+    List<Calificacion> findByPersonaId(Long estudianteId);
     
     // Buscar calificaciones por evaluación
     List<Calificacion> findByEvaluacion(Evaluacion evaluacion);
     List<Calificacion> findByEvaluacionId(Long evaluacionId);
     
     // Buscar calificación específica de un estudiante en una evaluación
-    Optional<Calificacion> findByEstudianteAndEvaluacion(Persona estudiante, Evaluacion evaluacion);
-    Optional<Calificacion> findByEstudianteIdAndEvaluacionId(Long estudianteId, Long evaluacionId);
+    Optional<Calificacion> findByPersonaAndEvaluacion(Persona estudiante, Evaluacion evaluacion);
+    Optional<Calificacion> findByPersonaIdAndEvaluacionId(Long estudianteId, Long evaluacionId);
     
     // Buscar calificaciones por rango de puntaje
     List<Calificacion> findByPuntajeObtenidoBetween(Double puntajeMin, Double puntajeMax);
@@ -46,8 +46,8 @@ public interface CalificacionRepository extends JpaRepository<Calificacion, Long
     List<Calificacion> findByFechaRealizacionBefore(LocalDateTime fecha);
     
     // Buscar calificaciones de un estudiante ordenadas por fecha
-    List<Calificacion> findByEstudianteOrderByFechaRealizacionDesc(Persona estudiante);
-    List<Calificacion> findByEstudianteIdOrderByFechaRealizacionDesc(Long estudianteId);
+    List<Calificacion> findByPersonaOrderByFechaRealizacionDesc(Persona estudiante);
+    List<Calificacion> findByPersonaIdOrderByFechaRealizacionDesc(Long estudianteId);
     
     // Buscar calificaciones de una evaluación ordenadas por puntaje
     List<Calificacion> findByEvaluacionOrderByPuntajeObtenidoDesc(Evaluacion evaluacion);
@@ -65,18 +65,18 @@ public interface CalificacionRepository extends JpaRepository<Calificacion, Long
     Double findMinPuntajeByEvaluacion(@Param("evaluacionId") Long evaluacionId);
     
     // Estadísticas de calificaciones por estudiante
-    @Query("SELECT AVG(c.puntajeObtenido) FROM Calificacion c WHERE c.estudiante.id = :estudianteId")
+    @Query("SELECT AVG(c.puntajeObtenido) FROM Calificacion c WHERE c.persona.id = :estudianteId")
     Double calcularPromedioByEstudiante(@Param("estudianteId") Long estudianteId);
     
-    @Query("SELECT MAX(c.puntajeObtenido) FROM Calificacion c WHERE c.estudiante.id = :estudianteId")
+    @Query("SELECT MAX(c.puntajeObtenido) FROM Calificacion c WHERE c.persona.id = :estudianteId")
     Double findMaxPuntajeByEstudiante(@Param("estudianteId") Long estudianteId);
     
-    @Query("SELECT MIN(c.puntajeObtenido) FROM Calificacion c WHERE c.estudiante.id = :estudianteId")
+    @Query("SELECT MIN(c.puntajeObtenido) FROM Calificacion c WHERE c.persona.id = :estudianteId")
     Double findMinPuntajeByEstudiante(@Param("estudianteId") Long estudianteId);
     
     // Contar calificaciones
     Integer countByEvaluacionId(Long evaluacionId);
-    Integer countByEstudianteId(Long estudianteId);
+    Integer countByPersonaId(Long estudianteId);
     
     // Buscar calificaciones de un curso específico
     @Query("SELECT c FROM Calificacion c WHERE c.evaluacion.ejecucion.curso.id = :cursoId")
@@ -88,18 +88,18 @@ public interface CalificacionRepository extends JpaRepository<Calificacion, Long
     
     // Buscar calificaciones por porcentaje de acierto
     @Query("SELECT c FROM Calificacion c WHERE " +
-           "(c.puntajeObtenido / c.evaluacion.puntajeMaximo * 100) BETWEEN :porcentajeMin AND :porcentajeMax")
+           "(c.puntajeObtenido / c.evaluacion.puntajeTotal * 100) BETWEEN :porcentajeMin AND :porcentajeMax")
     List<Calificacion> findCalificacionesByPorcentajeRange(@Param("porcentajeMin") Double porcentajeMin, 
                                                           @Param("porcentajeMax") Double porcentajeMax);
     
     // Buscar estudiantes que aprobaron una evaluación (≥60%)
     @Query("SELECT c FROM Calificacion c WHERE " +
-           "(c.puntajeObtenido / c.evaluacion.puntajeMaximo * 100) >= 60")
+           "(c.puntajeObtenido / c.evaluacion.puntajeTotal * 100) >= 60")
     List<Calificacion> findCalificacionesAprobadas();
     
     // Buscar estudiantes que reprobaron una evaluación (<60%)
     @Query("SELECT c FROM Calificacion c WHERE " +
-           "(c.puntajeObtenido / c.evaluacion.puntajeMaximo * 100) < 60")
+           "(c.puntajeObtenido / c.evaluacion.puntajeTotal * 100) < 60")
     List<Calificacion> findCalificacionesReprobadas();
     
     // Buscar mejores calificaciones (top N)
@@ -107,7 +107,7 @@ public interface CalificacionRepository extends JpaRepository<Calificacion, Long
     List<Calificacion> findTopCalificaciones();
     
     // Verificar si un estudiante ya tiene calificación en una evaluación
-    boolean existsByEstudianteIdAndEvaluacionId(Long estudianteId, Long evaluacionId);
+    boolean existsByPersonaIdAndEvaluacionId(Long estudianteId, Long evaluacionId);
     
     // Buscar calificaciones recientes
     @Query("SELECT c FROM Calificacion c ORDER BY c.fechaRealizacion DESC")
@@ -115,12 +115,12 @@ public interface CalificacionRepository extends JpaRepository<Calificacion, Long
     
     // Calcular porcentaje de aprobación por evaluación
     @Query("SELECT " +
-           "COUNT(CASE WHEN (c.puntajeObtenido / c.evaluacion.puntajeMaximo * 100) >= 60 THEN 1 END) * 100.0 / COUNT(c) " +
+           "COUNT(CASE WHEN (c.puntajeObtenido / c.evaluacion.puntajeTotal * 100) >= 60 THEN 1 END) * 100.0 / COUNT(c) " +
            "FROM Calificacion c WHERE c.evaluacion.id = :evaluacionId")
     Double calcularPorcentajeAprobacionByEvaluacion(@Param("evaluacionId") Long evaluacionId);
     
     // Buscar calificaciones de un estudiante en un curso específico
-    @Query("SELECT c FROM Calificacion c WHERE c.estudiante.id = :estudianteId " +
+    @Query("SELECT c FROM Calificacion c WHERE c.persona.id = :estudianteId " +
            "AND c.evaluacion.ejecucion.curso.id = :cursoId")
     List<Calificacion> findCalificacionesDeEstudianteEnCurso(@Param("estudianteId") Long estudianteId, 
                                                             @Param("cursoId") Long cursoId);

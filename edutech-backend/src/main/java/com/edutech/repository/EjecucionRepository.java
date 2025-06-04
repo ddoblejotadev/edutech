@@ -53,19 +53,19 @@ public interface EjecucionRepository extends JpaRepository<Ejecucion, Long> {
     List<Ejecucion> findEjecucionesPasadas();
     
     // Buscar ejecuciones con cupos disponibles
-    @Query("SELECT e FROM Ejecucion e WHERE SIZE(e.inscripciones) < e.cupoMaximo")
+    @Query("SELECT e FROM Ejecucion e WHERE SIZE(e.inscripciones) < e.capacidadMaxima")
     List<Ejecucion> findEjecucionesConCuposDisponibles();
     
     // Buscar ejecuciones con cupos disponibles para un curso específico
-    @Query("SELECT e FROM Ejecucion e WHERE e.curso.id = :cursoId AND SIZE(e.inscripciones) < e.cupoMaximo")
+    @Query("SELECT e FROM Ejecucion e WHERE e.curso.id = :cursoId AND SIZE(e.inscripciones) < e.capacidadMaxima")
     List<Ejecucion> findEjecucionesConCuposDisponiblesByCurso(@Param("cursoId") Long cursoId);
     
     // Contar estudiantes inscritos en una ejecución
     @Query("SELECT SIZE(e.inscripciones) FROM Ejecucion e WHERE e.id = :ejecucionId")
     Integer countEstudiantesInscritos(@Param("ejecucionId") Long ejecucionId);
     
-    // Buscar ejecuciones por rango de cupo máximo
-    List<Ejecucion> findByCupoMaximoBetween(Integer cupoMin, Integer cupoMax);
+    // Buscar ejecuciones por rango de capacidad máxima
+    List<Ejecucion> findByCapacidadMaximaBetween(Integer cupoMin, Integer cupoMax);
     
     // Buscar ejecuciones ordenadas por fecha de inicio
     List<Ejecucion> findAllByOrderByFechaInicioAsc();

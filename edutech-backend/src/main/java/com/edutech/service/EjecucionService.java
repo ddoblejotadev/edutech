@@ -167,7 +167,7 @@ public class EjecucionService {
      * Obtener ejecuciones por rango de cupo
      */
     public List<Ejecucion> obtenerPorRangoCupo(Integer cupoMin, Integer cupoMax) {
-        return ejecucionRepository.findByCupoMaximoBetween(cupoMin, cupoMax);
+        return ejecucionRepository.findByCapacidadMaximaBetween(cupoMin, cupoMax);
     }
     
     /**

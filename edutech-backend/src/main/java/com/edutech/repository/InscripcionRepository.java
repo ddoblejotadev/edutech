@@ -21,22 +21,22 @@ import java.util.Optional;
 @Repository
 public interface InscripcionRepository extends JpaRepository<Inscripcion, Long> {
     
-    List<Inscripcion> findByEstudianteId(Long estudianteId);
+    List<Inscripcion> findByPersonaId(Long estudianteId);
     
     List<Inscripcion> findByEjecucionId(Long ejecucionId);
     
-    List<Inscripcion> findByEstudianteIdAndActivoTrue(Long estudianteId);
+    List<Inscripcion> findByPersonaIdAndActivoTrue(Long estudianteId);
     
-    Optional<Inscripcion> findByEstudianteIdAndEjecucionId(Long estudianteId, Long ejecucionId);
+    Optional<Inscripcion> findByPersonaIdAndEjecucionId(Long estudianteId, Long ejecucionId);
     
-    boolean existsByEstudianteIdAndEjecucionId(Long estudianteId, Long ejecucionId);
+    boolean existsByPersonaIdAndEjecucionId(Long estudianteId, Long ejecucionId);
     
-    boolean existsByEstudianteIdAndEjecucionIdAndActivoTrue(Long estudianteId, Long ejecucionId);
+    boolean existsByPersonaIdAndEjecucionIdAndActivoTrue(Long estudianteId, Long ejecucionId);
     
-    @Query("SELECT i FROM Inscripcion i WHERE i.estudiante.id = :estudianteId AND i.ejecucion.fechaInicio > CURRENT_DATE")
+    @Query("SELECT i FROM Inscripcion i WHERE i.persona.id = :estudianteId AND i.ejecucion.fechaInicio > CURRENT_DATE")
     List<Inscripcion> findInscripcionesFuturasByEstudiante(@Param("estudianteId") Long estudianteId);
     
-    @Query("SELECT i FROM Inscripcion i WHERE i.estudiante.id = :estudianteId AND i.ejecucion.fechaFin < CURRENT_DATE")
+    @Query("SELECT i FROM Inscripcion i WHERE i.persona.id = :estudianteId AND i.ejecucion.fechaFin < CURRENT_DATE")
     List<Inscripcion> findInscripcionesPasadasByEstudiante(@Param("estudianteId") Long estudianteId);
     
     @Query("SELECT i.persona FROM Inscripcion i WHERE i.ejecucion.id = :ejecucionId")
@@ -47,10 +47,10 @@ public interface InscripcionRepository extends JpaRepository<Inscripcion, Long> 
     
     Integer countByEjecucionId(Long ejecucionId);
     
-    Integer countByEstudianteId(Long estudianteId);
+    Integer countByPersonaId(Long estudianteId);
     
-    @Query("SELECT COUNT(i) > 0 FROM Inscripcion i WHERE i.estudiante.id = :estudianteId AND i.ejecucion.curso.id = :cursoId AND i.activo = true")
-    boolean existsByEstudianteIdAndCursoId(@Param("estudianteId") Long estudianteId, @Param("cursoId") Long cursoId);
+    @Query("SELECT COUNT(i) > 0 FROM Inscripcion i WHERE i.persona.id = :estudianteId AND i.ejecucion.curso.id = :cursoId AND i.activo = true")
+    boolean existsByPersonaIdAndCursoId(@Param("estudianteId") Long estudianteId, @Param("cursoId") Long cursoId);
     
     List<Inscripcion> findTop10ByOrderByFechaInscripcionDesc();
 }

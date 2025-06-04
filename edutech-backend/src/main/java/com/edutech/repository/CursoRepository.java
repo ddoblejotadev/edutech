@@ -26,11 +26,7 @@ public interface CursoRepository extends JpaRepository<Curso, Long> {
     
     List<Curso> findByDescripcionContainingIgnoreCase(String descripcion);
     
-    List<Curso> findByArea(String area);
-    
     List<Curso> findByModalidad(String modalidad);
-    
-    List<Curso> findByNivel(Integer nivel);
     
     List<Curso> findByCreditosBetween(Integer creditosMin, Integer creditosMax);
     
@@ -42,17 +38,9 @@ public interface CursoRepository extends JpaRepository<Curso, Long> {
     
     List<Curso> findAllByOrderByNombreAsc();
     
-    List<Curso> findAllByOrderByNivelAsc();
-    
     boolean existsByNombreIgnoreCase(String nombre);
     
     boolean existsByCodigo(String codigo);
-    
-    @Query("SELECT c FROM Curso c WHERE c.prerequisitoCursoCodigo IS NULL")
-    List<Curso> findByPrerrequisitoIsNull();
-    
-    @Query("SELECT c FROM Curso c WHERE c.prerequisitoCursoCodigo = :prerequisitoCodigo")
-    List<Curso> findByPrerrequisitoId(@Param("prerequisitoCodigo") String prerequisitoCodigo);
     
     @Query("SELECT c FROM Curso c WHERE (c.horasTeoricas + c.horasPracticas) BETWEEN :duracionMin AND :duracionMax")
     List<Curso> findByDuracionHorasBetween(@Param("duracionMin") Integer duracionMin, @Param("duracionMax") Integer duracionMax);

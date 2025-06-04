@@ -102,24 +102,6 @@ public class CursoService {
     }
     
     /**
-     * Obtener cursos sin prerequisitos
-     */
-    @Transactional(readOnly = true)
-    public List<Curso> obtenerSinPrerequisitos() {
-        log.debug("Obteniendo cursos sin prerequisitos");
-        return cursoRepository.findByPrerrequisitoIsNull();
-    }
-    
-    /**
-     * Obtener cursos con un prerequisito específico
-     */
-    @Transactional(readOnly = true)
-    public List<Curso> obtenerConPrerequisito(String prerequisitoCodigo) {
-        log.debug("Obteniendo cursos con prerequisito: {}", prerequisitoCodigo);
-        return cursoRepository.findByPrerrequisitoId(prerequisitoCodigo);
-    }
-    
-    /**
      * Obtener cursos ordenados por nombre
      */
     @Transactional(readOnly = true)
