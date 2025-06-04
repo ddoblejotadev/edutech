@@ -44,16 +44,22 @@ public class Evaluacion {
     @Column(name = "duracion_minutos", nullable = false)
     private Integer duracionMinutos;
 
-    @Column(name = "puntaje_total", nullable = false, precision = 5, scale = 2)
+    @Column(name = "puntaje_total", nullable = false, precision = 5)
     private Double puntajeTotal;
 
-    @Column(name = "nota_minima", nullable = false, precision = 5, scale = 2)
-    private Double notaMinima;
+    @Column(name = "nota_minima_aprobacion", nullable = false, precision = 3, scale = 1)
+    private Double notaMinimaAprobacion = 4.0;
+
+    @Column(name = "nota_maxima", nullable = false, precision = 3, scale = 1)
+    private Double notaMaxima = 7.0;
+
+    @Column(name = "exigencia_porcentual", nullable = false, precision = 5, scale = 2)
+    private Double exigenciaPorcentual = 60.0;
 
     @Column(name = "intentos_permitidos", nullable = false)
     private Integer intentosPermitidos;
 
-    @Column(name = "ponderacion", precision = 5, scale = 2)
+    @Column(name = "ponderacion", precision = 5)
     private Double ponderacion;
 
     @Column(name = "activo")
@@ -67,9 +73,6 @@ public class Evaluacion {
 
     @Column(name = "fecha_actualizacion")
     private LocalDateTime fechaActualizacion;
-
-    @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Pregunta> preguntas;
 
     @OneToMany(mappedBy = "evaluacion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Calificacion> calificaciones;
@@ -86,6 +89,15 @@ public class Evaluacion {
         }
         if (intentosPermitidos == null) {
             intentosPermitidos = 1;
+        }
+        if (notaMinimaAprobacion == null) {
+            notaMinimaAprobacion = 4.0;
+        }
+        if (notaMaxima == null) {
+            notaMaxima = 7.0;
+        }
+        if (exigenciaPorcentual == null) {
+            exigenciaPorcentual = 60.0;
         }
         if (tipo != null) {
             tipo = tipo.toUpperCase();
@@ -112,28 +124,6 @@ public class Evaluacion {
         return LocalDateTime.now().isAfter(fechaFin);
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Ejecucion getEjecucion() { return ejecucion; }
-    public void setEjecucion(Ejecucion ejecucion) { this.ejecucion = ejecucion; }
-
-    public String getTitulo() { return titulo; }
-    public void setTitulo(String titulo) { this.titulo = titulo; }
-
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
-
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
-
-    public LocalDateTime getFechaInicio() { return fechaInicio; }
-    public void setFechaInicio(LocalDateTime fechaInicio) { this.fechaInicio = fechaInicio; }
-
-    public LocalDateTime getFechaFin() { return fechaFin; }
-    public void setFechaFin(LocalDateTime fechaFin) { this.fechaFin = fechaFin; }
-
     // Alias methods for compatibility
     public LocalDateTime getFechaDisponible() { return fechaInicio; }
     public void setFechaDisponible(LocalDateTime fechaDisponible) { this.fechaInicio = fechaDisponible; }
@@ -141,32 +131,28 @@ public class Evaluacion {
     public LocalDateTime getFechaLimite() { return fechaFin; }
     public void setFechaLimite(LocalDateTime fechaLimite) { this.fechaFin = fechaLimite; }
 
-    public Integer getDuracionMinutos() { return duracionMinutos; }
-    public void setDuracionMinutos(Integer duracionMinutos) { this.duracionMinutos = duracionMinutos; }
+    public Double getNotaMinima() {
+        return notaMinimaAprobacion;
+    }
+    public void setNotaMinima(Double notaMinima) {
+        this.notaMinimaAprobacion = notaMinima;
+    }
 
-    public Double getPuntajeTotal() { return puntajeTotal; }
-    public void setPuntajeTotal(Double puntajeTotal) { this.puntajeTotal = puntajeTotal; }
-
-    public Double getNotaMinima() { return notaMinima; }
-    public void setNotaMinima(Double notaMinima) { this.notaMinima = notaMinima; }
-
-    public Integer getIntentosPermitidos() { return intentosPermitidos; }
-    public void setIntentosPermitidos(Integer intentosPermitidos) { this.intentosPermitidos = intentosPermitidos; }
-
-    public Double getPonderacion() { return ponderacion; }
-    public void setPonderacion(Double ponderacion) { this.ponderacion = ponderacion; }
-
-    public Boolean getActivo() { return activo; }
-    public void setActivo(Boolean activo) { this.activo = activo; }
-    public void setActivo(boolean activo) { this.activo = activo; }
-
-    public Boolean getPublicada() { return publicada; }
-    public void setPublicada(Boolean publicada) { this.publicada = publicada; }
-    public void setPublicada(boolean publicada) { this.publicada = publicada; }
-
-    public List<Pregunta> getPreguntas() { return preguntas; }
-    public void setPreguntas(List<Pregunta> preguntas) { this.preguntas = preguntas; }
-
-    public List<Calificacion> getCalificaciones() { return calificaciones; }
-    public void setCalificaciones(List<Calificacion> calificaciones) { this.calificaciones = calificaciones; }
+    // Método para calcular nota chilena basada en puntaje
+    public Double calcularNotaChilena(Double puntajeObtenido) {
+        if (puntajeObtenido == null || puntajeTotal == null || puntajeTotal == 0) {
+            return 1.0;
+        }
+        
+        Double porcentajeObtenido = (puntajeObtenido / puntajeTotal) * 100;
+        
+        if (porcentajeObtenido < exigenciaPorcentual) {
+            // Escala de 1.0 a 3.9 para puntajes bajo la exigencia
+            return 1.0 + (porcentajeObtenido / exigenciaPorcentual) * 2.9;
+        } else {
+            // Escala de 4.0 a 7.0 para puntajes sobre la exigencia
+            Double porcentajeSobreExigencia = (porcentajeObtenido - exigenciaPorcentual) / (100 - exigenciaPorcentual);
+            return 4.0 + porcentajeSobreExigencia * 3.0;
+        }
+    }
 }

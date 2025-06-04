@@ -1,41 +1,38 @@
 package com.edutech.service;
 
+//Importaciones del model y repository
 import com.edutech.model.Ejecucion;
 import com.edutech.repository.EjecucionRepository;
 import com.edutech.repository.CursoRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+//Importacion para dependencias
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+//Importaciones Java
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
-@Transactional
 public class EjecucionService {
     
-    private final EjecucionRepository ejecucionRepository;
-    private final CursoRepository cursoRepository;
+    @Autowired
+    private EjecucionRepository ejecucionRepository;
+    @Autowired
+    private CursoRepository cursoRepository;
     
     /**
      * Obtener todas las ejecuciones
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerTodas() {
-        log.debug("Obteniendo todas las ejecuciones");
         return ejecucionRepository.findAll();
     }
     
     /**
      * Obtener ejecución por ID
      */
-    @Transactional(readOnly = true)
     public Optional<Ejecucion> obtenerPorId(Long id) {
-        log.debug("Obteniendo ejecución con ID: {}", id);
         return ejecucionRepository.findById(id);
     }
     
@@ -43,7 +40,6 @@ public class EjecucionService {
      * Crear nueva ejecución
      */
     public Ejecucion crear(Ejecucion ejecucion) {
-        log.debug("Creando nueva ejecución para curso: {}", ejecucion.getCurso().getId());
         
         // Validaciones
         validarCurso(ejecucion.getCurso().getId());
@@ -63,7 +59,6 @@ public class EjecucionService {
      * Actualizar ejecución existente
      */
     public Ejecucion actualizar(Long id, Ejecucion ejecucionActualizada) {
-        log.debug("Actualizando ejecución con ID: {}", id);
         
         return ejecucionRepository.findById(id)
                 .map(ejecucionExistente -> {
@@ -106,7 +101,6 @@ public class EjecucionService {
      * Eliminar ejecución
      */
     public void eliminar(Long id) {
-        log.debug("Eliminando ejecución con ID: {}", id);
         
         Ejecucion ejecucion = ejecucionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Ejecución no encontrada con ID: " + id));
@@ -123,90 +117,70 @@ public class EjecucionService {
     /**
      * Obtener ejecuciones por curso
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerPorCurso(Long cursoId) {
-        log.debug("Obteniendo ejecuciones del curso: {}", cursoId);
         return ejecucionRepository.findByCursoId(cursoId);
     }
     
     /**
      * Obtener ejecuciones activas
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerActivas() {
-        log.debug("Obteniendo ejecuciones activas");
         return ejecucionRepository.findEjecucionesActivas();
     }
     
     /**
      * Obtener ejecuciones futuras
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerFuturas() {
-        log.debug("Obteniendo ejecuciones futuras");
         return ejecucionRepository.findEjecucionesFuturas();
     }
     
     /**
      * Obtener ejecuciones pasadas
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerPasadas() {
-        log.debug("Obteniendo ejecuciones pasadas");
         return ejecucionRepository.findEjecucionesPasadas();
     }
     
     /**
      * Obtener ejecuciones con cupos disponibles
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerConCuposDisponibles() {
-        log.debug("Obteniendo ejecuciones con cupos disponibles");
         return ejecucionRepository.findEjecucionesConCuposDisponibles();
     }
     
     /**
      * Obtener ejecuciones con cupos disponibles para un curso específico
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerConCuposDisponiblesPorCurso(Long cursoId) {
-        log.debug("Obteniendo ejecuciones con cupos disponibles para curso: {}", cursoId);
         return ejecucionRepository.findEjecucionesConCuposDisponiblesByCurso(cursoId);
     }
     
     /**
      * Obtener ejecuciones por rango de fechas
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerPorRangoFechas(LocalDate fechaInicio, LocalDate fechaFin) {
-        log.debug("Obteniendo ejecuciones entre {} y {}", fechaInicio, fechaFin);
         return ejecucionRepository.findByFechaInicioBetween(fechaInicio, fechaFin);
     }
     
     /**
      * Obtener ejecuciones por rango de cupo
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerPorRangoCupo(Integer cupoMin, Integer cupoMax) {
-        log.debug("Obteniendo ejecuciones con cupo entre {} y {}", cupoMin, cupoMax);
         return ejecucionRepository.findByCupoMaximoBetween(cupoMin, cupoMax);
     }
     
     /**
      * Obtener ejecuciones ordenadas por fecha
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerOrdenadasPorFecha(boolean ascendente) {
-        log.debug("Obteniendo ejecuciones ordenadas por fecha: {}", ascendente ? "ascendente" : "descendente");
         return ascendente ? ejecucionRepository.findAllByOrderByFechaInicioAsc() : ejecucionRepository.findAllByOrderByFechaInicioDesc();
     }
     
     /**
      * Obtener ejecuciones de un curso ordenadas por fecha
      */
-    @Transactional(readOnly = true)
     public List<Ejecucion> obtenerPorCursoOrdenadasPorFecha(Long cursoId, boolean ascendente) {
-        log.debug("Obteniendo ejecuciones del curso {} ordenadas por fecha: {}", cursoId, ascendente ? "ascendente" : "descendente");
         
         return cursoRepository.findById(cursoId)
                 .map(curso -> ascendente ? 
@@ -218,7 +192,6 @@ public class EjecucionService {
     /**
      * Contar estudiantes inscritos en una ejecución
      */
-    @Transactional(readOnly = true)
     public Integer contarEstudiantesInscritos(Long ejecucionId) {
         return ejecucionRepository.countEstudiantesInscritos(ejecucionId);
     }
@@ -226,7 +199,6 @@ public class EjecucionService {
     /**
      * Verificar si hay cupos disponibles
      */
-    @Transactional(readOnly = true)
     public boolean tieneCuposDisponibles(Long ejecucionId) {
         return ejecucionRepository.findById(ejecucionId)
                 .map(ejecucion -> {
@@ -239,7 +211,6 @@ public class EjecucionService {
     /**
      * Obtener número de cupos disponibles
      */
-    @Transactional(readOnly = true)
     public Integer obtenerCuposDisponibles(Long ejecucionId) {
         return ejecucionRepository.findById(ejecucionId)
                 .map(ejecucion -> {
@@ -252,7 +223,6 @@ public class EjecucionService {
     /**
      * Verificar si existe ejecución activa para un curso
      */
-    @Transactional(readOnly = true)
     public boolean existeEjecucionActivaParaCurso(Long cursoId) {
         return ejecucionRepository.existeEjecucionActivaParaCurso(cursoId);
     }
@@ -260,7 +230,6 @@ public class EjecucionService {
     /**
      * Verificar si una ejecución está activa
      */
-    @Transactional(readOnly = true)
     public boolean estaActiva(Long ejecucionId) {
         return ejecucionRepository.findById(ejecucionId)
                 .map(ejecucion -> {

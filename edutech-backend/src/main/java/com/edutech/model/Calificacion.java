@@ -50,8 +50,11 @@ public class Calificacion {
     @Column(name = "observaciones", length = 500)
     private String observaciones;
 
-    @Column(name = "nota", precision = 4, scale = 2)
+    @Column(name = "nota", precision = 4)
     private Double nota;
+
+    @Column(name = "nota_chilena", precision = 3, scale = 1)
+    private Double notaChilena;
 
     // Alias methods for compatibility
     public Persona getEstudiante() { return persona; }
@@ -75,9 +78,29 @@ public class Calificacion {
     }
 
     public boolean isAprobada() {
+        if (notaChilena != null) {
+            return notaChilena >= 4.0;
+        }
         if (evaluacion != null && evaluacion.getNotaMinima() != null && nota != null) {
             return nota >= evaluacion.getNotaMinima();
         }
         return false;
+    }
+
+    // Método para calcular nota chilena automáticamente
+    public void calcularNotaChilena() {
+        if (evaluacion != null && puntajeObtenido != null) {
+            this.notaChilena = evaluacion.calcularNotaChilena(puntajeObtenido);
+            this.nota = this.notaChilena; // Para compatibilidad
+        }
+    }
+
+    public String getCalificacionCualitativa() {
+        if (notaChilena == null) return "Sin calificar";
+        
+        if (notaChilena >= 6.0) return "Muy Bueno";
+        if (notaChilena >= 5.0) return "Bueno";
+        if (notaChilena >= 4.0) return "Suficiente";
+        return "Insuficiente";
     }
 }

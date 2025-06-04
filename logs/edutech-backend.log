@@ -1,0 +1,204 @@
+2025-06-03T23:01:12.413-04:00  INFO 1408 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 17.0.15 with PID 1408 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in c:\Users\Administrator\Documents\edutech)
+2025-06-03T23:01:12.417-04:00 DEBUG 1408 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:01:12.418-04:00  INFO 1408 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:01:13.511-04:00  INFO 1408 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:01:13.848-04:00  INFO 1408 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 319 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:01:14.840-04:00  INFO 1408 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:01:14.868-04:00  INFO 1408 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:01:14.869-04:00  INFO 1408 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:01:14.969-04:00  INFO 1408 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:01:14.970-04:00  INFO 1408 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2466 ms
+2025-06-03T23:01:15.272-04:00  INFO 1408 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:01:15.361-04:00  INFO 1408 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:01:15.423-04:00  INFO 1408 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:01:15.871-04:00  INFO 1408 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:01:15.934-04:00  INFO 1408 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:01:16.178-04:00  INFO 1408 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@15d65fcf
+2025-06-03T23:01:16.182-04:00  INFO 1408 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:01:16.246-04:00  WARN 1408 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:01:16.253-04:00  WARN 1408 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:01:16.636-04:00  WARN 1408 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: scale has no meaning for SQL floating point types
+2025-06-03T23:01:16.638-04:00  INFO 1408 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:01:16.650-04:00  INFO 1408 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:01:16.655-04:00  INFO 1408 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:01:16.673-04:00  INFO 1408 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:01:16.704-04:00 ERROR 1408 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: scale has no meaning for SQL floating point types
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: java.lang.IllegalArgumentException: scale has no meaning for SQL floating point types
+	at org.hibernate.dialect.Dialect$SizeStrategyImpl.resolveSize(Dialect.java:5219) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.dialect.MySQLDialect$1.resolveSize(MySQLDialect.java:150) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.Column.calculateColumnSize(Column.java:459) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.BasicValue.resolve(BasicValue.java:361) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.BasicValue.resolve(BasicValue.java:340) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.lambda$processValueResolvers$4(InFlightMetadataCollectorImpl.java:1796) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at java.base/java.util.ArrayList.removeIf(ArrayList.java:1682) ~[na:na]
+	at java.base/java.util.ArrayList.removeIf(ArrayList.java:1660) ~[na:na]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.processValueResolvers(InFlightMetadataCollectorImpl.java:1795) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.processSecondPasses(InFlightMetadataCollectorImpl.java:1781) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:334) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1431) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1502) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 15 common frames omitted
+
+2025-06-03T23:01:51.727-04:00  INFO 8208 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 17.0.15 with PID 8208 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech)
+2025-06-03T23:01:51.730-04:00 DEBUG 8208 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:01:51.732-04:00  INFO 8208 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:01:52.802-04:00  INFO 8208 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:01:52.948-04:00  INFO 8208 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 128 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:01:53.949-04:00  INFO 8208 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:01:53.979-04:00  INFO 8208 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:01:53.980-04:00  INFO 8208 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:01:54.105-04:00  INFO 8208 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:01:54.106-04:00  INFO 8208 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2296 ms
+2025-06-03T23:01:54.345-04:00  INFO 8208 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:01:54.442-04:00  INFO 8208 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:01:54.503-04:00  INFO 8208 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:01:54.933-04:00  INFO 8208 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:01:55.006-04:00  INFO 8208 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:01:55.297-04:00  INFO 8208 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@15d65fcf
+2025-06-03T23:01:55.301-04:00  INFO 8208 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:01:55.364-04:00  WARN 8208 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:01:55.371-04:00  WARN 8208 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:01:55.731-04:00  WARN 8208 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: scale has no meaning for SQL floating point types
+2025-06-03T23:01:55.732-04:00  INFO 8208 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:01:55.743-04:00  INFO 8208 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:01:55.748-04:00  INFO 8208 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:01:55.769-04:00  INFO 8208 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:01:55.807-04:00 ERROR 8208 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: scale has no meaning for SQL floating point types
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: java.lang.IllegalArgumentException: scale has no meaning for SQL floating point types
+	at org.hibernate.dialect.Dialect$SizeStrategyImpl.resolveSize(Dialect.java:5219) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.dialect.MySQLDialect$1.resolveSize(MySQLDialect.java:150) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.Column.calculateColumnSize(Column.java:459) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.BasicValue.resolve(BasicValue.java:361) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.BasicValue.resolve(BasicValue.java:340) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.lambda$processValueResolvers$4(InFlightMetadataCollectorImpl.java:1796) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at java.base/java.util.ArrayList.removeIf(ArrayList.java:1682) ~[na:na]
+	at java.base/java.util.ArrayList.removeIf(ArrayList.java:1660) ~[na:na]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.processValueResolvers(InFlightMetadataCollectorImpl.java:1795) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.processSecondPasses(InFlightMetadataCollectorImpl.java:1781) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:334) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1431) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1502) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 15 common frames omitted
+
+2025-06-03T23:33:06.288-04:00  INFO 9496 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 17.0.15 with PID 9496 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech)
+2025-06-03T23:33:06.304-04:00 DEBUG 9496 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:33:06.309-04:00  INFO 9496 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:33:07.399-04:00  INFO 9496 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:33:07.542-04:00  INFO 9496 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 129 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:33:08.453-04:00  INFO 9496 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:33:08.474-04:00  INFO 9496 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:33:08.475-04:00  INFO 9496 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:33:08.571-04:00  INFO 9496 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:33:08.572-04:00  INFO 9496 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 2175 ms
+2025-06-03T23:33:08.817-04:00  INFO 9496 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:33:08.910-04:00  INFO 9496 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:33:08.968-04:00  INFO 9496 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:33:09.371-04:00  INFO 9496 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:33:09.427-04:00  INFO 9496 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:33:09.673-04:00  INFO 9496 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1cc41b77
+2025-06-03T23:33:09.676-04:00  INFO 9496 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:33:09.769-04:00  WARN 9496 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:33:09.778-04:00  WARN 9496 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:33:10.115-04:00  WARN 9496 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: scale has no meaning for SQL floating point types
+2025-06-03T23:33:10.116-04:00  INFO 9496 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:33:10.126-04:00  INFO 9496 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:33:10.131-04:00  INFO 9496 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:33:10.147-04:00  INFO 9496 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:33:10.173-04:00 ERROR 9496 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'entityManagerFactory' defined in class path resource [org/springframework/boot/autoconfigure/orm/jpa/HibernateJpaConfiguration.class]: scale has no meaning for SQL floating point types
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:205) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:954) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: java.lang.IllegalArgumentException: scale has no meaning for SQL floating point types
+	at org.hibernate.dialect.Dialect$SizeStrategyImpl.resolveSize(Dialect.java:5219) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.dialect.MySQLDialect$1.resolveSize(MySQLDialect.java:150) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.Column.calculateColumnSize(Column.java:459) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.BasicValue.resolve(BasicValue.java:361) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.mapping.BasicValue.resolve(BasicValue.java:340) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.lambda$processValueResolvers$4(InFlightMetadataCollectorImpl.java:1796) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at java.base/java.util.ArrayList.removeIf(ArrayList.java:1682) ~[na:na]
+	at java.base/java.util.ArrayList.removeIf(ArrayList.java:1660) ~[na:na]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.processValueResolvers(InFlightMetadataCollectorImpl.java:1795) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.internal.InFlightMetadataCollectorImpl.processSecondPasses(InFlightMetadataCollectorImpl.java:1781) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.boot.model.process.spi.MetadataBuildingProcess.complete(MetadataBuildingProcess.java:334) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.metadata(EntityManagerFactoryBuilderImpl.java:1431) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.build(EntityManagerFactoryBuilderImpl.java:1502) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.springframework.orm.jpa.vendor.SpringHibernateJpaPersistenceProvider.createContainerEntityManagerFactory(SpringHibernateJpaPersistenceProvider.java:75) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.createNativeEntityManagerFactory(LocalContainerEntityManagerFactoryBean.java:390) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.buildNativeEntityManagerFactory(AbstractEntityManagerFactoryBean.java:409) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.AbstractEntityManagerFactoryBean.afterPropertiesSet(AbstractEntityManagerFactoryBean.java:396) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean.afterPropertiesSet(LocalContainerEntityManagerFactoryBean.java:366) ~[spring-orm-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 15 common frames omitted
+

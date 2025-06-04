@@ -1,22 +1,22 @@
 package com.edutech.service;
 
-//Importaciones Modelo y Repository
 import com.edutech.model.Calificacion;
 import com.edutech.repository.CalificacionRepository;
-
-//Importaciones para funcionamiento de service
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-//Importaciones Java
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Slf4j
+@Transactional
 public class CalificacionService {
 
-    @Autowired
-    private CalificacionRepository calificacionRepository;
+    private final CalificacionRepository calificacionRepository;
     
     /**
      * Obtener todas las calificaciones
@@ -36,14 +36,20 @@ public class CalificacionService {
      * Registrar nueva calificación
      */
     public Calificacion registrar(Calificacion calificacion) {
+        log.debug("Registrando nueva calificación");
         validarCalificacion(calificacion);
+        
+        // Calcular nota chilena automáticamente
+        calificacion.calcularNotaChilena();
+        
         return calificacionRepository.save(calificacion);
     }
-    
+
     /**
      * Actualizar calificación existente
      */
     public Calificacion actualizar(Long id, Calificacion calificacionActualizada) {
+        log.debug("Actualizando calificación con ID: {}", id);
         
         return calificacionRepository.findById(id)
                 .map(calificacionExistente -> {
@@ -51,11 +57,15 @@ public class CalificacionService {
                     calificacionExistente.setEstudiante(calificacionActualizada.getEstudiante());
                     calificacionExistente.setIntento(calificacionActualizada.getIntento());
                     calificacionExistente.setPuntajeObtenido(calificacionActualizada.getPuntajeObtenido());
-                    calificacionExistente.setNota(calificacionActualizada.getNota());
+                    calificacionExistente.setPuntajeMaximo(calificacionActualizada.getPuntajeMaximo());
                     calificacionExistente.setFechaEntrega(calificacionActualizada.getFechaEntrega());
                     calificacionExistente.setTiempoUtilizadoMinutos(calificacionActualizada.getTiempoUtilizadoMinutos());
                     calificacionExistente.setEstado(calificacionActualizada.getEstado());
                     calificacionExistente.setObservaciones(calificacionActualizada.getObservaciones());
+                    
+                    // Recalcular nota chilena
+                    calificacionExistente.calcularNotaChilena();
+                    
                     return calificacionRepository.save(calificacionExistente);
                 })
                 .orElseThrow(() -> new IllegalArgumentException("Calificación no encontrada con ID: " + id));
@@ -65,6 +75,7 @@ public class CalificacionService {
      * Eliminar calificación
      */
     public void eliminar(Long id) {
+        log.debug("Eliminando calificación con ID: {}", id);
         if (!calificacionRepository.existsById(id)) {
             throw new IllegalArgumentException("Calificación no encontrada con ID: " + id);
         }
@@ -167,8 +178,16 @@ public class CalificacionService {
             throw new IllegalArgumentException("El puntaje obtenido no puede ser negativo");
         }
         
-        if (calificacion.getNota() == null || calificacion.getNota() < 1.0 || calificacion.getNota() > 7.0) {
-            throw new IllegalArgumentException("La nota debe estar entre 1.0 y 7.0");
+        // Validar que el puntaje no exceda el máximo
+        if (calificacion.getPuntajeMaximo() != null && 
+            calificacion.getPuntajeObtenido() > calificacion.getPuntajeMaximo()) {
+            throw new IllegalArgumentException("El puntaje obtenido no puede exceder el puntaje máximo");
+        }
+        
+        // Si se proporciona nota manual, validar rango chileno
+        if (calificacion.getNota() != null && 
+            (calificacion.getNota() < 1.0 || calificacion.getNota() > 7.0)) {
+            throw new IllegalArgumentException("La nota debe estar entre 1.0 y 7.0 (sistema chileno)");
         }
     }
 }

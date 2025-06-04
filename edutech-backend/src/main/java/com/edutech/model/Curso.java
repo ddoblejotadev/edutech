@@ -15,11 +15,12 @@ import java.util.List;
 //Importaciones de Jackson
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity
-@Table(name = "cursos")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+//Entidad JPA
+@Entity  // Marca esta clase como una entidad JPA.
+@Table(name = "cursos")  // Especifica el nombre de la tabla en la base de datos.
+@Data  // Genera automáticamente getters, setters, equals, hashCode y toString.
+@NoArgsConstructor  // Genera un constructor sin argumentos.
+@AllArgsConstructor  // Genera un constructor con un argumento por cada campo en la clase.
 public class Curso {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

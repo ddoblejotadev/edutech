@@ -35,7 +35,7 @@ public class Inscripcion {
     @Column(name = "estado", length = 20)
     private String estado = "ACTIVO";
 
-    @Column(name = "nota_final", precision = 4, scale = 2)
+    @Column(name = "nota_final", precision = 4)
     private Double notaFinal;
 
     @Column(name = "activo")

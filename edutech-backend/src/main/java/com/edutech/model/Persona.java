@@ -25,20 +25,23 @@ public class Persona {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "dni", unique = true, nullable = false, length = 8)
-    private String dni;
+    @Column(name = "rut", unique = true, nullable = false, length = 12)
+    private String rut;
 
     @Column(name = "nombres", nullable = false, length = 100)
     private String nombres;
 
-    @Column(name = "apellidos", nullable = false, length = 100)
-    private String apellidos;
+    @Column(name = "apellido_paterno", nullable = false, length = 50)
+    private String apellidoPaterno;
+
+    @Column(name = "apellido_materno", nullable = false, length = 50)
+    private String apellidoMaterno;
 
     @Column(name = "direccion", length = 200)
     private String direccion;
 
-    @Column(name = "email", unique = true, nullable = false, length = 150)
-    private String email;
+    @Column(name = "correo", unique = true, nullable = false, length = 150)
+    private String correo;
 
     @Column(name = "telefono", length = 15)
     private String telefono;
@@ -62,42 +65,34 @@ public class Persona {
     private List<Calificacion> calificaciones;
 
     // Alias methods for compatibility
-    public String getApellidoPaterno() {
-        if (apellidos != null && apellidos.contains(" ")) {
-            return apellidos.split(" ")[0];
-        }
-        return apellidos;
+    public String getDni() {
+        return rut;
     }
 
-    public void setApellidoPaterno(String apellidoPaterno) {
-        String materno = getApellidoMaterno();
-        if (materno != null && !materno.isEmpty()) {
-            this.apellidos = apellidoPaterno + " " + materno;
-        } else {
-            this.apellidos = apellidoPaterno;
-        }
+    public void setDni(String dni) {
+        this.rut = dni;
     }
 
-    public String getApellidoMaterno() {
+    public String getEmail() {
+        return correo;
+    }
+
+    public void setEmail(String email) {
+        this.correo = email;
+    }
+
+    public String getApellidos() {
+        return apellidoPaterno + " " + (apellidoMaterno != null ? apellidoMaterno : "");
+    }
+
+    public void setApellidos(String apellidos) {
         if (apellidos != null && apellidos.contains(" ")) {
             String[] parts = apellidos.split(" ");
-            return parts.length > 1 ? parts[1] : "";
+            this.apellidoPaterno = parts[0];
+            this.apellidoMaterno = parts.length > 1 ? parts[1] : "";
+        } else {
+            this.apellidoPaterno = apellidos;
+            this.apellidoMaterno = "";
         }
-        return "";
-    }
-
-    public void setApellidoMaterno(String apellidoMaterno) {
-        String paterno = getApellidoPaterno();
-        if (paterno != null && !paterno.isEmpty()) {
-            this.apellidos = paterno + " " + apellidoMaterno;
-        }
-    }
-
-    public String getCorreo() {
-        return email;
-    }
-
-    public void setCorreo(String correo) {
-        this.email = correo;
     }
 }

@@ -1,44 +1,42 @@
 package com.edutech.service;
 
+//Importaciones del model y repository
 import com.edutech.model.Inscripcion;
 import com.edutech.model.Persona;
 import com.edutech.repository.InscripcionRepository;
 import com.edutech.repository.PersonaRepository;
 import com.edutech.repository.EjecucionRepository;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+//Importacion para dependencias
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+//Importaciones Java
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
-@Transactional
 public class InscripcionService {
     
-    private final InscripcionRepository inscripcionRepository;
-    private final PersonaRepository personaRepository;
-    private final EjecucionRepository ejecucionRepository;
+    @Autowired
+    private InscripcionRepository inscripcionRepository;
+    @Autowired
+    private PersonaRepository personaRepository;
+    @Autowired
+    private EjecucionRepository ejecucionRepository;
     
     /**
      * Obtener todas las inscripciones
      */
-    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerTodas() {
-        log.debug("Obteniendo todas las inscripciones");
         return inscripcionRepository.findAll();
     }
     
     /**
      * Obtener inscripción por ID
      */
-    @Transactional(readOnly = true)
     public Optional<Inscripcion> obtenerPorId(Long id) {
-        log.debug("Obteniendo inscripción con ID: {}", id);
         return inscripcionRepository.findById(id);
     }
     
@@ -46,7 +44,6 @@ public class InscripcionService {
      * Crear nueva inscripción
      */
     public Inscripcion crear(Inscripcion inscripcion) {
-        log.debug("Creando nueva inscripción");
         
         // Validaciones básicas
         validarInscripcion(inscripcion);
@@ -61,7 +58,6 @@ public class InscripcionService {
      * Actualizar inscripción existente
      */
     public Optional<Inscripcion> actualizar(Long id, Inscripcion inscripcionActualizada) {
-        log.debug("Actualizando inscripción con ID: {}", id);
         
         return inscripcionRepository.findById(id)
                 .map(inscripcionExistente -> {
@@ -78,7 +74,6 @@ public class InscripcionService {
      * Eliminar inscripción
      */
     public boolean eliminar(Long id) {
-        log.debug("Eliminando inscripción con ID: {}", id);
         if (inscripcionRepository.existsById(id)) {
             inscripcionRepository.deleteById(id);
             return true;
@@ -90,7 +85,6 @@ public class InscripcionService {
      * Inscribir estudiante en una ejecución
      */
     public Inscripcion inscribir(Long estudianteId, Long ejecucionId) {
-        log.debug("Inscribiendo estudiante {} en ejecución {}", estudianteId, ejecucionId);
         
         // Verificar que el estudiante existe
         Persona estudiante = personaRepository.findById(estudianteId)
@@ -120,7 +114,6 @@ public class InscripcionService {
      * Cancelar inscripción por ID
      */
     public void cancelarInscripcion(Long inscripcionId) {
-        log.debug("Cancelando inscripción con ID: {}", inscripcionId);
         
         Inscripcion inscripcion = inscripcionRepository.findById(inscripcionId)
                 .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada"));
@@ -134,7 +127,6 @@ public class InscripcionService {
      * Cancelar inscripción por estudiante y ejecución
      */
     public void cancelarInscripcion(Long estudianteId, Long ejecucionId) {
-        log.debug("Cancelando inscripción de estudiante {} en ejecución {}", estudianteId, ejecucionId);
         
         Inscripcion inscripcion = inscripcionRepository.findByEstudianteIdAndEjecucionId(estudianteId, ejecucionId)
                 .orElseThrow(() -> new IllegalArgumentException("Inscripción no encontrada"));
@@ -147,25 +139,20 @@ public class InscripcionService {
     /**
      * Obtener inscripciones por estudiante
      */
-    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerPorEstudiante(Long estudianteId) {
-        log.debug("Obteniendo inscripciones del estudiante: {}", estudianteId);
         return inscripcionRepository.findByEstudianteId(estudianteId);
     }
     
     /**
      * Obtener inscripciones por ejecución
      */
-    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerPorEjecucion(Long ejecucionId) {
-        log.debug("Obteniendo inscripciones de la ejecución: {}", ejecucionId);
         return inscripcionRepository.findByEjecucionId(ejecucionId);
     }
     
     /**
      * Obtener inscripciones activas de un estudiante
      */
-    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerActivasDeEstudiante(Long estudianteId) {
         return inscripcionRepository.findByEstudianteIdAndActivoTrue(estudianteId);
     }
@@ -173,7 +160,6 @@ public class InscripcionService {
     /**
      * Obtener inscripciones futuras de un estudiante
      */
-    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerFuturasDeEstudiante(Long estudianteId) {
         return inscripcionRepository.findInscripcionesFuturasByEstudiante(estudianteId);
     }
@@ -181,7 +167,6 @@ public class InscripcionService {
     /**
      * Obtener inscripciones pasadas de un estudiante
      */
-    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerPasadasDeEstudiante(Long estudianteId) {
         return inscripcionRepository.findInscripcionesPasadasByEstudiante(estudianteId);
     }
@@ -189,7 +174,6 @@ public class InscripcionService {
     /**
      * Obtener estudiantes inscritos en una ejecución
      */
-    @Transactional(readOnly = true)
     public List<Persona> obtenerEstudiantesInscritos(Long ejecucionId) {
         return inscripcionRepository.findEstudiantesByEjecucionId(ejecucionId);
     }
@@ -197,7 +181,6 @@ public class InscripcionService {
     /**
      * Obtener inscripciones por curso
      */
-    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerPorCurso(Long cursoId) {
         return inscripcionRepository.findByCursoId(cursoId);
     }
@@ -205,7 +188,6 @@ public class InscripcionService {
     /**
      * Contar inscripciones por ejecución
      */
-    @Transactional(readOnly = true)
     public Integer contarPorEjecucion(Long ejecucionId) {
         return inscripcionRepository.countByEjecucionId(ejecucionId);
     }
@@ -213,7 +195,6 @@ public class InscripcionService {
     /**
      * Contar inscripciones por estudiante
      */
-    @Transactional(readOnly = true)
     public Integer contarPorEstudiante(Long estudianteId) {
         return inscripcionRepository.countByEstudianteId(estudianteId);
     }
@@ -221,7 +202,6 @@ public class InscripcionService {
     /**
      * Verificar si estudiante está inscrito en ejecución
      */
-    @Transactional(readOnly = true)
     public boolean estaInscrito(Long estudianteId, Long ejecucionId) {
         return inscripcionRepository.existsByEstudianteIdAndEjecucionIdAndActivoTrue(estudianteId, ejecucionId);
     }
@@ -229,7 +209,6 @@ public class InscripcionService {
     /**
      * Verificar si estudiante está inscrito en alguna ejecución de un curso
      */
-    @Transactional(readOnly = true)
     public boolean estaInscritoEnCurso(Long estudianteId, Long cursoId) {
         return inscripcionRepository.existsByEstudianteIdAndCursoId(estudianteId, cursoId);
     }
@@ -237,7 +216,6 @@ public class InscripcionService {
     /**
      * Obtener últimas inscripciones
      */
-    @Transactional(readOnly = true)
     public List<Inscripcion> obtenerUltimas() {
         return inscripcionRepository.findTop10ByOrderByFechaInscripcionDesc();
     }

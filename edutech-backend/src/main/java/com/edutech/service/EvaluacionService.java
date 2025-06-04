@@ -49,6 +49,7 @@ public class EvaluacionService {
         validarEjecucion(evaluacion.getEjecucion().getId());
         validarFechas(evaluacion.getFechaDisponible(), evaluacion.getFechaLimite());
         validarPuntaje(evaluacion.getPuntajeTotal());
+        validarNotasChilenas(evaluacion);
         
         return evaluacionRepository.save(evaluacion);
     }
@@ -82,6 +83,9 @@ public class EvaluacionService {
                     evaluacionExistente.setPuntajeTotal(evaluacionActualizada.getPuntajeTotal());
                     evaluacionExistente.setPonderacion(evaluacionActualizada.getPonderacion());
                     evaluacionExistente.setIntentosPermitidos(evaluacionActualizada.getIntentosPermitidos());
+                    evaluacionExistente.setNotaMinimaAprobacion(evaluacionActualizada.getNotaMinimaAprobacion());
+                    evaluacionExistente.setNotaMaxima(evaluacionActualizada.getNotaMaxima());
+                    evaluacionExistente.setExigenciaPorcentual(evaluacionActualizada.getExigenciaPorcentual());
                     evaluacionExistente.setActivo(evaluacionActualizada.getActivo());
                     evaluacionExistente.setPublicada(evaluacionActualizada.getPublicada());
                     
@@ -326,6 +330,31 @@ public class EvaluacionService {
         
         if (puntajeTotal > 100.0) {
             throw new IllegalArgumentException("El puntaje total no puede exceder 100.0");
+        }
+    }
+    
+    private void validarNotasChilenas(Evaluacion evaluacion) {
+        if (evaluacion.getNotaMinimaAprobacion() != null) {
+            if (evaluacion.getNotaMinimaAprobacion() < 1.0 || evaluacion.getNotaMinimaAprobacion() > 7.0) {
+                throw new IllegalArgumentException("La nota mínima debe estar entre 1.0 y 7.0");
+            }
+        }
+        
+        if (evaluacion.getNotaMaxima() != null) {
+            if (evaluacion.getNotaMaxima() < 1.0 || evaluacion.getNotaMaxima() > 7.0) {
+                throw new IllegalArgumentException("La nota máxima debe estar entre 1.0 y 7.0");
+            }
+            
+            if (evaluacion.getNotaMinimaAprobacion() != null && 
+                evaluacion.getNotaMaxima() < evaluacion.getNotaMinimaAprobacion()) {
+                throw new IllegalArgumentException("La nota máxima no puede ser menor a la nota mínima");
+            }
+        }
+        
+        if (evaluacion.getExigenciaPorcentual() != null) {
+            if (evaluacion.getExigenciaPorcentual() < 0 || evaluacion.getExigenciaPorcentual() > 100) {
+                throw new IllegalArgumentException("La exigencia porcentual debe estar entre 0% y 100%");
+            }
         }
     }
 }

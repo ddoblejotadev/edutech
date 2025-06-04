@@ -22,12 +22,8 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class CursoController {
 
-    private final CursoService cursoService;
-
     @Autowired
-    public CursoController(CursoService cursoService) {
-        this.cursoService = cursoService;
-    }
+    private CursoService cursoService;
 
     /**
      * Obtener todos los cursos
