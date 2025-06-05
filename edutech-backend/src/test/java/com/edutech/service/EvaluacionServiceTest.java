@@ -104,8 +104,8 @@ class EvaluacionServiceTest {
         Evaluacion evaluacion = new Evaluacion();
         evaluacion.setTitulo("Examen Parcial");
         evaluacion.setEjecucion(ejecucion);
-        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1));
-        evaluacion.setFechaFin(LocalDateTime.now().plusDays(2));
+        evaluacion.setFechaDisponible(LocalDateTime.now().plusDays(1));
+        evaluacion.setFechaLimite(LocalDateTime.now().plusDays(2));
         evaluacion.setPuntajeTotal(100.0);
         
         when(ejecucionRepository.existsById(1L)).thenReturn(true);
@@ -151,8 +151,8 @@ class EvaluacionServiceTest {
         
         Evaluacion evaluacion = new Evaluacion();
         evaluacion.setEjecucion(ejecucion);
-        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(2));
-        evaluacion.setFechaFin(LocalDateTime.now().plusDays(1)); // Fecha fin antes que inicio
+        evaluacion.setFechaDisponible(LocalDateTime.now().plusDays(2));
+        evaluacion.setFechaLimite(LocalDateTime.now().plusDays(1)); // Fecha fin antes que inicio
         evaluacion.setPuntajeTotal(100.0);
         
         when(ejecucionRepository.existsById(1L)).thenReturn(true);
@@ -175,8 +175,8 @@ class EvaluacionServiceTest {
         
         Evaluacion evaluacion = new Evaluacion();
         evaluacion.setEjecucion(ejecucion);
-        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1));
-        evaluacion.setFechaFin(LocalDateTime.now().plusDays(2));
+        evaluacion.setFechaDisponible(LocalDateTime.now().plusDays(1));
+        evaluacion.setFechaLimite(LocalDateTime.now().plusDays(2));
         evaluacion.setPuntajeTotal(-10.0);
         
         when(ejecucionRepository.existsById(1L)).thenReturn(true);
@@ -205,8 +205,8 @@ class EvaluacionServiceTest {
         Evaluacion evaluacionActualizada = new Evaluacion();
         evaluacionActualizada.setTitulo("Examen Final");
         evaluacionActualizada.setEjecucion(ejecucion);
-        evaluacionActualizada.setFechaInicio(LocalDateTime.now().plusDays(5));
-        evaluacionActualizada.setFechaFin(LocalDateTime.now().plusDays(6));
+        evaluacionActualizada.setFechaDisponible(LocalDateTime.now().plusDays(5));
+        evaluacionActualizada.setFechaLimite(LocalDateTime.now().plusDays(6));
         evaluacionActualizada.setPuntajeTotal(100.0);
         
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacionExistente));
@@ -228,7 +228,7 @@ class EvaluacionServiceTest {
         // Arrange
         Evaluacion evaluacion = new Evaluacion();
         evaluacion.setId(1L);
-        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1)); // No ha comenzado
+        evaluacion.setFechaDisponible(LocalDateTime.now().plusDays(1)); // No ha comenzado
         
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
@@ -261,7 +261,7 @@ class EvaluacionServiceTest {
         // Arrange
         Evaluacion evaluacion = new Evaluacion();
         evaluacion.setId(1L);
-        evaluacion.setFechaInicio(LocalDateTime.now().minusDays(1)); // Ya comenzó
+        evaluacion.setFechaDisponible(LocalDateTime.now().minusDays(1)); // Ya comenzó
         
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
@@ -354,8 +354,8 @@ class EvaluacionServiceTest {
         Evaluacion evaluacion = new Evaluacion();
         evaluacion.setActivo(true);
         evaluacion.setPublicada(true);
-        evaluacion.setFechaInicio(LocalDateTime.now().minusHours(1));
-        evaluacion.setFechaFin(LocalDateTime.now().plusHours(1));
+        evaluacion.setFechaDisponible(LocalDateTime.now().minusHours(1));
+        evaluacion.setFechaLimite(LocalDateTime.now().plusHours(1));
         
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByActivoTrueAndPublicadaTrueAndFechaInicioBeforeAndFechaFinAfter(any(LocalDateTime.class)))
@@ -375,7 +375,7 @@ class EvaluacionServiceTest {
     void testObtenerFuturas() {
         // Arrange
         Evaluacion evaluacion = new Evaluacion();
-        evaluacion.setFechaInicio(LocalDateTime.now().plusDays(1));
+        evaluacion.setFechaDisponible(LocalDateTime.now().plusDays(1));
         
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByFechaInicioAfter(any(LocalDateTime.class))).thenReturn(evaluaciones);
@@ -393,7 +393,7 @@ class EvaluacionServiceTest {
     void testObtenerVencidas() {
         // Arrange
         Evaluacion evaluacion = new Evaluacion();
-        evaluacion.setFechaFin(LocalDateTime.now().minusDays(1));
+        evaluacion.setFechaLimite(LocalDateTime.now().minusDays(1));
         
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByFechaFinBefore(any(LocalDateTime.class))).thenReturn(evaluaciones);
@@ -451,8 +451,8 @@ class EvaluacionServiceTest {
         Evaluacion evaluacion = new Evaluacion();
         evaluacion.setActivo(true);
         evaluacion.setPublicada(true);
-        evaluacion.setFechaInicio(LocalDateTime.now().minusHours(1));
-        evaluacion.setFechaFin(LocalDateTime.now().plusHours(1));
+        evaluacion.setFechaDisponible(LocalDateTime.now().minusHours(1));
+        evaluacion.setFechaLimite(LocalDateTime.now().plusHours(1));
         
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
@@ -484,7 +484,7 @@ class EvaluacionServiceTest {
     void testEstaVencida_Vencida() {
         // Arrange
         Evaluacion evaluacion = new Evaluacion();
-        evaluacion.setFechaFin(LocalDateTime.now().minusDays(1));
+        evaluacion.setFechaLimite(LocalDateTime.now().minusDays(1));
         
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
@@ -500,7 +500,7 @@ class EvaluacionServiceTest {
     void testEstaVencida_NoVencida() {
         // Arrange
         Evaluacion evaluacion = new Evaluacion();
-        evaluacion.setFechaFin(LocalDateTime.now().plusDays(1));
+        evaluacion.setFechaLimite(LocalDateTime.now().plusDays(1));
         
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
@@ -516,7 +516,7 @@ class EvaluacionServiceTest {
     void testObtenerTiempoRestante() {
         // Arrange
         Evaluacion evaluacion = new Evaluacion();
-        evaluacion.setFechaFin(LocalDateTime.now().plusHours(2));
+        evaluacion.setFechaLimite(LocalDateTime.now().plusHours(2));
         
         when(evaluacionRepository.findById(1L)).thenReturn(Optional.of(evaluacion));
 
@@ -546,7 +546,7 @@ class EvaluacionServiceTest {
     void testObtenerProximasAVencer() {
         // Arrange
         Evaluacion evaluacion = new Evaluacion();
-        evaluacion.setFechaFin(LocalDateTime.now().plusHours(12));
+        evaluacion.setFechaLimite(LocalDateTime.now().plusHours(12));
         
         List<Evaluacion> evaluaciones = Arrays.asList(evaluacion);
         when(evaluacionRepository.findByFechaFinBetween(any(LocalDateTime.class), any(LocalDateTime.class)))

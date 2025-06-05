@@ -104,4 +104,28 @@ public interface EvaluacionRepository extends JpaRepository<Evaluacion, Long> {
     
     // Buscar evaluaciones por rango de fechas fin
     List<Evaluacion> findByFechaFinBetween(LocalDateTime fechaInicio, LocalDateTime fechaFin);
+    
+    // Buscar evaluaciones por ejecución y estado de publicación
+    @Query("SELECT e FROM Evaluacion e WHERE e.ejecucion.id = :ejecucionId AND e.publicada = :publicada")
+    List<Evaluacion> findByEjecucionIdAndPublicada(@Param("ejecucionId") Long ejecucionId, 
+                                                    @Param("publicada") boolean publicada);
+    
+    // Contar evaluaciones por ejecución y estado de publicación
+    @Query("SELECT COUNT(e) FROM Evaluacion e WHERE e.ejecucion.id = :ejecucionId AND e.publicada = :publicada")
+    Long countByEjecucionIdAndPublicada(@Param("ejecucionId") Long ejecucionId, 
+                                        @Param("publicada") boolean publicada);
+    
+    // Buscar evaluaciones por ejecución y rango de fechas
+    @Query("SELECT e FROM Evaluacion e WHERE e.ejecucion.id = :ejecucionId AND e.fechaInicio BETWEEN :fechaInicio AND :fechaFin")
+    List<Evaluacion> findByEjecucionIdAndFechaInicioBetween(@Param("ejecucionId") Long ejecucionId, 
+                                                             @Param("fechaInicio") LocalDateTime fechaInicio, 
+                                                             @Param("fechaFin") LocalDateTime fechaFin);
+    
+    // Buscar evaluaciones por ejecución, estado de publicación y rango de fechas
+    @Query("SELECT e FROM Evaluacion e WHERE e.ejecucion.id = :ejecucionId AND e.publicada = :publicada " +
+           "AND e.fechaInicio BETWEEN :fechaInicio AND :fechaFin")
+    List<Evaluacion> findByEjecucionIdAndPublicadaAndFechaInicioBetween(@Param("ejecucionId") Long ejecucionId, 
+                                                                         @Param("publicada") boolean publicada, 
+                                                                         @Param("fechaInicio") LocalDateTime fechaInicio, 
+                                                                         @Param("fechaFin") LocalDateTime fechaFin);
 }

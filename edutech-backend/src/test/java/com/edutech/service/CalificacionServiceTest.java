@@ -300,4 +300,46 @@ class CalificacionServiceTest {
         assertEquals(87.3, resultado);
         verify(calificacionRepository, times(1)).calcularPromedioByEstudiante(1L);
     }
+
+    @Test
+    void testObtenerCalificacionEspecifica() {
+        // Arrange
+        when(calificacionRepository.findByPersonaIdAndEvaluacionId(1L, 1L)).thenReturn(Optional.of(calificacion));
+
+        // Act
+        Optional<Calificacion> resultado = calificacionService.obtenerCalificacionEspecifica(1L, 1L);
+
+        // Assert
+        assertTrue(resultado.isPresent());
+        assertEquals(calificacion.getId(), resultado.get().getId());
+        verify(calificacionRepository, times(1)).findByPersonaIdAndEvaluacionId(1L, 1L);
+    }
+
+    @Test
+    void testCalcularPorcentaje() {
+        // Arrange
+        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
+
+        // Act
+        Double resultado = calificacionService.calcularPorcentaje(1L);
+
+        // Assert
+        assertNotNull(resultado);
+        assertEquals(85.0, resultado); // 85/100 * 100 = 85%
+        verify(calificacionRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void testEstaAprobada() {
+        // Arrange
+        calificacion.setNotaChilena(5.5); // Nota aprobada
+        when(calificacionRepository.findById(1L)).thenReturn(Optional.of(calificacion));
+
+        // Act
+        boolean resultado = calificacionService.estaAprobada(1L);
+
+        // Assert
+        assertTrue(resultado);
+        verify(calificacionRepository, times(1)).findById(1L);
+    }
 }

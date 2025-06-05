@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 @Component
-@Profile("dev") // Solo se ejecutará cuando el perfil activo sea 'dev'
+@Profile("prod") // Solo se ejecutará cuando el perfil activo sea 'dev'
 @Transactional // Agregar esta anotación para manejar la sesión de Hibernate
 public class DataLoader implements CommandLineRunner {
     
@@ -115,7 +115,7 @@ public class DataLoader implements CommandLineRunner {
             estudiante.setApellidoPaterno(faker.name().lastName());
             estudiante.setApellidoMaterno(faker.name().lastName());
             estudiante.setCorreo(faker.internet().emailAddress());
-            estudiante.setTelefono(faker.phoneNumber().phoneNumber());
+            estudiante.setTelefono(generateRandomPhone());
             estudiante.setDireccion(faker.address().streetAddress());
             estudiante.setFechaNacimiento(faker.date().birthday(18, 25).toLocalDateTime().toLocalDate());
             estudiante.setTipoPersona(tipoEstudiante);
@@ -137,7 +137,7 @@ public class DataLoader implements CommandLineRunner {
             profesor.setApellidoPaterno(faker.name().lastName());
             profesor.setApellidoMaterno(faker.name().lastName());
             profesor.setCorreo(faker.internet().emailAddress());
-            profesor.setTelefono(faker.phoneNumber().phoneNumber());
+            profesor.setTelefono(generateRandomPhone());
             profesor.setDireccion(faker.address().streetAddress());
             profesor.setFechaNacimiento(faker.date().birthday(25, 55).toLocalDateTime().toLocalDate());
             profesor.setTipoPersona(tipoProfesor);
@@ -303,6 +303,26 @@ public class DataLoader implements CommandLineRunner {
     private String generateRandomRut() {
         int numero = faker.number().numberBetween(10000000, 25000000);
         return numero + "-" + faker.options().option("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "K");
+    }
+    
+    private String generateRandomPhone() {
+        // Generar números de teléfono chilenos válidos con máximo 15 caracteres
+        String[] prefijos = {"+56 9", "+56 2", "09", "02"};
+        String prefijo = faker.options().option(prefijos);
+        
+        if (prefijo.startsWith("+56")) {
+            // Formato internacional: +56 9 XXXX XXXX o +56 2 XXXX XXXX
+            String numero = String.format("%04d %04d", 
+                faker.number().numberBetween(1000, 9999),
+                faker.number().numberBetween(1000, 9999));
+            return prefijo + " " + numero; // Máximo 14 caracteres
+        } else {
+            // Formato nacional: 09 XXXX XXXX o 02 XXXX XXXX
+            String numero = String.format("%04d %04d", 
+                faker.number().numberBetween(1000, 9999),
+                faker.number().numberBetween(1000, 9999));
+            return prefijo + " " + numero; // Máximo 12 caracteres
+        }
     }
     
     private String generateRandomHorario() {
