@@ -68,10 +68,6 @@ public class Ejecucion {
     @OneToMany(mappedBy = "ejecucion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Inscripcion> inscripciones;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "ejecucion", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Evaluacion> evaluaciones;
-
     // Business method
     public Integer getCuposDisponibles() {
         return capacidadMaxima - (inscritosActuales != null ? inscritosActuales : 0);

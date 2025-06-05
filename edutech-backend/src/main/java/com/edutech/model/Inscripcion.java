@@ -35,13 +35,10 @@ public class Inscripcion {
     @Column(name = "estado", length = 20)
     private String estado = "ACTIVO";
 
-    @Column(name = "nota_final", precision = 4)
-    private Double notaFinal;
-
     @Column(name = "activo")
     private Boolean activo = true;
 
-    // Alias methods for compatibility
+    // Alias method for compatibility
     public Persona getEstudiante() {
         return persona;
     }

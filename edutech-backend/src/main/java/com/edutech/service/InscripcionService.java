@@ -64,7 +64,6 @@ public class InscripcionService {
                     inscripcionExistente.setEjecucion(inscripcionActualizada.getEjecucion());
                     inscripcionExistente.setPersona(inscripcionActualizada.getPersona());
                     inscripcionExistente.setEstado(inscripcionActualizada.getEstado());
-                    inscripcionExistente.setNotaFinal(inscripcionActualizada.getNotaFinal());
                     inscripcionExistente.setActivo(inscripcionActualizada.getActivo());
                     return inscripcionRepository.save(inscripcionExistente);
                 });

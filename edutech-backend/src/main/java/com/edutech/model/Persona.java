@@ -60,10 +60,6 @@ public class Persona {
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Inscripcion> inscripciones;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Calificacion> calificaciones;
-
     // Alias methods for compatibility
     public String getDni() {
         return rut;

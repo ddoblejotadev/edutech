@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Random;
 
 @Component
-@Profile("prod") // Solo se ejecutará cuando el perfil activo sea 'dev'
+@Profile("prod") // Cargar datos solo en el perfil seleccionado
 @Transactional // Agregar esta anotación para manejar la sesión de Hibernate
 public class DataLoader implements CommandLineRunner {
     
@@ -39,10 +39,6 @@ public class DataLoader implements CommandLineRunner {
     private EjecucionRepository ejecucionRepository;
     @Autowired
     private InscripcionRepository inscripcionRepository;
-    @Autowired
-    private EvaluacionRepository evaluacionRepository;
-    @Autowired
-    private CalificacionRepository calificacionRepository;
     
     @Override
     public void run(String... args) throws Exception {
@@ -67,14 +63,6 @@ public class DataLoader implements CommandLineRunner {
         
         if (inscripcionRepository.count() == 0) {
             createInscripciones();
-        }
-        
-        if (evaluacionRepository.count() == 0) {
-            createEvaluaciones();
-        }
-        
-        if (calificacionRepository.count() == 0) {
-            createCalificaciones();
         }
         
         logger.info("Datos falsos cargados exitosamente para EduTech");
@@ -225,75 +213,8 @@ public class DataLoader implements CommandLineRunner {
                     inscripcion.setEstado(faker.options().option("ACTIVA", "COMPLETADA", "CANCELADA"));
                     inscripcion.setActivo(!"CANCELADA".equals(inscripcion.getEstado()));
                     
-                    if ("COMPLETADA".equals(inscripcion.getEstado())) {
-                        inscripcion.setNotaFinal(faker.number().randomDouble(1, 1, 7));
-                    }
-                    
                     inscripcionRepository.save(inscripcion);
                     logger.info("Inscripción creada: {} en {}", estudiante.getNombres(), ejecucion.getCurso().getNombre());
-                }
-            }
-        }
-    }
-    
-    public void createEvaluaciones() {
-        List<Ejecucion> ejecuciones = ejecucionRepository.findAll();
-        String[] tiposEvaluacion = {"PRUEBA", "TAREA", "PROYECTO", "EXAMEN"};
-        
-        for (Ejecucion ejecucion : ejecuciones) {
-            // Crear 3-5 evaluaciones por ejecución
-            int numEvaluaciones = faker.number().numberBetween(3, 6);
-            
-            for (int i = 0; i < numEvaluaciones; i++) {
-                Evaluacion evaluacion = new Evaluacion();
-                evaluacion.setEjecucion(ejecucion);
-                evaluacion.setTitulo(faker.options().option(tiposEvaluacion) + " " + (i + 1));
-                evaluacion.setDescripcion(faker.lorem().sentence());
-                evaluacion.setTipo(faker.options().option(tiposEvaluacion));
-                evaluacion.setFechaInicio(LocalDateTime.now().plusDays(faker.number().numberBetween(1, 30)));
-                evaluacion.setFechaFin(evaluacion.getFechaInicio().plusHours(faker.number().numberBetween(1, 24)));
-                evaluacion.setDuracionMinutos(faker.number().numberBetween(60, 180));
-                evaluacion.setPuntajeTotal(Double.valueOf(faker.number().numberBetween(50, 100)));
-                evaluacion.setNotaMinimaAprobacion(4.0);
-                evaluacion.setNotaMaxima(7.0);
-                evaluacion.setExigenciaPorcentual(60.0);
-                evaluacion.setIntentosPermitidos(faker.number().numberBetween(1, 3));
-                evaluacion.setPonderacion(faker.number().randomDouble(1, 10, 30));
-                evaluacion.setActivo(true);
-                evaluacion.setPublicada(faker.bool().bool());
-                
-                evaluacionRepository.save(evaluacion);
-                logger.info("Evaluación creada: {} para {}", evaluacion.getTitulo(), ejecucion.getCurso().getNombre());
-            }
-        }
-    }
-    
-    private void createCalificaciones() {
-        List<Evaluacion> evaluaciones = evaluacionRepository.findAll();
-        
-        for (Evaluacion evaluacion : evaluaciones) {
-            List<Inscripcion> inscripciones = inscripcionRepository.findByEjecucionId(evaluacion.getEjecucion().getId());
-            
-            for (Inscripcion inscripcion : inscripciones) {
-                if ("ACTIVA".equals(inscripcion.getEstado()) || "COMPLETADA".equals(inscripcion.getEstado())) {
-                    Calificacion calificacion = new Calificacion();
-                    calificacion.setPersona(inscripcion.getPersona());
-                    calificacion.setEvaluacion(evaluacion);
-                    calificacion.setNumeroIntento(1);
-                    calificacion.setPuntajeObtenido(faker.number().randomDouble(1, 0, evaluacion.getPuntajeTotal().intValue()));
-                    calificacion.setPuntajeMaximo(evaluacion.getPuntajeTotal());
-                    calificacion.setFechaRealizacion(LocalDateTime.now().minusDays(faker.number().numberBetween(1, 15)));
-                    calificacion.setTiempoEmpleado(faker.number().numberBetween(30, evaluacion.getDuracionMinutos()));
-                    calificacion.setEstado("FINALIZADA");
-                    calificacion.setObservaciones(faker.lorem().sentence());
-                    
-                    // Calcular nota chilena automáticamente
-                    calificacion.calcularNotaChilena();
-                    
-                    calificacionRepository.save(calificacion);
-                    logger.info("Calificación creada: {} - Nota: {}", 
-                        inscripcion.getPersona().getNombres(), 
-                        String.format("%.1f", calificacion.getNotaChilena()));
                 }
             }
         }
