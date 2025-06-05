@@ -236,7 +236,7 @@ public class DataLoader implements CommandLineRunner {
         }
     }
     
-    void createEvaluaciones() {
+    public void createEvaluaciones() {
         List<Ejecucion> ejecuciones = ejecucionRepository.findAll();
         String[] tiposEvaluacion = {"PRUEBA", "TAREA", "PROYECTO", "EXAMEN"};
         
