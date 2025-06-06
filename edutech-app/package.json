@@ -1,0 +1,45 @@
+{
+  "name": "edutech-app",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "clear-cache": "expo start --clear"
+  },
+  "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.1.2",
+    "@react-navigation/bottom-tabs": "^7.3.13",
+    "@react-navigation/native": "^7.1.9",
+    "@react-navigation/stack": "^7.3.2",
+    "expo": "^53.0.9",
+    "expo-secure-store": "^14.2.3",
+    "expo-status-bar": "~2.2.3",
+    "react": "19.0.0",
+    "react-native": "0.79.2",
+    "react-native-gesture-handler": "~2.24.0",
+    "react-native-paper": "^5.14.5",
+    "react-native-reanimated": "^3.17.5",
+    "react-native-safe-area-context": "5.4.0",
+    "react-native-screens": "^4.10.0",
+    "react-native-svg": "15.11.2",
+    "react-native-vector-icons": "^10.2.0",
+    "react-dom": "19.0.0",
+    "react-native-web": "^0.20.0",
+    "@expo/metro-runtime": "~5.0.4",
+    "expo-updates": "~0.28.14"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.20.0",
+    "babel-plugin-module-resolver": "^5.0.2"
+  },
+  "resolutions": {
+    "use-latest-callback": "^0.1.9"
+  },
+  "overrides": {
+    "use-latest-callback": "^0.1.9"
+  },
+  "private": true
+}
