@@ -1,0 +1,1040 @@
+2025-06-03T23:41:58.816-04:00  INFO 9908 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 21.0.7 with PID 9908 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech\edutech-backend)
+2025-06-03T23:41:58.819-04:00 DEBUG 9908 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:41:58.821-04:00  INFO 9908 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:41:59.660-04:00  INFO 9908 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:41:59.759-04:00  INFO 9908 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 85 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:42:00.439-04:00  INFO 9908 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:42:00.471-04:00  INFO 9908 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:42:00.472-04:00  INFO 9908 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:42:00.545-04:00  INFO 9908 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:42:00.545-04:00  INFO 9908 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1663 ms
+2025-06-03T23:42:00.786-04:00  INFO 9908 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:42:00.852-04:00  INFO 9908 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:42:00.893-04:00  INFO 9908 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:42:01.240-04:00  INFO 9908 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:42:01.283-04:00  INFO 9908 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:42:01.471-04:00  INFO 9908 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@a9e8da1
+2025-06-03T23:42:01.471-04:00  INFO 9908 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:42:01.537-04:00  WARN 9908 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:42:01.542-04:00  WARN 9908 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:42:02.886-04:00  INFO 9908 --- [edutech-backend] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-03T23:42:02.932-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    create table calificaciones (
+        id bigint not null auto_increment,
+        estado varchar(20),
+        fecha_realizacion datetime(6) not null,
+        nota float(14),
+        nota_chilena float(10),
+        numero_intento integer not null,
+        observaciones varchar(500),
+        puntaje_maximo float(17) not null,
+        puntaje_obtenido float(17) not null,
+        tiempo_empleado integer,
+        evaluacion_id bigint not null,
+        persona_id bigint not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-06-03T23:42:02.947-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    create table cursos (
+        id bigint not null auto_increment,
+        activo bit,
+        ciclo varchar(10) not null,
+        codigo varchar(10) not null,
+        creditos integer not null,
+        descripcion varchar(500),
+        fecha_actualizacion datetime(6),
+        fecha_creacion datetime(6),
+        horas_practicas integer not null,
+        horas_teoricas integer not null,
+        modalidad varchar(20) not null,
+        nombre varchar(100) not null,
+        total_horas integer not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-06-03T23:42:02.959-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    create table ejecuciones (
+        id bigint not null auto_increment,
+        aula varchar(50),
+        capacidad_maxima integer not null,
+        estado varchar(20) not null,
+        fecha_fin date not null,
+        fecha_inicio date not null,
+        horario varchar(100),
+        inscritos_actuales integer,
+        periodo varchar(20) not null,
+        sala varchar(50),
+        seccion varchar(10) not null,
+        curso_id bigint not null,
+        profesor_id bigint,
+        primary key (id)
+    ) engine=InnoDB
+2025-06-03T23:42:02.971-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    create table evaluaciones (
+        id bigint not null auto_increment,
+        activo bit,
+        descripcion varchar(1000),
+        duracion_minutos integer not null,
+        exigencia_porcentual float(17) not null,
+        fecha_actualizacion datetime(6),
+        fecha_creacion datetime(6) not null,
+        fecha_fin datetime(6) not null,
+        fecha_inicio datetime(6) not null,
+        intentos_permitidos integer not null,
+        nota_maxima float(10) not null,
+        nota_minima_aprobacion float(10) not null,
+        ponderacion float(17),
+        publicada bit,
+        puntaje_total float(17) not null,
+        tipo varchar(50) not null,
+        titulo varchar(200) not null,
+        ejecucion_id bigint not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-06-03T23:42:02.983-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    create table inscripciones (
+        id bigint not null auto_increment,
+        activo bit,
+        estado varchar(20),
+        fecha_inscripcion datetime(6) not null,
+        nota_final float(14),
+        ejecucion_id bigint not null,
+        persona_id bigint not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-06-03T23:42:02.994-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    create table personas (
+        id bigint not null auto_increment,
+        activo bit,
+        apellido_materno varchar(50) not null,
+        apellido_paterno varchar(50) not null,
+        correo varchar(150) not null,
+        direccion varchar(200),
+        fecha_nacimiento date,
+        nombres varchar(100) not null,
+        rut varchar(12) not null,
+        telefono varchar(15),
+        tipo_persona_id bigint not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-06-03T23:42:03.004-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    create table tipos_persona (
+        id bigint not null auto_increment,
+        activo bit,
+        descripcion varchar(200),
+        nombre varchar(50) not null,
+        primary key (id)
+    ) engine=InnoDB
+2025-06-03T23:42:03.015-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table cursos 
+       drop index UK5chgkqo5rseqn463ia6onnoeu
+2025-06-03T23:42:03.054-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table cursos 
+       add constraint UK5chgkqo5rseqn463ia6onnoeu unique (codigo)
+2025-06-03T23:42:03.066-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table personas 
+       drop index UK1f3wqd14lwfifrd1308leu73o
+2025-06-03T23:42:03.068-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table personas 
+       add constraint UK1f3wqd14lwfifrd1308leu73o unique (correo)
+2025-06-03T23:42:03.080-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table personas 
+       drop index UKk2f5nurjaq15ot26q7954nk8p
+2025-06-03T23:42:03.082-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table personas 
+       add constraint UKk2f5nurjaq15ot26q7954nk8p unique (rut)
+2025-06-03T23:42:03.093-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table tipos_persona 
+       drop index UKb51uq5ayodbrdlmtio4sjqjrh
+2025-06-03T23:42:03.095-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table tipos_persona 
+       add constraint UKb51uq5ayodbrdlmtio4sjqjrh unique (nombre)
+2025-06-03T23:42:03.108-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table calificaciones 
+       add constraint FKafmtntlflyvb6hrivb1l8r50a 
+       foreign key (evaluacion_id) 
+       references evaluaciones (id)
+2025-06-03T23:42:03.144-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table calificaciones 
+       add constraint FKltt3nm5wcg5d9wb75m4ussnyx 
+       foreign key (persona_id) 
+       references personas (id)
+2025-06-03T23:42:03.200-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table ejecuciones 
+       add constraint FK6o964kooew2p2er45p10rg9r8 
+       foreign key (curso_id) 
+       references cursos (id)
+2025-06-03T23:42:03.241-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table ejecuciones 
+       add constraint FK2id51q833sdx3gjl7x47902kh 
+       foreign key (profesor_id) 
+       references personas (id)
+2025-06-03T23:42:03.275-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table evaluaciones 
+       add constraint FKsay1st0t7j8tcgi704u3u2lwl 
+       foreign key (ejecucion_id) 
+       references ejecuciones (id)
+2025-06-03T23:42:03.305-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table inscripciones 
+       add constraint FKr93b0wg2nbv3u8ymoldk8on8p 
+       foreign key (ejecucion_id) 
+       references ejecuciones (id)
+2025-06-03T23:42:03.342-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table inscripciones 
+       add constraint FKos5x14h98378l6xhnxwtrcjjg 
+       foreign key (persona_id) 
+       references personas (id)
+2025-06-03T23:42:03.380-04:00 DEBUG 9908 --- [edutech-backend] [main] org.hibernate.SQL                        : 
+    alter table personas 
+       add constraint FKdiet8y471o6qlo1rtrpdgpsgo 
+       foreign key (tipo_persona_id) 
+       references tipos_persona (id)
+2025-06-03T23:42:03.418-04:00  INFO 9908 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:42:03.863-04:00  WARN 9908 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'calificacionController': Unsatisfied dependency expressed through field 'calificacionService': Error creating bean with name 'calificacionService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\CalificacionService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'calificacionRepository' defined in com.edutech.repository.CalificacionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Could not resolve attribute 'estudiante' of 'com.edutech.model.Calificacion'
+2025-06-03T23:42:03.865-04:00  INFO 9908 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:42:03.867-04:00  INFO 9908 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:42:03.876-04:00  INFO 9908 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:42:03.878-04:00  INFO 9908 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:42:03.896-04:00  INFO 9908 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:42:03.931-04:00 ERROR 9908 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'calificacionController': Unsatisfied dependency expressed through field 'calificacionService': Error creating bean with name 'calificacionService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\CalificacionService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'calificacionRepository' defined in com.edutech.repository.CalificacionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Could not resolve attribute 'estudiante' of 'com.edutech.model.Calificacion'
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:971) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'calificacionService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\CalificacionService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'calificacionRepository' defined in com.edutech.repository.CalificacionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Could not resolve attribute 'estudiante' of 'com.edutech.model.Calificacion'
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:795) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:237) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1375) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1212) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 20 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'calificacionRepository' defined in com.edutech.repository.CalificacionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Could not resolve attribute 'estudiante' of 'com.edutech.model.Calificacion'
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:904) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:782) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 33 common frames omitted
+Caused by: org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Could not resolve attribute 'estudiante' of 'com.edutech.model.Calificacion'
+	at org.springframework.data.repository.query.QueryCreationException.create(QueryCreationException.java:101) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.mapMethodsToQuery(QueryExecutorMethodInterceptor.java:103) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lambda$new$0(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at java.base/java.util.Optional.map(Optional.java:260) ~[na:na]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.<init>(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport.getRepository(RepositoryFactorySupport.java:357) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.lambda$afterPropertiesSet$5(RepositoryFactoryBeanSupport.java:290) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.getNullable(Lazy.java:135) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.get(Lazy.java:113) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.afterPropertiesSet(RepositoryFactoryBeanSupport.java:296) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean.afterPropertiesSet(JpaRepositoryFactoryBean.java:132) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 44 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Failed to create query for method public abstract java.util.List com.edutech.repository.CalificacionRepository.findByEstudianteId(java.lang.Long); Could not resolve attribute 'estudiante' of 'com.edutech.model.Calificacion'
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:107) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:124) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateIfNotFoundQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:258) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$AbstractQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:95) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:115) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	... 56 common frames omitted
+Caused by: org.hibernate.query.sqm.PathElementException: Could not resolve attribute 'estudiante' of 'com.edutech.model.Calificacion'
+	at org.hibernate.query.sqm.SqmPathSource.getSubPathSource(SqmPathSource.java:95) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:196) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:42) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.springframework.data.jpa.repository.query.QueryUtils.getModelForPath(QueryUtils.java:978) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.requiresOuterJoin(QueryUtils.java:835) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:790) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:769) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:765) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.getTypedPath(JpaQueryCreator.java:387) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.build(JpaQueryCreator.java:310) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.toPredicate(JpaQueryCreator.java:210) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.create(JpaQueryCreator.java:121) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.create(JpaQueryCreator.java:1) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createCriteria(AbstractQueryCreator.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createQuery(AbstractQueryCreator.java:95) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createQuery(AbstractQueryCreator.java:81) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery$QueryPreparer.<init>(PartTreeJpaQuery.java:224) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery$CountQueryPreparer.<init>(PartTreeJpaQuery.java:370) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:103) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	... 60 common frames omitted
+
+2025-06-03T23:44:19.305-04:00  INFO 9380 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 21.0.7 with PID 9380 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech\edutech-backend)
+2025-06-03T23:44:19.309-04:00 DEBUG 9380 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:44:19.311-04:00  INFO 9380 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:44:20.099-04:00  INFO 9380 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:44:20.195-04:00  INFO 9380 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 87 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:44:20.865-04:00  INFO 9380 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:44:20.887-04:00  INFO 9380 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:44:20.887-04:00  INFO 9380 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:44:20.949-04:00  INFO 9380 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:44:20.950-04:00  INFO 9380 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1573 ms
+2025-06-03T23:44:21.160-04:00  INFO 9380 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:44:21.216-04:00  INFO 9380 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:44:21.263-04:00  INFO 9380 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:44:21.712-04:00  INFO 9380 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:44:21.752-04:00  INFO 9380 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:44:21.966-04:00  INFO 9380 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@e972ee1
+2025-06-03T23:44:21.969-04:00  INFO 9380 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:44:22.021-04:00  WARN 9380 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:44:22.027-04:00  WARN 9380 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:44:23.208-04:00  INFO 9380 --- [edutech-backend] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-03T23:44:23.345-04:00  INFO 9380 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:44:23.729-04:00  INFO 9380 --- [edutech-backend] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-03T23:44:24.491-04:00  WARN 9380 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'cursoController': Unsatisfied dependency expressed through field 'cursoService': Error creating bean with name 'cursoService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\CursoService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'cursoRepository' defined in com.edutech.repository.CursoRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull()
+2025-06-03T23:44:24.491-04:00  INFO 9380 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:44:24.506-04:00  INFO 9380 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:44:24.506-04:00  INFO 9380 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:44:24.519-04:00  INFO 9380 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:44:24.535-04:00  INFO 9380 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:44:24.564-04:00 ERROR 9380 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'cursoController': Unsatisfied dependency expressed through field 'cursoService': Error creating bean with name 'cursoService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\CursoService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'cursoRepository' defined in com.edutech.repository.CursoRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:971) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'cursoService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\CursoService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'cursoRepository' defined in com.edutech.repository.CursoRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull()
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:795) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:237) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1375) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1212) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 20 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'cursoRepository' defined in com.edutech.repository.CursoRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull()
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:904) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:782) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 33 common frames omitted
+Caused by: org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull()
+	at org.springframework.data.repository.query.QueryCreationException.create(QueryCreationException.java:101) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.mapMethodsToQuery(QueryExecutorMethodInterceptor.java:103) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lambda$new$0(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at java.base/java.util.Optional.map(Optional.java:260) ~[na:na]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.<init>(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport.getRepository(RepositoryFactorySupport.java:357) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.lambda$afterPropertiesSet$5(RepositoryFactoryBeanSupport.java:290) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.getNullable(Lazy.java:135) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.get(Lazy.java:113) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.afterPropertiesSet(RepositoryFactoryBeanSupport.java:296) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean.afterPropertiesSet(JpaRepositoryFactoryBean.java:132) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 44 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Validation failed for query for method public abstract java.util.List com.edutech.repository.CursoRepository.findByPrerrequisitoIsNull()
+	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.validateQuery(SimpleJpaQuery.java:100) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.<init>(SimpleJpaQuery.java:70) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryFactory.fromMethodWithQueryString(JpaQueryFactory.java:60) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$DeclaredQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:170) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateIfNotFoundQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:252) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$AbstractQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:95) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:115) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	... 56 common frames omitted
+Caused by: java.lang.IllegalArgumentException: org.hibernate.query.sqm.UnknownPathException: Could not resolve attribute 'prerequisitoCursoCodigo' of 'com.edutech.model.Curso' [SELECT c FROM Curso c WHERE c.prerequisitoCursoCodigo IS NULL]
+	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:143) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:167) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:173) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:860) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:765) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:140) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.orm.jpa.ExtendedEntityManagerCreator$ExtendedEntityManagerInvocationHandler.invoke(ExtendedEntityManagerCreator.java:364) ~[spring-orm-6.1.20.jar:6.1.20]
+	at jdk.proxy2/jdk.proxy2.$Proxy125.createQuery(Unknown Source) ~[na:na]
+	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.validateQuery(SimpleJpaQuery.java:94) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	... 62 common frames omitted
+Caused by: org.hibernate.query.sqm.UnknownPathException: Could not resolve attribute 'prerequisitoCursoCodigo' of 'com.edutech.model.Curso' [SELECT c FROM Curso c WHERE c.prerequisitoCursoCodigo IS NULL]
+	at org.hibernate.query.hql.internal.StandardHqlTranslator.translate(StandardHqlTranslator.java:88) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.internal.QueryInterpretationCacheStandardImpl.createHqlInterpretation(QueryInterpretationCacheStandardImpl.java:145) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.internal.QueryInterpretationCacheStandardImpl.resolveHqlInterpretation(QueryInterpretationCacheStandardImpl.java:132) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.interpretHql(AbstractSharedSessionContract.java:802) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:852) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	... 69 common frames omitted
+Caused by: org.hibernate.query.sqm.PathElementException: Could not resolve attribute 'prerequisitoCursoCodigo' of 'com.edutech.model.Curso'
+	at org.hibernate.query.sqm.SqmPathSource.getSubPathSource(SqmPathSource.java:95) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:196) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmFrom.resolvePathPart(AbstractSqmFrom.java:198) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.DomainPathPart.resolvePathPart(DomainPathPart.java:42) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.BasicDotIdentifierConsumer.consumeIdentifier(BasicDotIdentifierConsumer.java:92) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitSimplePath(SemanticQueryBuilder.java:5269) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitIndexedPathAccessFragment(SemanticQueryBuilder.java:5218) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitGeneralPathFragment(SemanticQueryBuilder.java:5193) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitGeneralPathExpression(SemanticQueryBuilder.java:1886) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$GeneralPathExpressionContext.accept(HqlParser.java:7967) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visitChildren(AbstractParseTreeVisitor.java:46) ~[antlr4-runtime-4.13.0.jar:4.13.0]
+	at org.hibernate.grammars.hql.HqlParserBaseVisitor.visitBarePrimaryExpression(HqlParserBaseVisitor.java:777) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$BarePrimaryExpressionContext.accept(HqlParser.java:7425) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitIsNullPredicate(SemanticQueryBuilder.java:2437) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitIsNullPredicate(SemanticQueryBuilder.java:275) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$IsNullPredicateContext.accept(HqlParser.java:6595) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitWhereClause(SemanticQueryBuilder.java:2356) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitWhereClause(SemanticQueryBuilder.java:275) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$WhereClauseContext.accept(HqlParser.java:6173) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitQuery(SemanticQueryBuilder.java:1254) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitQuerySpecExpression(SemanticQueryBuilder.java:1035) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitQuerySpecExpression(SemanticQueryBuilder.java:275) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$QuerySpecExpressionContext.accept(HqlParser.java:2132) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitSimpleQueryGroup(SemanticQueryBuilder.java:1020) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitSimpleQueryGroup(SemanticQueryBuilder.java:275) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$SimpleQueryGroupContext.accept(HqlParser.java:2003) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitSelectStatement(SemanticQueryBuilder.java:490) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitStatement(SemanticQueryBuilder.java:449) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.buildSemanticModel(SemanticQueryBuilder.java:322) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.StandardHqlTranslator.translate(StandardHqlTranslator.java:71) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	... 73 common frames omitted
+
+2025-06-03T23:46:34.723-04:00  INFO 6336 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 21.0.7 with PID 6336 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech\edutech-backend)
+2025-06-03T23:46:34.725-04:00 DEBUG 6336 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:46:34.727-04:00  INFO 6336 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:46:35.559-04:00  INFO 6336 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:46:35.661-04:00  INFO 6336 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 92 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:46:36.323-04:00  INFO 6336 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:46:36.347-04:00  INFO 6336 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:46:36.348-04:00  INFO 6336 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:46:36.419-04:00  INFO 6336 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:46:36.420-04:00  INFO 6336 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1621 ms
+2025-06-03T23:46:36.584-04:00  INFO 6336 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:46:36.656-04:00  INFO 6336 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:46:36.707-04:00  INFO 6336 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:46:37.056-04:00  INFO 6336 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:46:37.091-04:00  INFO 6336 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:46:37.283-04:00  INFO 6336 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@1f45db49
+2025-06-03T23:46:37.283-04:00  INFO 6336 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:46:37.345-04:00  WARN 6336 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:46:37.350-04:00  WARN 6336 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:46:38.551-04:00  INFO 6336 --- [edutech-backend] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-03T23:46:38.670-04:00  INFO 6336 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:46:39.036-04:00  INFO 6336 --- [edutech-backend] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-03T23:46:39.867-04:00  WARN 6336 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'ejecucionController': Unsatisfied dependency expressed through field 'ejecucionService': Error creating bean with name 'ejecucionService': Unsatisfied dependency expressed through field 'ejecucionRepository': Error creating bean with name 'ejecucionRepository' defined in com.edutech.repository.EjecucionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles()
+2025-06-03T23:46:39.868-04:00  INFO 6336 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:46:39.870-04:00  INFO 6336 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:46:39.880-04:00  INFO 6336 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:46:39.883-04:00  INFO 6336 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:46:39.902-04:00  INFO 6336 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:46:39.924-04:00 ERROR 6336 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'ejecucionController': Unsatisfied dependency expressed through field 'ejecucionService': Error creating bean with name 'ejecucionService': Unsatisfied dependency expressed through field 'ejecucionRepository': Error creating bean with name 'ejecucionRepository' defined in com.edutech.repository.EjecucionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:971) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'ejecucionService': Unsatisfied dependency expressed through field 'ejecucionRepository': Error creating bean with name 'ejecucionRepository' defined in com.edutech.repository.EjecucionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles()
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 20 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'ejecucionRepository' defined in com.edutech.repository.EjecucionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles()
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 34 common frames omitted
+Caused by: org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles(); Reason: Validation failed for query for method public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles()
+	at org.springframework.data.repository.query.QueryCreationException.create(QueryCreationException.java:101) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.mapMethodsToQuery(QueryExecutorMethodInterceptor.java:103) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lambda$new$0(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at java.base/java.util.Optional.map(Optional.java:260) ~[na:na]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.<init>(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport.getRepository(RepositoryFactorySupport.java:357) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.lambda$afterPropertiesSet$5(RepositoryFactoryBeanSupport.java:290) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.getNullable(Lazy.java:135) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.get(Lazy.java:113) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.afterPropertiesSet(RepositoryFactoryBeanSupport.java:296) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean.afterPropertiesSet(JpaRepositoryFactoryBean.java:132) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 44 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Validation failed for query for method public abstract java.util.List com.edutech.repository.EjecucionRepository.findEjecucionesConCuposDisponibles()
+	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.validateQuery(SimpleJpaQuery.java:100) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.<init>(SimpleJpaQuery.java:70) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryFactory.fromMethodWithQueryString(JpaQueryFactory.java:60) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$DeclaredQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:170) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateIfNotFoundQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:252) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$AbstractQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:95) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:115) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	... 56 common frames omitted
+Caused by: java.lang.IllegalArgumentException: org.hibernate.query.sqm.UnknownPathException: Could not resolve attribute 'cupoMaximo' of 'com.edutech.model.Ejecucion' [SELECT e FROM Ejecucion e WHERE SIZE(e.inscripciones) < e.cupoMaximo]
+	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:143) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:167) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.ExceptionConverterImpl.convert(ExceptionConverterImpl.java:173) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:860) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:765) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:140) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103) ~[na:na]
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580) ~[na:na]
+	at org.springframework.orm.jpa.ExtendedEntityManagerCreator$ExtendedEntityManagerInvocationHandler.invoke(ExtendedEntityManagerCreator.java:364) ~[spring-orm-6.1.20.jar:6.1.20]
+	at jdk.proxy2/jdk.proxy2.$Proxy125.createQuery(Unknown Source) ~[na:na]
+	at org.springframework.data.jpa.repository.query.SimpleJpaQuery.validateQuery(SimpleJpaQuery.java:94) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	... 62 common frames omitted
+Caused by: org.hibernate.query.sqm.UnknownPathException: Could not resolve attribute 'cupoMaximo' of 'com.edutech.model.Ejecucion' [SELECT e FROM Ejecucion e WHERE SIZE(e.inscripciones) < e.cupoMaximo]
+	at org.hibernate.query.hql.internal.StandardHqlTranslator.translate(StandardHqlTranslator.java:88) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.internal.QueryInterpretationCacheStandardImpl.createHqlInterpretation(QueryInterpretationCacheStandardImpl.java:145) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.internal.QueryInterpretationCacheStandardImpl.resolveHqlInterpretation(QueryInterpretationCacheStandardImpl.java:132) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.interpretHql(AbstractSharedSessionContract.java:802) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.internal.AbstractSharedSessionContract.createQuery(AbstractSharedSessionContract.java:852) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	... 69 common frames omitted
+Caused by: org.hibernate.query.sqm.PathElementException: Could not resolve attribute 'cupoMaximo' of 'com.edutech.model.Ejecucion'
+	at org.hibernate.query.sqm.SqmPathSource.getSubPathSource(SqmPathSource.java:95) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:196) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmFrom.resolvePathPart(AbstractSqmFrom.java:198) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.DomainPathPart.resolvePathPart(DomainPathPart.java:42) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.BasicDotIdentifierConsumer.consumeIdentifier(BasicDotIdentifierConsumer.java:92) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitSimplePath(SemanticQueryBuilder.java:5269) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitIndexedPathAccessFragment(SemanticQueryBuilder.java:5218) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitGeneralPathFragment(SemanticQueryBuilder.java:5193) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitGeneralPathExpression(SemanticQueryBuilder.java:1886) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$GeneralPathExpressionContext.accept(HqlParser.java:7967) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.antlr.v4.runtime.tree.AbstractParseTreeVisitor.visitChildren(AbstractParseTreeVisitor.java:46) ~[antlr4-runtime-4.13.0.jar:4.13.0]
+	at org.hibernate.grammars.hql.HqlParserBaseVisitor.visitBarePrimaryExpression(HqlParserBaseVisitor.java:777) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$BarePrimaryExpressionContext.accept(HqlParser.java:7425) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.createComparisonPredicate(SemanticQueryBuilder.java:2544) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitComparisonPredicate(SemanticQueryBuilder.java:2504) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitComparisonPredicate(SemanticQueryBuilder.java:275) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$ComparisonPredicateContext.accept(HqlParser.java:6432) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitWhereClause(SemanticQueryBuilder.java:2356) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitWhereClause(SemanticQueryBuilder.java:275) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$WhereClauseContext.accept(HqlParser.java:6173) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitQuery(SemanticQueryBuilder.java:1254) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitQuerySpecExpression(SemanticQueryBuilder.java:1035) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitQuerySpecExpression(SemanticQueryBuilder.java:275) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$QuerySpecExpressionContext.accept(HqlParser.java:2132) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitSimpleQueryGroup(SemanticQueryBuilder.java:1020) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitSimpleQueryGroup(SemanticQueryBuilder.java:275) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.grammars.hql.HqlParser$SimpleQueryGroupContext.accept(HqlParser.java:2003) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitSelectStatement(SemanticQueryBuilder.java:490) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.visitStatement(SemanticQueryBuilder.java:449) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.SemanticQueryBuilder.buildSemanticModel(SemanticQueryBuilder.java:322) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.hql.internal.StandardHqlTranslator.translate(StandardHqlTranslator.java:71) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	... 73 common frames omitted
+
+2025-06-03T23:48:03.063-04:00  INFO 5112 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 21.0.7 with PID 5112 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech\edutech-backend)
+2025-06-03T23:48:03.066-04:00 DEBUG 5112 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:48:03.067-04:00  INFO 5112 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:48:04.118-04:00  INFO 5112 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:48:04.238-04:00  INFO 5112 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 105 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:48:04.980-04:00  INFO 5112 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:48:05.005-04:00  INFO 5112 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:48:05.005-04:00  INFO 5112 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:48:05.088-04:00  INFO 5112 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:48:05.089-04:00  INFO 5112 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1952 ms
+2025-06-03T23:48:05.287-04:00  INFO 5112 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:48:05.379-04:00  INFO 5112 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:48:05.413-04:00  INFO 5112 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:48:05.840-04:00  INFO 5112 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:48:05.897-04:00  INFO 5112 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:48:06.107-04:00  INFO 5112 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@49631cfb
+2025-06-03T23:48:06.122-04:00  INFO 5112 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:48:06.180-04:00  WARN 5112 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:48:06.180-04:00  WARN 5112 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:48:07.465-04:00  INFO 5112 --- [edutech-backend] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-03T23:48:07.600-04:00  INFO 5112 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:48:08.030-04:00  INFO 5112 --- [edutech-backend] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-03T23:48:08.987-04:00  WARN 5112 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'evaluacionController': Unsatisfied dependency expressed through field 'evaluacionService': Error creating bean with name 'evaluacionService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\EvaluacionService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'evaluacionRepository' defined in com.edutech.repository.EvaluacionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Could not resolve attribute 'fechaDisponible' of 'com.edutech.model.Evaluacion'
+2025-06-03T23:48:08.989-04:00  INFO 5112 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:48:08.991-04:00  INFO 5112 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:48:09.004-04:00  INFO 5112 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:48:09.007-04:00  INFO 5112 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:48:09.023-04:00  INFO 5112 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:48:09.049-04:00 ERROR 5112 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'evaluacionController': Unsatisfied dependency expressed through field 'evaluacionService': Error creating bean with name 'evaluacionService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\EvaluacionService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'evaluacionRepository' defined in com.edutech.repository.EvaluacionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Could not resolve attribute 'fechaDisponible' of 'com.edutech.model.Evaluacion'
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:971) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'evaluacionService' defined in file [C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes\com\edutech\service\EvaluacionService.class]: Unsatisfied dependency expressed through constructor parameter 0: Error creating bean with name 'evaluacionRepository' defined in com.edutech.repository.EvaluacionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Could not resolve attribute 'fechaDisponible' of 'com.edutech.model.Evaluacion'
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:795) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.autowireConstructor(ConstructorResolver.java:237) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.autowireConstructor(AbstractAutowireCapableBeanFactory.java:1375) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBeanInstance(AbstractAutowireCapableBeanFactory.java:1212) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:562) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 20 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'evaluacionRepository' defined in com.edutech.repository.EvaluacionRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Could not resolve attribute 'fechaDisponible' of 'com.edutech.model.Evaluacion'
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.resolveAutowiredArgument(ConstructorResolver.java:904) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.ConstructorResolver.createArgumentArray(ConstructorResolver.java:782) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 33 common frames omitted
+Caused by: org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Could not resolve attribute 'fechaDisponible' of 'com.edutech.model.Evaluacion'
+	at org.springframework.data.repository.query.QueryCreationException.create(QueryCreationException.java:101) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.mapMethodsToQuery(QueryExecutorMethodInterceptor.java:103) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lambda$new$0(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at java.base/java.util.Optional.map(Optional.java:260) ~[na:na]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.<init>(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport.getRepository(RepositoryFactorySupport.java:357) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.lambda$afterPropertiesSet$5(RepositoryFactoryBeanSupport.java:290) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.getNullable(Lazy.java:135) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.get(Lazy.java:113) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.afterPropertiesSet(RepositoryFactoryBeanSupport.java:296) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean.afterPropertiesSet(JpaRepositoryFactoryBean.java:132) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 44 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Failed to create query for method public abstract java.util.List com.edutech.repository.EvaluacionRepository.findByFechaDisponibleAfter(java.time.LocalDateTime); Could not resolve attribute 'fechaDisponible' of 'com.edutech.model.Evaluacion'
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:107) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:124) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateIfNotFoundQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:258) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$AbstractQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:95) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:115) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	... 56 common frames omitted
+Caused by: org.hibernate.query.sqm.PathElementException: Could not resolve attribute 'fechaDisponible' of 'com.edutech.model.Evaluacion'
+	at org.hibernate.query.sqm.SqmPathSource.getSubPathSource(SqmPathSource.java:95) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:196) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:42) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.springframework.data.jpa.repository.query.QueryUtils.getModelForPath(QueryUtils.java:978) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.requiresOuterJoin(QueryUtils.java:835) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:790) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:769) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:765) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.getTypedPath(JpaQueryCreator.java:387) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.getComparablePath(JpaQueryCreator.java:383) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.build(JpaQueryCreator.java:256) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.toPredicate(JpaQueryCreator.java:210) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.create(JpaQueryCreator.java:121) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.create(JpaQueryCreator.java:1) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createCriteria(AbstractQueryCreator.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createQuery(AbstractQueryCreator.java:95) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createQuery(AbstractQueryCreator.java:81) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery$QueryPreparer.<init>(PartTreeJpaQuery.java:224) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery$CountQueryPreparer.<init>(PartTreeJpaQuery.java:370) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:103) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	... 60 common frames omitted
+
+2025-06-03T23:50:20.734-04:00  INFO 9196 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 21.0.7 with PID 9196 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech\edutech-backend)
+2025-06-03T23:50:20.736-04:00 DEBUG 9196 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:50:20.737-04:00  INFO 9196 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:50:21.532-04:00  INFO 9196 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:50:21.633-04:00  INFO 9196 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 93 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:50:22.296-04:00  INFO 9196 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:50:22.317-04:00  INFO 9196 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:50:22.318-04:00  INFO 9196 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:50:22.390-04:00  INFO 9196 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:50:22.391-04:00  INFO 9196 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1585 ms
+2025-06-03T23:50:22.581-04:00  INFO 9196 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:50:22.656-04:00  INFO 9196 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:50:22.694-04:00  INFO 9196 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:50:23.040-04:00  INFO 9196 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:50:23.072-04:00  INFO 9196 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:50:23.257-04:00  INFO 9196 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@33a47707
+2025-06-03T23:50:23.259-04:00  INFO 9196 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:50:23.301-04:00  WARN 9196 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:50:23.309-04:00  WARN 9196 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:50:24.527-04:00  INFO 9196 --- [edutech-backend] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-03T23:50:24.647-04:00  INFO 9196 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:50:24.982-04:00  INFO 9196 --- [edutech-backend] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-03T23:50:26.123-04:00  WARN 9196 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'inscripcionController': Unsatisfied dependency expressed through field 'inscripcionService': Error creating bean with name 'inscripcionService': Unsatisfied dependency expressed through field 'personaRepository': Error creating bean with name 'personaRepository' defined in com.edutech.repository.PersonaRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Reason: Failed to create query for method public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Could not resolve attribute 'email' of 'com.edutech.model.Persona'
+2025-06-03T23:50:26.124-04:00  INFO 9196 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:50:26.127-04:00  INFO 9196 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:50:26.139-04:00  INFO 9196 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:50:26.142-04:00  INFO 9196 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:50:26.160-04:00  INFO 9196 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:50:26.184-04:00 ERROR 9196 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'inscripcionController': Unsatisfied dependency expressed through field 'inscripcionService': Error creating bean with name 'inscripcionService': Unsatisfied dependency expressed through field 'personaRepository': Error creating bean with name 'personaRepository' defined in com.edutech.repository.PersonaRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Reason: Failed to create query for method public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Could not resolve attribute 'email' of 'com.edutech.model.Persona'
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:971) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'inscripcionService': Unsatisfied dependency expressed through field 'personaRepository': Error creating bean with name 'personaRepository' defined in com.edutech.repository.PersonaRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Reason: Failed to create query for method public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Could not resolve attribute 'email' of 'com.edutech.model.Persona'
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 20 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'personaRepository' defined in com.edutech.repository.PersonaRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Reason: Failed to create query for method public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Could not resolve attribute 'email' of 'com.edutech.model.Persona'
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 34 common frames omitted
+Caused by: org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Reason: Failed to create query for method public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Could not resolve attribute 'email' of 'com.edutech.model.Persona'
+	at org.springframework.data.repository.query.QueryCreationException.create(QueryCreationException.java:101) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.mapMethodsToQuery(QueryExecutorMethodInterceptor.java:103) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lambda$new$0(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at java.base/java.util.Optional.map(Optional.java:260) ~[na:na]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.<init>(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport.getRepository(RepositoryFactorySupport.java:357) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.lambda$afterPropertiesSet$5(RepositoryFactoryBeanSupport.java:290) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.getNullable(Lazy.java:135) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.get(Lazy.java:113) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.afterPropertiesSet(RepositoryFactoryBeanSupport.java:296) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean.afterPropertiesSet(JpaRepositoryFactoryBean.java:132) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 44 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Failed to create query for method public abstract boolean com.edutech.repository.PersonaRepository.existsByEmailIgnoreCase(java.lang.String); Could not resolve attribute 'email' of 'com.edutech.model.Persona'
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:107) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:124) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateIfNotFoundQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:258) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$AbstractQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:95) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:115) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	... 56 common frames omitted
+Caused by: org.hibernate.query.sqm.PathElementException: Could not resolve attribute 'email' of 'com.edutech.model.Persona'
+	at org.hibernate.query.sqm.SqmPathSource.getSubPathSource(SqmPathSource.java:95) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:196) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:42) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.springframework.data.jpa.repository.query.QueryUtils.getModelForPath(QueryUtils.java:978) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.requiresOuterJoin(QueryUtils.java:835) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:790) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:769) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:765) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.getTypedPath(JpaQueryCreator.java:387) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.build(JpaQueryCreator.java:310) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.toPredicate(JpaQueryCreator.java:210) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.create(JpaQueryCreator.java:121) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.create(JpaQueryCreator.java:1) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createCriteria(AbstractQueryCreator.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createQuery(AbstractQueryCreator.java:95) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createQuery(AbstractQueryCreator.java:81) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery$QueryPreparer.<init>(PartTreeJpaQuery.java:224) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery$CountQueryPreparer.<init>(PartTreeJpaQuery.java:370) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:103) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	... 60 common frames omitted
+
+2025-06-03T23:52:01.641-04:00  INFO 6196 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 21.0.7 with PID 6196 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech\edutech-backend)
+2025-06-03T23:52:01.644-04:00 DEBUG 6196 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:52:01.645-04:00  INFO 6196 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:52:02.602-04:00  INFO 6196 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:52:02.718-04:00  INFO 6196 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 103 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:52:03.549-04:00  INFO 6196 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:52:03.577-04:00  INFO 6196 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:52:03.581-04:00  INFO 6196 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:52:03.679-04:00  INFO 6196 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:52:03.679-04:00  INFO 6196 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1954 ms
+2025-06-03T23:52:03.896-04:00  INFO 6196 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:52:03.975-04:00  INFO 6196 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:52:04.028-04:00  INFO 6196 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:52:04.469-04:00  INFO 6196 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:52:04.523-04:00  INFO 6196 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:52:04.780-04:00  INFO 6196 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@62cd562d
+2025-06-03T23:52:04.784-04:00  INFO 6196 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:52:04.834-04:00  WARN 6196 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:52:04.842-04:00  WARN 6196 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:52:06.252-04:00  INFO 6196 --- [edutech-backend] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-03T23:52:06.386-04:00  INFO 6196 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:52:06.804-04:00  INFO 6196 --- [edutech-backend] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-03T23:52:08.401-04:00  WARN 6196 --- [edutech-backend] [main] ConfigServletWebServerApplicationContext : Exception encountered during context initialization - cancelling refresh attempt: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'inscripcionController': Unsatisfied dependency expressed through field 'inscripcionService': Error creating bean with name 'inscripcionService': Unsatisfied dependency expressed through field 'personaRepository': Error creating bean with name 'personaRepository' defined in com.edutech.repository.PersonaRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Could not resolve attribute 'apellidos' of 'com.edutech.model.Persona'
+2025-06-03T23:52:08.403-04:00  INFO 6196 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:52:08.406-04:00  INFO 6196 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2025-06-03T23:52:08.416-04:00  INFO 6196 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+2025-06-03T23:52:08.418-04:00  INFO 6196 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Stopping service [Tomcat]
+2025-06-03T23:52:08.435-04:00  INFO 6196 --- [edutech-backend] [main] .s.b.a.l.ConditionEvaluationReportLogger : 
+
+Error starting ApplicationContext. To display the condition evaluation report re-run your application with 'debug' enabled.
+2025-06-03T23:52:08.464-04:00 ERROR 6196 --- [edutech-backend] [main] o.s.boot.SpringApplication               : Application run failed
+
+org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'inscripcionController': Unsatisfied dependency expressed through field 'inscripcionService': Error creating bean with name 'inscripcionService': Unsatisfied dependency expressed through field 'personaRepository': Error creating bean with name 'personaRepository' defined in com.edutech.repository.PersonaRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Could not resolve attribute 'apellidos' of 'com.edutech.model.Persona'
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.preInstantiateSingletons(DefaultListableBeanFactory.java:975) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.finishBeanFactoryInitialization(AbstractApplicationContext.java:971) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.context.support.AbstractApplicationContext.refresh(AbstractApplicationContext.java:625) ~[spring-context-6.1.20.jar:6.1.20]
+	at org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext.refresh(ServletWebServerApplicationContext.java:146) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refresh(SpringApplication.java:755) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.refreshContext(SpringApplication.java:456) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:335) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1364) ~[spring-boot-3.3.12.jar:3.3.12]
+	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1353) ~[spring-boot-3.3.12.jar:3.3.12]
+	at com.edutech.EdutechBackendApplication.main(EdutechBackendApplication.java:10) ~[classes/:na]
+Caused by: org.springframework.beans.factory.UnsatisfiedDependencyException: Error creating bean with name 'inscripcionService': Unsatisfied dependency expressed through field 'personaRepository': Error creating bean with name 'personaRepository' defined in com.edutech.repository.PersonaRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Could not resolve attribute 'apellidos' of 'com.edutech.model.Persona'
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:788) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.inject(AutowiredAnnotationBeanPostProcessor.java:768) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.InjectionMetadata.inject(InjectionMetadata.java:145) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor.postProcessProperties(AutowiredAnnotationBeanPostProcessor.java:509) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.populateBean(AbstractAutowireCapableBeanFactory.java:1439) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:599) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 20 common frames omitted
+Caused by: org.springframework.beans.factory.BeanCreationException: Error creating bean with name 'personaRepository' defined in com.edutech.repository.PersonaRepository defined in @EnableJpaRepositories declared on JpaRepositoriesRegistrar.EnableJpaRepositoriesConfiguration: Could not create query for public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Could not resolve attribute 'apellidos' of 'com.edutech.model.Persona'
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1806) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.doCreateBean(AbstractAutowireCapableBeanFactory.java:600) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.createBean(AbstractAutowireCapableBeanFactory.java:522) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.lambda$doGetBean$0(AbstractBeanFactory.java:337) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultSingletonBeanRegistry.getSingleton(DefaultSingletonBeanRegistry.java:234) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.doGetBean(AbstractBeanFactory.java:335) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractBeanFactory.getBean(AbstractBeanFactory.java:200) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.config.DependencyDescriptor.resolveCandidate(DependencyDescriptor.java:254) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.doResolveDependency(DefaultListableBeanFactory.java:1448) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.DefaultListableBeanFactory.resolveDependency(DefaultListableBeanFactory.java:1358) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor$AutowiredFieldElement.resolveFieldValue(AutowiredAnnotationBeanPostProcessor.java:785) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 34 common frames omitted
+Caused by: org.springframework.data.repository.query.QueryCreationException: Could not create query for public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Reason: Failed to create query for method public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Could not resolve attribute 'apellidos' of 'com.edutech.model.Persona'
+	at org.springframework.data.repository.query.QueryCreationException.create(QueryCreationException.java:101) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.mapMethodsToQuery(QueryExecutorMethodInterceptor.java:103) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lambda$new$0(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at java.base/java.util.Optional.map(Optional.java:260) ~[na:na]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.<init>(QueryExecutorMethodInterceptor.java:92) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactorySupport.getRepository(RepositoryFactorySupport.java:357) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.lambda$afterPropertiesSet$5(RepositoryFactoryBeanSupport.java:290) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.getNullable(Lazy.java:135) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.util.Lazy.get(Lazy.java:113) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.RepositoryFactoryBeanSupport.afterPropertiesSet(RepositoryFactoryBeanSupport.java:296) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.support.JpaRepositoryFactoryBean.afterPropertiesSet(JpaRepositoryFactoryBean.java:132) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.invokeInitMethods(AbstractAutowireCapableBeanFactory.java:1853) ~[spring-beans-6.1.20.jar:6.1.20]
+	at org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory.initializeBean(AbstractAutowireCapableBeanFactory.java:1802) ~[spring-beans-6.1.20.jar:6.1.20]
+	... 44 common frames omitted
+Caused by: java.lang.IllegalArgumentException: Failed to create query for method public abstract java.util.List com.edutech.repository.PersonaRepository.findByNombresContainingIgnoreCaseOrApellidosContainingIgnoreCase(java.lang.String,java.lang.String); Could not resolve attribute 'apellidos' of 'com.edutech.model.Persona'
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:107) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:124) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$CreateIfNotFoundQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:258) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryLookupStrategy$AbstractQueryLookupStrategy.resolveQuery(JpaQueryLookupStrategy.java:95) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.core.support.QueryExecutorMethodInterceptor.lookupQuery(QueryExecutorMethodInterceptor.java:115) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	... 56 common frames omitted
+Caused by: org.hibernate.query.sqm.PathElementException: Could not resolve attribute 'apellidos' of 'com.edutech.model.Persona'
+	at org.hibernate.query.sqm.SqmPathSource.getSubPathSource(SqmPathSource.java:95) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:196) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.hibernate.query.sqm.tree.domain.AbstractSqmPath.get(AbstractSqmPath.java:42) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
+	at org.springframework.data.jpa.repository.query.QueryUtils.getModelForPath(QueryUtils.java:978) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.requiresOuterJoin(QueryUtils.java:835) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:790) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:769) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.QueryUtils.toExpressionRecursively(QueryUtils.java:765) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.getTypedPath(JpaQueryCreator.java:387) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator$PredicateBuilder.build(JpaQueryCreator.java:297) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.toPredicate(JpaQueryCreator.java:210) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.create(JpaQueryCreator.java:121) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.JpaQueryCreator.create(JpaQueryCreator.java:1) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createCriteria(AbstractQueryCreator.java:119) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createQuery(AbstractQueryCreator.java:95) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.repository.query.parser.AbstractQueryCreator.createQuery(AbstractQueryCreator.java:81) ~[spring-data-commons-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery$QueryPreparer.<init>(PartTreeJpaQuery.java:224) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery$CountQueryPreparer.<init>(PartTreeJpaQuery.java:370) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	at org.springframework.data.jpa.repository.query.PartTreeJpaQuery.<init>(PartTreeJpaQuery.java:103) ~[spring-data-jpa-3.3.12.jar:3.3.12]
+	... 60 common frames omitted
+
+2025-06-03T23:53:35.797-04:00  INFO 2256 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Starting EdutechBackendApplication using Java 21.0.7 with PID 2256 (C:\Users\Administrator\Documents\edutech\edutech-backend\target\classes started by Administrator in C:\Users\Administrator\Documents\edutech\edutech-backend)
+2025-06-03T23:53:35.800-04:00 DEBUG 2256 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Running with Spring Boot v3.3.12, Spring v6.1.20
+2025-06-03T23:53:35.802-04:00  INFO 2256 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : No active profile set, falling back to 1 default profile: "default"
+2025-06-03T23:53:36.620-04:00  INFO 2256 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-03T23:53:36.710-04:00  INFO 2256 --- [edutech-backend] [main] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 79 ms. Found 7 JPA repository interfaces.
+2025-06-03T23:53:37.347-04:00  INFO 2256 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2025-06-03T23:53:37.372-04:00  INFO 2256 --- [edutech-backend] [main] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2025-06-03T23:53:37.373-04:00  INFO 2256 --- [edutech-backend] [main] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.41]
+2025-06-03T23:53:37.436-04:00  INFO 2256 --- [edutech-backend] [main] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2025-06-03T23:53:37.437-04:00  INFO 2256 --- [edutech-backend] [main] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1554 ms
+2025-06-03T23:53:37.606-04:00  INFO 2256 --- [edutech-backend] [main] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-03T23:53:37.682-04:00  INFO 2256 --- [edutech-backend] [main] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.5.3.Final
+2025-06-03T23:53:37.729-04:00  INFO 2256 --- [edutech-backend] [main] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2025-06-03T23:53:38.057-04:00  INFO 2256 --- [edutech-backend] [main] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-03T23:53:38.102-04:00  INFO 2256 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2025-06-03T23:53:38.315-04:00  INFO 2256 --- [edutech-backend] [main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection com.mysql.cj.jdbc.ConnectionImpl@38c10190
+2025-06-03T23:53:38.318-04:00  INFO 2256 --- [edutech-backend] [main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2025-06-03T23:53:38.368-04:00  WARN 2256 --- [edutech-backend] [main] org.hibernate.dialect.Dialect            : HHH000511: The 5.5.5 version for [org.hibernate.dialect.MySQLDialect] is no longer supported, hence certain features may not work properly. The minimum supported version is 8.0.0. Check the community dialects project for available legacy versions.
+2025-06-03T23:53:38.373-04:00  WARN 2256 --- [edutech-backend] [main] org.hibernate.orm.deprecation            : HHH90000025: MySQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-03T23:53:39.507-04:00  INFO 2256 --- [edutech-backend] [main] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-03T23:53:39.644-04:00  INFO 2256 --- [edutech-backend] [main] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-03T23:53:40.024-04:00  INFO 2256 --- [edutech-backend] [main] o.s.d.j.r.query.QueryEnhancerFactory     : Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-03T23:53:41.603-04:00  WARN 2256 --- [edutech-backend] [main] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-03T23:53:41.760-04:00 DEBUG 2256 --- [edutech-backend] [main] s.w.s.m.m.a.RequestMappingHandlerMapping : 75 mappings in 'requestMappingHandlerMapping'
+2025-06-03T23:53:41.915-04:00 DEBUG 2256 --- [edutech-backend] [main] o.s.w.s.handler.SimpleUrlHandlerMapping  : Patterns [/webjars/**, /**] in 'resourceHandlerMapping'
+2025-06-03T23:53:41.968-04:00 DEBUG 2256 --- [edutech-backend] [main] s.w.s.m.m.a.RequestMappingHandlerAdapter : ControllerAdvice beans: 0 @ModelAttribute, 0 @InitBinder, 1 RequestBodyAdvice, 1 ResponseBodyAdvice
+2025-06-03T23:53:42.011-04:00 DEBUG 2256 --- [edutech-backend] [main] .m.m.a.ExceptionHandlerExceptionResolver : ControllerAdvice beans: 0 @ExceptionHandler, 1 ResponseBodyAdvice
+2025-06-03T23:53:42.152-04:00  INFO 2256 --- [edutech-backend] [main] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path '/'
+2025-06-03T23:53:42.167-04:00  INFO 2256 --- [edutech-backend] [main] com.edutech.EdutechBackendApplication    : Started EdutechBackendApplication in 6.976 seconds (process running for 7.36)
