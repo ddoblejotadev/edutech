@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  SafeAreaView,
-  TouchableOpacity,
-  Alert,
-  RefreshControl
-} from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT, FONTS } from '../../config/theme';
+import { COLORS, SPACING, FONT_SIZE, FONT_WEIGHT, BORDER_RADIUS, FONTS } from '../../config/theme';
 import { Card, LoadingState } from '../../components/common/UIComponents';
 
 const ServicesScreen = ({ navigation }) => {
