@@ -32,6 +32,7 @@ import AcademicTranscriptScreen from '../screens/services/AcademicTranscriptScre
 import ExamRegistrationScreen from '../screens/services/ExamRegistrationScreen';
 import ScholarshipsScreen from '../screens/services/ScholarshipsScreen';
 import SocialServiceScreen from '../screens/services/SocialServiceScreen';
+import StudentServicesScreen from '../screens/services/StudentServicesScreen';
 
 // Pantallas de perfil
 import FinancialStatusScreen from '../screens/profile/FinancialStatusScreen';
@@ -138,6 +139,7 @@ function AppNavigator() {
             <Stack.Screen name="Scholarships" component={ScholarshipsScreen} />
             <Stack.Screen name="SocialService" component={SocialServiceScreen} />
             <Stack.Screen name="FinancialStatus" component={FinancialStatusScreen} />
+            <Stack.Screen name="StudentServices" component={StudentServicesScreen} />
           </React.Fragment>
         ) : (
           // Rutas para usuarios no autenticados

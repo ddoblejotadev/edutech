@@ -62,7 +62,7 @@ const ProfileScreen = ({ navigation }) => {
   };
 
   const handleRequestCertificate = () => {
-    navigation.navigate('StudentServices');
+    navigation.navigate('Services');
   };
 
   const formatCurrency = (amount) => {
