@@ -115,7 +115,7 @@ public class DataLoader implements CommandLineRunner {
             estudiante.setRut(generarRut());
             
             // Usar nombres chilenos realistas
-            String nombre = generateChileanName();
+            String nombre = generarNombreChileno();
             String apellidoPaterno = generateChileanLastName();
             String apellidoMaterno = generateChileanLastName();
             
@@ -127,8 +127,8 @@ public class DataLoader implements CommandLineRunner {
             String correo = generateEmailFromName(nombre, apellidoPaterno);
             estudiante.setCorreo(correo);
             
-            estudiante.setTelefono(generateChileanPhone());
-            estudiante.setDireccion(generateChileanAddress());
+            estudiante.setTelefono(generaNumero());
+            estudiante.setDireccion(generarCorreo());
             estudiante.setFechaNacimiento(faker.date().birthday(18, 25).toLocalDateTime().toLocalDate());
             estudiante.setTipoPersona(tipoEstudiante);
             estudiante.setActivo(true);
@@ -152,7 +152,7 @@ public class DataLoader implements CommandLineRunner {
             profesor.setRut(generarRut());
             
             // Usar nombres chilenos realistas
-            String nombre = generateChileanName();
+            String nombre = generarNombreChileno();
             String apellidoPaterno = generateChileanLastName();
             String apellidoMaterno = generateChileanLastName();
             
@@ -164,8 +164,8 @@ public class DataLoader implements CommandLineRunner {
             String correo = generateEmailFromName(nombre, apellidoPaterno);
             profesor.setCorreo(correo);
             
-            profesor.setTelefono(generateChileanPhone());
-            profesor.setDireccion(generateChileanAddress());
+            profesor.setTelefono(generaNumero());
+            profesor.setDireccion(generarCorreo());
             profesor.setFechaNacimiento(faker.date().birthday(25, 55).toLocalDateTime().toLocalDate());
             profesor.setTipoPersona(tipoProfesor);
             profesor.setActivo(true);
@@ -258,12 +258,11 @@ public class DataLoader implements CommandLineRunner {
         }
     }
     
-    // ===== MÉTODOS AUXILIARES SIMPLIFICADOS =====
+    // ===== MÉTODOS AUXILIARES =====
     
     /**
-     * Genera un RUT chileno simple pero válido
-     * Versión simplificada para fines educativos
-     */
+     * Genera un RUT chileno simple válido
+      */
     private String generarRut() {
         // Generar número simple entre 10.000.000 y 25.000.000
         int numero = faker.number().numberBetween(10000000, 25000000);
@@ -283,7 +282,7 @@ public class DataLoader implements CommandLineRunner {
      * Genera un nombre chileno simple
      * Toma un nombre al azar de las listas predefinidas
      */
-    private String generateChileanName() {
+    private String generarNombreChileno() {
         // Combinar todos los nombres en una sola lista
         String[] todosLosNombres = {
             "Carlos", "Luis", "Jorge", "Francisco", "Miguel", "Juan", "Pedro", "José",
@@ -316,7 +315,7 @@ public class DataLoader implements CommandLineRunner {
     /**
      * Genera un teléfono chileno simple
      */
-    private String generateChileanPhone() {
+    private String generaNumero() {
         // Formato simple: +56 9 XXXXXXXX (solo móviles)
         String numero = String.valueOf(faker.number().numberBetween(10000000, 99999999));
         return "+56 9 " + numero;
@@ -325,7 +324,7 @@ public class DataLoader implements CommandLineRunner {
     /**
      * Genera una dirección chilena simple
      */
-    private String generateChileanAddress() {
+    private String generarCorreo() {
         // Formato simple: Calle Nombre Número, Comuna
         String calle = faker.address().streetName();
         int numero = faker.number().numberBetween(100, 9999);
