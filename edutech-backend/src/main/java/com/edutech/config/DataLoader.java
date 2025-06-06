@@ -128,7 +128,7 @@ public class DataLoader implements CommandLineRunner {
             estudiante.setCorreo(correo);
             
             estudiante.setTelefono(generaNumero());
-            estudiante.setDireccion(generarCorreo());
+            estudiante.setDireccion(generarDireccion());
             estudiante.setFechaNacimiento(faker.date().birthday(18, 25).toLocalDateTime().toLocalDate());
             estudiante.setTipoPersona(tipoEstudiante);
             estudiante.setActivo(true);
@@ -165,7 +165,7 @@ public class DataLoader implements CommandLineRunner {
             profesor.setCorreo(correo);
             
             profesor.setTelefono(generaNumero());
-            profesor.setDireccion(generarCorreo());
+            profesor.setDireccion(generarDireccion());
             profesor.setFechaNacimiento(faker.date().birthday(25, 55).toLocalDateTime().toLocalDate());
             profesor.setTipoPersona(tipoProfesor);
             profesor.setActivo(true);
@@ -324,7 +324,7 @@ public class DataLoader implements CommandLineRunner {
     /**
      * Genera una dirección chilena simple
      */
-    private String generarCorreo() {
+    private String generarDireccion() {
         // Formato simple: Calle Nombre Número, Comuna
         String calle = faker.address().streetName();
         int numero = faker.number().numberBetween(100, 9999);
