@@ -174,11 +174,6 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más det
 - **Backend**: Spring Boot / Java
 - **Diseño UI/UX**: Inspirado en plataformas educativas modernas
 
-## 📞 Soporte
-
-Para soporte técnico o consultas:
-- Email: soporte@edutech.cl
-- Issues: [GitHub Issues](https://github.com/tu-usuario/edutech/issues)
 
 ## 🔄 Roadmap
 
