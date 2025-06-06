@@ -46,14 +46,26 @@ module.exports = {
     // Configuración básica
     primaryColor: "#4f46e5",
     
-    // Configuración de updates
+    // Configuración de updates - ACTUALIZADA
     updates: {
-      fallbackToCacheTimeout: 0
+      url: "https://u.expo.dev/458db7e5-8ce8-44f3-b649-5ecfe6c0f902"
+    },
+    
+    // Configuración de runtime version - NUEVA
+    runtimeVersion: {
+      policy: "appVersion"
     },
     
     // Configuración de experimentos
     experiments: {
       tsconfigPaths: true
+    },
+    
+    // Configuración EAS
+    extra: {
+      eas: {
+        projectId: "458db7e5-8ce8-44f3-b649-5ecfe6c0f902"
+      }
     }
   }
 };
