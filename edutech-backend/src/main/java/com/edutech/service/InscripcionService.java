@@ -11,6 +11,7 @@ import com.edutech.repository.EjecucionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 //Importaciones Java
 import java.time.LocalDateTime;
 import java.util.List;
@@ -97,7 +98,12 @@ public class InscripcionService {
         if (inscripcionRepository.existsByPersonaIdAndEjecucionId(estudianteId, ejecucionId)) {
             throw new IllegalStateException("El estudiante ya está inscrito en esta ejecución");
         }
-        
+
+        // NUEVA VALIDACIÓN: Verificar que la fecha de inicio no sea futura
+        if (ejecucion.getFechaInicio().isAfter(LocalDate.now())) {
+            throw new IllegalStateException("No se puede inscribir a una ejecución que aún no ha comenzado");
+        }
+ 
         // Crear inscripción
         Inscripcion inscripcion = new Inscripcion();
         inscripcion.setPersona(estudiante);

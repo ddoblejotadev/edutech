@@ -17,6 +17,7 @@ import com.edutech.repository.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 @Component
@@ -25,9 +26,20 @@ import java.util.Random;
 public class DataLoader implements CommandLineRunner {
     
     private static final Logger logger = LoggerFactory.getLogger(DataLoader.class);
-    private final Faker faker = new Faker();
+    
+    // ===== CONFIGURACIÓN PARA DATOS CHILENOS =====
+    // Usar locale chileno para generar datos más realistas
+    private final Faker faker = new Faker(new Locale("es", "CL"));
     private final Random random = new Random();
     
+    // Apellidos chilenos comunes para hacer la clase más educativa
+    private final String[] APELLIDOS_CHILENOS = {
+        "González", "Rodríguez", "Muñoz", "Rojas", "López", "Díaz", "Pérez", "Soto",
+        "Contreras", "Silva", "Martínez", "Sepúlveda", "Morales", "Jiménez", "Herrera",
+        "Medina", "Guzmán", "Núñez", "Tapia", "Castillo", "Ramos", "Espinoza", "Araya",
+        "Flores", "Espínola", "Fuentes", "Torres", "Álvarez", "Poblete", "Cáceres"
+    };
+
     // Inyectar repositorios del proyecto
     @Autowired
     private TipoPersonaRepository tipoPersonaRepository;
@@ -84,7 +96,6 @@ public class DataLoader implements CommandLineRunner {
             tipo.setActivo(true);
             
             tipoPersonaRepository.save(tipo);
-            logger.info("Tipo de persona creado: {}", tipos[i]);
         }
     }
     
@@ -96,21 +107,36 @@ public class DataLoader implements CommandLineRunner {
             .filter(t -> "ESTUDIANTE".equals(t.getNombre()))
             .findFirst().orElse(tipos.get(0));
             
+        logger.info("=== Generando estudiantes con nombres chilenos ===");
         for (int i = 0; i < 15; i++) {
             Persona estudiante = new Persona();
-            estudiante.setRut(generateRandomRut());
-            estudiante.setNombres(faker.name().firstName());
-            estudiante.setApellidoPaterno(faker.name().lastName());
-            estudiante.setApellidoMaterno(faker.name().lastName());
-            estudiante.setCorreo(faker.internet().emailAddress());
-            estudiante.setTelefono(generateRandomPhone());
-            estudiante.setDireccion(faker.address().streetAddress());
+            
+            // Usar generador de RUT chileno válido
+            estudiante.setRut(generarRut());
+            
+            // Usar nombres chilenos realistas
+            String nombre = generateChileanName();
+            String apellidoPaterno = generateChileanLastName();
+            String apellidoMaterno = generateChileanLastName();
+            
+            estudiante.setNombres(nombre);
+            estudiante.setApellidoPaterno(apellidoPaterno);
+            estudiante.setApellidoMaterno(apellidoMaterno);
+            
+            // Generar correo basado en el nombre (más realista)
+            String correo = generateEmailFromName(nombre, apellidoPaterno);
+            estudiante.setCorreo(correo);
+            
+            estudiante.setTelefono(generateChileanPhone());
+            estudiante.setDireccion(generateChileanAddress());
             estudiante.setFechaNacimiento(faker.date().birthday(18, 25).toLocalDateTime().toLocalDate());
             estudiante.setTipoPersona(tipoEstudiante);
             estudiante.setActivo(true);
             
             personaRepository.save(estudiante);
-            logger.info("Estudiante creado: {} {} - {}", estudiante.getNombres(), estudiante.getApellidoPaterno(), estudiante.getCorreo());
+            
+            // Log para mostrar en clase cómo se generan los datos
+            logger.info("Estudiante creado: {} {} - RUT: {}", nombre, apellidoPaterno, estudiante.getRut());
         }
         
         // Crear profesores
@@ -118,21 +144,36 @@ public class DataLoader implements CommandLineRunner {
             .filter(t -> "PROFESOR".equals(t.getNombre()))
             .findFirst().orElse(tipos.get(1));
             
+        logger.info("=== Generando profesores con nombres chilenos ===");
         for (int i = 0; i < 5; i++) {
             Persona profesor = new Persona();
-            profesor.setRut(generateRandomRut());
-            profesor.setNombres(faker.name().firstName());
-            profesor.setApellidoPaterno(faker.name().lastName());
-            profesor.setApellidoMaterno(faker.name().lastName());
-            profesor.setCorreo(faker.internet().emailAddress());
-            profesor.setTelefono(generateRandomPhone());
-            profesor.setDireccion(faker.address().streetAddress());
+            
+            // Usar generador de RUT chileno válido
+            profesor.setRut(generarRut());
+            
+            // Usar nombres chilenos realistas
+            String nombre = generateChileanName();
+            String apellidoPaterno = generateChileanLastName();
+            String apellidoMaterno = generateChileanLastName();
+            
+            profesor.setNombres(nombre);
+            profesor.setApellidoPaterno(apellidoPaterno);
+            profesor.setApellidoMaterno(apellidoMaterno);
+            
+            // Generar correo basado en el nombre
+            String correo = generateEmailFromName(nombre, apellidoPaterno);
+            profesor.setCorreo(correo);
+            
+            profesor.setTelefono(generateChileanPhone());
+            profesor.setDireccion(generateChileanAddress());
             profesor.setFechaNacimiento(faker.date().birthday(25, 55).toLocalDateTime().toLocalDate());
             profesor.setTipoPersona(tipoProfesor);
             profesor.setActivo(true);
             
             personaRepository.save(profesor);
-            logger.info("Profesor creado: {} {} - {}", profesor.getNombres(), profesor.getApellidoPaterno(), profesor.getCorreo());
+            
+            // Log para mostrar en clase cómo se generan los datos
+            logger.info("Profesor creado: {} {} - RUT: {}", nombre, apellidoPaterno, profesor.getRut());
         }
     }
     
@@ -155,7 +196,6 @@ public class DataLoader implements CommandLineRunner {
             curso.setActivo(true);
             
             cursoRepository.save(curso);
-            logger.info("Curso creado: {} - {}", curso.getCodigo(), curso.getNombre());
         }
     }
     
@@ -188,7 +228,6 @@ public class DataLoader implements CommandLineRunner {
                 }
                 
                 ejecucionRepository.save(ejecucion);
-                logger.info("Ejecución creada: {} - Sección {} - {}", curso.getNombre(), ejecucion.getSeccion(), ejecucion.getPeriodo());
             }
         }
     }
@@ -214,42 +253,98 @@ public class DataLoader implements CommandLineRunner {
                     inscripcion.setActivo(!"CANCELADA".equals(inscripcion.getEstado()));
                     
                     inscripcionRepository.save(inscripcion);
-                    logger.info("Inscripción creada: {} en {}", estudiante.getNombres(), ejecucion.getCurso().getNombre());
                 }
             }
         }
     }
     
-    // Métodos auxiliares
-    private String generateRandomRut() {
+    // ===== MÉTODOS AUXILIARES SIMPLIFICADOS =====
+    
+    /**
+     * Genera un RUT chileno simple pero válido
+     * Versión simplificada para fines educativos
+     */
+    private String generarRut() {
+        // Generar número simple entre 10.000.000 y 25.000.000
         int numero = faker.number().numberBetween(10000000, 25000000);
-        return numero + "-" + faker.options().option("1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "K");
-    }
-    
-    private String generateRandomPhone() {
-        // Generar números de teléfono chilenos válidos con máximo 15 caracteres
-        String[] prefijos = {"+56 9", "+56 2", "09", "02"};
-        String prefijo = faker.options().option(prefijos);
         
-        if (prefijo.startsWith("+56")) {
-            // Formato internacional: +56 9 XXXX XXXX o +56 2 XXXX XXXX
-            String numero = String.format("%04d %04d", 
-                faker.number().numberBetween(1000, 9999),
-                faker.number().numberBetween(1000, 9999));
-            return prefijo + " " + numero; // Máximo 14 caracteres
-        } else {
-            // Formato nacional: 09 XXXX XXXX o 02 XXXX XXXX
-            String numero = String.format("%04d %04d", 
-                faker.number().numberBetween(1000, 9999),
-                faker.number().numberBetween(1000, 9999));
-            return prefijo + " " + numero; // Máximo 12 caracteres
-        }
+        // Usar dígitos verificadores simples (solo números)
+        int dv = numero % 10;
+        
+        // Formatear como RUT chileno estándar
+        return String.format("%d.%03d.%03d-%d", 
+            numero / 1000000, 
+            (numero / 1000) % 1000, 
+            numero % 1000, 
+            dv);
     }
     
+    /**
+     * Genera un nombre chileno simple
+     * Toma un nombre al azar de las listas predefinidas
+     */
+    private String generateChileanName() {
+        // Combinar todos los nombres en una sola lista
+        String[] todosLosNombres = {
+            "Carlos", "Luis", "Jorge", "Francisco", "Miguel", "Juan", "Pedro", "José",
+            "María", "Carmen", "Rosa", "Ana", "Patricia", "Claudia", "Sandra", "Mónica"
+        };
+        
+        return faker.options().option(todosLosNombres);
+    }
+    
+    /**
+     * Genera un apellido chileno simple
+     */
+    private String generateChileanLastName() {
+        return faker.options().option(APELLIDOS_CHILENOS);
+    }
+    
+    /**
+     * Genera un email simple basado en nombre y apellido
+     */
+    private String generateEmailFromName(String nombre, String apellido) {
+        // Crear email simple: nombre.apellido@dominio.com
+        String nombreSimple = nombre.toLowerCase().replace(" ", "");
+        String apellidoSimple = apellido.toLowerCase();
+        String[] dominios = {"gmail.com", "hotmail.com", "edutech.cl"};
+        String dominio = faker.options().option(dominios);
+        
+        return nombreSimple + "." + apellidoSimple + "@" + dominio;
+    }
+    
+    /**
+     * Genera un teléfono chileno simple
+     */
+    private String generateChileanPhone() {
+        // Formato simple: +56 9 XXXXXXXX (solo móviles)
+        String numero = String.valueOf(faker.number().numberBetween(10000000, 99999999));
+        return "+56 9 " + numero;
+    }
+    
+    /**
+     * Genera una dirección chilena simple
+     */
+    private String generateChileanAddress() {
+        // Formato simple: Calle Nombre Número, Comuna
+        String calle = faker.address().streetName();
+        int numero = faker.number().numberBetween(100, 9999);
+        String[] comunas = {"Santiago", "Las Condes", "Providencia", "Ñuñoa", "Maipú"};
+        String comuna = faker.options().option(comunas);
+        
+        return calle + " " + numero + ", " + comuna;
+    }
+    
+    /**
+     * Genera un horario simple para las clases
+     */
     private String generateRandomHorario() {
         String[] dias = {"Lunes", "Martes", "Miércoles", "Jueves", "Viernes"};
         String[] horas = {"08:00-10:00", "10:00-12:00", "14:00-16:00", "16:00-18:00"};
         
-        return faker.options().option(dias) + " y " + faker.options().option(dias) + " " + faker.options().option(horas);
+        String dia = faker.options().option(dias);
+        String hora = faker.options().option(horas);
+        
+        return dia + " " + hora;
     }
 }

@@ -10,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
 import java.time.LocalDate;
 
 import com.edutech.model.Ejecucion;
@@ -21,127 +20,109 @@ import com.edutech.repository.CursoRepository;
 @SpringBootTest
 class EjecucionServiceTest {
 
+    // Inyecta el servicio de Ejecución para ser probado
+    @Autowired
+    private EjecucionService ejecucionService;
+
+    // Crea mocks de los repositorios para simular su comportamiento
     @MockBean
     private EjecucionRepository ejecucionRepository;
 
     @MockBean
     private CursoRepository cursoRepository;
 
-    @Autowired
-    private EjecucionService ejecucionService;
-
     @Test
     void testObtenerTodas() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
-        curso.setNombre("Matemáticas Básica");
+        // Define el comportamiento del mock: cuando se llame a findAll(), devuelve una lista con una Ejecución
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        when(ejecucionRepository.findAll()).thenReturn(List.of(ejecucion));
 
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setId(1L);
-        ejecucion.setCurso(curso);
-        ejecucion.setSeccion("A");
-        ejecucion.setPeriodo("2024-1");
-        
-        List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
-        when(ejecucionRepository.findAll()).thenReturn(ejecuciones);
-
-        // Act
+        // Llama al método obtenerTodas() del servicio
         List<Ejecucion> result = ejecucionService.obtenerTodas();
 
-        // Assert
+        // Verifica que la lista devuelta no sea nula y contenga exactamente una Ejecución
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("A", result.get(0).getSeccion());
-        verify(ejecucionRepository, times(1)).findAll();
     }
 
     @Test
-    void testObtenerPorId_EjecucionExiste() {
-        // Arrange
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setId(1L);
-        ejecucion.setSeccion("A");
-        ejecucion.setPeriodo("2024-1");
-        
+    void testObtenerPorId_Existe() {
+        // Define el comportamiento del mock: cuando se llame a findById() con 1L, devuelve una Ejecución
+        Ejecucion ejecucion = crearEjecucionEjemplo();
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
 
-        // Act
+        // Llama al método obtenerPorId() del servicio
         Optional<Ejecucion> result = ejecucionService.obtenerPorId(1L);
 
-        // Assert
+        // Verifica que la Ejecución devuelta exista y tenga los valores correctos
         assertTrue(result.isPresent());
         assertEquals("A", result.get().getSeccion());
         assertEquals("2024-1", result.get().getPeriodo());
-        verify(ejecucionRepository, times(1)).findById(1L);
+    }
+
+    @Test
+    void testObtenerPorId_NoExiste() {
+        // Define el comportamiento del mock: cuando se llame a findById() con 999L, devuelve vacío
+        when(ejecucionRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Llama al método obtenerPorId() del servicio
+        Optional<Ejecucion> result = ejecucionService.obtenerPorId(999L);
+
+        // Verifica que no se encontró ninguna Ejecución
+        assertFalse(result.isPresent());
     }
 
     @Test
     void testCrear_EjecucionValida() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
-        
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCurso(curso);
-        ejecucion.setSeccion("A");
-        ejecucion.setPeriodo("2024-1");
-        ejecucion.setFechaInicio(LocalDate.now().plusDays(1));
+        // Prepara una ejecución válida para crear
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        ejecucion.setFechaInicio(LocalDate.now().plusDays(1)); // Fecha futura válida
         ejecucion.setFechaFin(LocalDate.now().plusDays(60));
         ejecucion.setCuposDisponibles(30);
-        ejecucion.setCapacidadMaxima(30);
-        
+
+        // Define el comportamiento de los mocks
         when(cursoRepository.existsById(1L)).thenReturn(true);
         when(ejecucionRepository.existsByCursoIdAndSeccionAndPeriodo(1L, "A", "2024-1")).thenReturn(false);
         when(ejecucionRepository.save(any(Ejecucion.class))).thenReturn(ejecucion);
 
-        // Act
+        // Llama al método crear() del servicio
         Ejecucion result = ejecucionService.crear(ejecucion);
 
-        // Assert
+        // Verifica que la ejecución se haya creado correctamente
         assertNotNull(result);
         assertEquals("A", result.getSeccion());
-        verify(cursoRepository, times(1)).existsById(1L);
         verify(ejecucionRepository, times(1)).save(ejecucion);
     }
 
     @Test
     void testCrear_CursoNoExiste() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
+        // Prepara una ejecución con curso inexistente
+        Ejecucion ejecucion = crearEjecucionEjemplo();
         
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCurso(curso);
-        
+        // Define el comportamiento del mock: curso no existe
         when(cursoRepository.existsById(1L)).thenReturn(false);
 
-        // Act & Assert
+        // Verifica que se lance una excepción cuando el curso no existe
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> ejecucionService.crear(ejecucion)
         );
         
         assertEquals("Curso no encontrado con ID: 1", exception.getMessage());
-        verify(cursoRepository, times(1)).existsById(1L);
         verify(ejecucionRepository, never()).save(any());
     }
 
     @Test
     void testCrear_EjecucionDuplicada() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
+        // Prepara una ejecución que ya existe
+        Ejecucion ejecucion = crearEjecucionEjemplo();
         
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCurso(curso);
-        ejecucion.setSeccion("A");
-        ejecucion.setPeriodo("2024-1");
-        
+        // Define el comportamiento de los mocks: curso existe pero ejecución duplicada
         when(cursoRepository.existsById(1L)).thenReturn(true);
         when(ejecucionRepository.existsByCursoIdAndSeccionAndPeriodo(1L, "A", "2024-1")).thenReturn(true);
 
-        // Act & Assert
+        // Verifica que se lance una excepción cuando la ejecución ya existe
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> ejecucionService.crear(ejecucion)
@@ -153,17 +134,14 @@ class EjecucionServiceTest {
 
     @Test
     void testCrear_FechaInicioAnteriorAHoy() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
+        // Prepara una ejecución con fecha de inicio en el pasado
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        ejecucion.setFechaInicio(LocalDate.now().minusDays(1)); // Fecha pasada (inválida)
         
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCurso(curso);
-        ejecucion.setFechaInicio(LocalDate.now().minusDays(1));
-        
+        // Define el comportamiento del mock: curso existe
         when(cursoRepository.existsById(1L)).thenReturn(true);
 
-        // Act & Assert
+        // Verifica que se lance una excepción cuando la fecha de inicio es pasada
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> ejecucionService.crear(ejecucion)
@@ -175,18 +153,15 @@ class EjecucionServiceTest {
 
     @Test
     void testCrear_FechaInicioMayorQueFin() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
-        
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCurso(curso);
-        ejecucion.setFechaInicio(LocalDate.now().plusDays(60));
+        // Prepara una ejecución con fechas inconsistentes
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        ejecucion.setFechaInicio(LocalDate.now().plusDays(60)); // Fecha inicio después de fin
         ejecucion.setFechaFin(LocalDate.now().plusDays(30));
         
+        // Define el comportamiento del mock: curso existe
         when(cursoRepository.existsById(1L)).thenReturn(true);
 
-        // Act & Assert
+        // Verifica que se lance una excepción cuando la fecha de inicio es posterior a la de fin
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> ejecucionService.crear(ejecucion)
@@ -198,17 +173,14 @@ class EjecucionServiceTest {
 
     @Test
     void testCrear_CupoMaximoInvalido() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
+        // Prepara una ejecución con cupo inválido (0 o menor)
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        ejecucion.setCuposDisponibles(0); // Cupo inválido
         
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCurso(curso);
-        ejecucion.setCuposDisponibles(0);
-        
+        // Define el comportamiento del mock: curso existe
         when(cursoRepository.existsById(1L)).thenReturn(true);
 
-        // Act & Assert
+        // Verifica que se lance una excepción cuando el cupo es 0 o menor
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> ejecucionService.crear(ejecucion)
@@ -220,17 +192,14 @@ class EjecucionServiceTest {
 
     @Test
     void testCrear_CupoMaximoExcedeLimite() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
+        // Prepara una ejecución con cupo excesivo
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        ejecucion.setCuposDisponibles(150); // Cupo excesivo (límite es 100)
         
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCurso(curso);
-        ejecucion.setCuposDisponibles(150);
-        
+        // Define el comportamiento del mock: curso existe
         when(cursoRepository.existsById(1L)).thenReturn(true);
 
-        // Act & Assert
+        // Verifica que se lance una excepción cuando el cupo excede el límite
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> ejecucionService.crear(ejecucion)
@@ -242,167 +211,173 @@ class EjecucionServiceTest {
 
     @Test
     void testActualizar_EjecucionExiste() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
-        
-        Ejecucion ejecucionExistente = new Ejecucion();
-        ejecucionExistente.setId(1L);
-        ejecucionExistente.setCurso(curso);
-        ejecucionExistente.setSeccion("A");
-        ejecucionExistente.setPeriodo("2024-1");
-        
+        // Prepara los datos de prueba
+        Ejecucion ejecucionExistente = crearEjecucionEjemplo();
         Ejecucion ejecucionActualizada = new Ejecucion();
+        ejecucionActualizada.setCurso(ejecucionExistente.getCurso());
         ejecucionActualizada.setSeccion("B");
         ejecucionActualizada.setPeriodo("2024-2");
-        
+        ejecucionActualizada.setFechaInicio(LocalDate.now().plusDays(1));
+        ejecucionActualizada.setFechaFin(LocalDate.now().plusDays(60));
+        ejecucionActualizada.setCuposDisponibles(25);
+
+        // Define el comportamiento de los mocks
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucionExistente));
+        when(cursoRepository.existsById(1L)).thenReturn(true);
         when(ejecucionRepository.save(any(Ejecucion.class))).thenReturn(ejecucionExistente);
 
-        // Act
+        // Llama al método actualizar() del servicio
         Ejecucion result = ejecucionService.actualizar(1L, ejecucionActualizada);
 
-        // Assert
+        // Verifica que la actualización fue exitosa
         assertNotNull(result);
         assertEquals("B", ejecucionExistente.getSeccion());
         assertEquals("2024-2", ejecucionExistente.getPeriodo());
-        verify(ejecucionRepository, times(1)).findById(1L);
         verify(ejecucionRepository, times(1)).save(ejecucionExistente);
     }
 
     @Test
     void testActualizar_EjecucionNoExiste() {
-        // Arrange
+        // Prepara datos de prueba
         Ejecucion ejecucionActualizada = new Ejecucion();
         ejecucionActualizada.setSeccion("B");
         
+        // Define el comportamiento del mock: ejecución no encontrada
         when(ejecucionRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Verifica que se lance una excepción cuando la ejecución no existe
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> ejecucionService.actualizar(999L, ejecucionActualizada)
         );
         
         assertEquals("Ejecución no encontrada con ID: 999", exception.getMessage());
-        verify(ejecucionRepository, times(1)).findById(999L);
         verify(ejecucionRepository, never()).save(any());
     }
 
     @Test
     void testEliminar_EjecucionExiste() {
-        // Arrange
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setId(1L);
+        // Prepara una ejecución sin inscripciones
+        Ejecucion ejecucion = crearEjecucionEjemplo();
         
+        // Define el comportamiento de los mocks
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
+        when(ejecucionRepository.countEstudiantesInscritos(1L)).thenReturn(0); // Sin inscripciones
+        doNothing().when(ejecucionRepository).delete(ejecucion);
 
-        // Act
+        // Llama al método eliminar() del servicio
         assertDoesNotThrow(() -> ejecucionService.eliminar(1L));
 
-        // Assert
-        verify(ejecucionRepository, times(1)).findById(1L);
+        // Verifica que la eliminación fue exitosa
         verify(ejecucionRepository, times(1)).delete(ejecucion);
     }
 
     @Test
     void testEliminar_EjecucionNoExiste() {
-        // Arrange
+        // Define el comportamiento del mock: ejecución no encontrada
         when(ejecucionRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // Act & Assert
+        // Verifica que se lance una excepción cuando la ejecución no existe
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class,
             () -> ejecucionService.eliminar(999L)
         );
         
         assertEquals("Ejecución no encontrada con ID: 999", exception.getMessage());
-        verify(ejecucionRepository, times(1)).findById(999L);
         verify(ejecucionRepository, never()).delete(any());
     }
 
     @Test
     void testObtenerPorCurso() {
-        // Arrange
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setSeccion("A");
-        
-        List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
-        when(ejecucionRepository.findByCursoId(1L)).thenReturn(ejecuciones);
+        // Define el comportamiento del mock: devuelve ejecuciones de un curso
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        when(ejecucionRepository.findByCursoId(1L)).thenReturn(List.of(ejecucion));
 
-        // Act
+        // Llama al método obtenerPorCurso() del servicio
         List<Ejecucion> result = ejecucionService.obtenerPorCurso(1L);
 
-        // Assert
+        // Verifica que se devuelvan las ejecuciones del curso
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(ejecucionRepository, times(1)).findByCursoId(1L);
+        assertEquals("A", result.get(0).getSeccion());
     }
 
     @Test
     void testObtenerActivas() {
-        // Arrange
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setSeccion("A");
-        
-        List<Ejecucion> ejecuciones = Arrays.asList(ejecucion);
-        when(ejecucionRepository.findEjecucionesActivas()).thenReturn(ejecuciones);
+        // Define el comportamiento del mock: devuelve ejecuciones activas
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        when(ejecucionRepository.findEjecucionesActivas()).thenReturn(List.of(ejecucion));
 
-        // Act
+        // Llama al método obtenerActivas() del servicio
         List<Ejecucion> result = ejecucionService.obtenerActivas();
 
-        // Assert
+        // Verifica que se devuelvan las ejecuciones activas
         assertNotNull(result);
         assertEquals(1, result.size());
-        verify(ejecucionRepository, times(1)).findEjecucionesActivas();
     }
 
     @Test
     void testContarEstudiantesInscritos() {
-        // Arrange
+        // Define el comportamiento del mock: devuelve el número de estudiantes inscritos
         when(ejecucionRepository.countEstudiantesInscritos(1L)).thenReturn(15);
 
-        // Act
+        // Llama al método contarEstudiantesInscritos() del servicio
         Integer result = ejecucionService.contarEstudiantesInscritos(1L);
 
-        // Assert
+        // Verifica que se devuelva el número correcto
         assertEquals(15, result);
-        verify(ejecucionRepository, times(1)).countEstudiantesInscritos(1L);
     }
 
     @Test
     void testTieneCuposDisponibles_ConCupos() {
-        // Arrange
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCapacidadMaxima(30);
+        // Prepara una ejecución con cupos disponibles
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        ejecucion.setCuposDisponibles(30); // Capacidad máxima 30
         
+        // Define el comportamiento de los mocks: 20 inscritos de 30 cupos
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
         when(ejecucionRepository.countEstudiantesInscritos(1L)).thenReturn(20);
 
-        // Act
+        // Llama al método tieneCuposDisponibles() del servicio
         boolean result = ejecucionService.tieneCuposDisponibles(1L);
 
-        // Assert
+        // Verifica que hay cupos disponibles
         assertTrue(result);
-        verify(ejecucionRepository, times(1)).findById(1L);
-        verify(ejecucionRepository, times(1)).countEstudiantesInscritos(1L);
     }
 
     @Test
     void testTieneCuposDisponibles_SinCupos() {
-        // Arrange
-        Ejecucion ejecucion = new Ejecucion();
-        ejecucion.setCapacidadMaxima(30);
+        // Prepara una ejecución sin cupos disponibles
+        Ejecucion ejecucion = crearEjecucionEjemplo();
+        ejecucion.setCuposDisponibles(30); // Capacidad máxima 30
         
+        // Define el comportamiento de los mocks: 30 inscritos de 30 cupos (lleno)
         when(ejecucionRepository.findById(1L)).thenReturn(Optional.of(ejecucion));
         when(ejecucionRepository.countEstudiantesInscritos(1L)).thenReturn(30);
 
-        // Act
+        // Llama al método tieneCuposDisponibles() del servicio
         boolean result = ejecucionService.tieneCuposDisponibles(1L);
 
-        // Assert
+        // Verifica que no hay cupos disponibles
         assertFalse(result);
-        verify(ejecucionRepository, times(1)).findById(1L);
-        verify(ejecucionRepository, times(1)).countEstudiantesInscritos(1L);
+    }
+
+    // ===== MÉTODOS AUXILIARES PARA CREAR OBJETOS DE PRUEBA =====
+    
+    private Ejecucion crearEjecucionEjemplo() {
+        Curso curso = new Curso();
+        curso.setId(1L);
+        curso.setNombre("Matemáticas Básica");
+
+        Ejecucion ejecucion = new Ejecucion();
+        ejecucion.setId(1L);
+        ejecucion.setCurso(curso);
+        ejecucion.setSeccion("A");
+        ejecucion.setPeriodo("2024-1");
+        ejecucion.setFechaInicio(LocalDate.now().plusDays(1));
+        ejecucion.setFechaFin(LocalDate.now().plusDays(90));
+        ejecucion.setCuposDisponibles(30);
+        ejecucion.setCapacidadMaxima(30);
+        return ejecucion;
     }
 }

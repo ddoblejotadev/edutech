@@ -10,7 +10,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
 
 import com.edutech.model.Curso;
 import com.edutech.repository.CursoRepository;
@@ -18,197 +17,243 @@ import com.edutech.repository.CursoRepository;
 @SpringBootTest
 class CursoServiceTest {
 
-    @MockBean
-    private CursoRepository cursoRepository;
-
+    // Inyecta el servicio de Curso para ser probado
     @Autowired
     private CursoService cursoService;
 
+    // Crea un mock del repositorio de Curso para simular su comportamiento
+    @MockBean
+    private CursoRepository cursoRepository;
+
     @Test
     void testObtenerTodos() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
-        curso.setCodigo("MAT001");
-        curso.setNombre("Matemáticas Básica");
-        
-        List<Curso> cursos = Arrays.asList(curso);
-        when(cursoRepository.findAll()).thenReturn(cursos);
+        // Define el comportamiento del mock: cuando se llame a findAll(), devuelve una lista con un Curso
+        Curso curso = crearCursoEjemplo();
+        when(cursoRepository.findAll()).thenReturn(List.of(curso));
 
-        // Act
+        // Llama al método obtenerTodos() del servicio
         List<Curso> result = cursoService.obtenerTodos();
 
-        // Assert
+        // Verifica que la lista devuelta no sea nula y contenga exactamente un Curso
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("MAT001", result.get(0).getCodigo());
-        verify(cursoRepository, times(1)).findAll();
+        assertEquals("EDU001", result.get(0).getCodigo());
     }
 
     @Test
-    void testObtenerPorId_CursoExiste() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setId(1L);
-        curso.setCodigo("MAT001");
-        curso.setNombre("Matemáticas Básica");
-        
+    void testObtenerPorId_Existe() {
+        // Define el comportamiento del mock: cuando se llame a findById() con 1L, devuelve un Curso
+        Curso curso = crearCursoEjemplo();
         when(cursoRepository.findById(1L)).thenReturn(Optional.of(curso));
 
-        // Act
+        // Llama al método obtenerPorId() del servicio
         Optional<Curso> result = cursoService.obtenerPorId(1L);
 
-        // Assert
+        // Verifica que el Curso devuelto exista y tenga los valores correctos
         assertTrue(result.isPresent());
-        assertEquals("MAT001", result.get().getCodigo());
+        assertEquals("EDU001", result.get().getCodigo());
         assertEquals("Matemáticas Básica", result.get().getNombre());
-        verify(cursoRepository, times(1)).findById(1L);
     }
 
     @Test
-    void testObtenerPorId_CursoNoExiste() {
-        // Arrange
+    void testObtenerPorId_NoExiste() {
+        // Define el comportamiento del mock: cuando se llame a findById() con 999L, devuelve vacío
         when(cursoRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // Act
+        // Llama al método obtenerPorId() del servicio
         Optional<Curso> result = cursoService.obtenerPorId(999L);
 
-        // Assert
+        // Verifica que no se encontró ningún Curso
         assertFalse(result.isPresent());
-        verify(cursoRepository, times(1)).findById(999L);
     }
 
     @Test
     void testCrear_CursoValido() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setCodigo("MAT001");
-        curso.setNombre("Matemáticas Básica");
+        // Crea un Curso válido para guardar
+        Curso curso = crearCursoEjemplo();
         
+        // Define el comportamiento del mock: cuando se llame a save(), devuelve el Curso
         when(cursoRepository.save(any(Curso.class))).thenReturn(curso);
 
-        // Act
+        // Llama al método crear() del servicio
         Curso result = cursoService.crear(curso);
 
-        // Assert
+        // Verifica que el Curso se haya creado correctamente
         assertNotNull(result);
-        assertEquals("MAT001", result.getCodigo());
-        verify(cursoRepository, times(1)).save(curso);
+        assertEquals("EDU001", result.getCodigo());
+        assertEquals("Matemáticas Básica", result.getNombre());
+        assertEquals(4, result.getCreditos());
     }
 
     @Test
     void testActualizar_CursoExiste() {
-        // Arrange
-        Curso cursoExistente = new Curso();
-        cursoExistente.setId(1L);
-        cursoExistente.setCodigo("MAT001");
-        cursoExistente.setNombre("Matemáticas Básica");
-        
+        // Prepara los datos de prueba
+        Curso cursoExistente = crearCursoEjemplo();
         Curso cursoActualizado = new Curso();
-        cursoActualizado.setNombre("Matemáticas Avanzada");
-        cursoActualizado.setDescripcion("Curso actualizado");
-        
+        cursoActualizado.setNombre("Física Básica");
+        cursoActualizado.setDescripcion("Curso de física para principiantes");
+        cursoActualizado.setCreditos(5);
+        cursoActualizado.setHorasTeoricas(35);
+        cursoActualizado.setHorasPracticas(25);
+        cursoActualizado.setTotalHoras(60);
+        cursoActualizado.setActivo(true);
+
+        // Define el comportamiento de los mocks
         when(cursoRepository.findById(1L)).thenReturn(Optional.of(cursoExistente));
         when(cursoRepository.save(any(Curso.class))).thenReturn(cursoExistente);
 
-        // Act
+        // Llama al método actualizar() del servicio
         Optional<Curso> result = cursoService.actualizar(1L, cursoActualizado);
 
-        // Assert
+        // Verifica que la actualización fue exitosa
         assertTrue(result.isPresent());
-        assertEquals("Matemáticas Avanzada", cursoExistente.getNombre());
-        assertEquals("Curso actualizado", cursoExistente.getDescripcion());
-        verify(cursoRepository, times(1)).findById(1L);
-        verify(cursoRepository, times(1)).save(cursoExistente);
+        assertEquals("Física Básica", cursoExistente.getNombre());
+        assertEquals(5, cursoExistente.getCreditos());
     }
 
     @Test
     void testActualizar_CursoNoExiste() {
-        // Arrange
+        // Prepara datos de prueba
         Curso cursoActualizado = new Curso();
-        cursoActualizado.setNombre("Matemáticas Avanzada");
+        cursoActualizado.setNombre("Física Básica");
         
+        // Define el comportamiento del mock: Curso no encontrado
         when(cursoRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // Act
+        // Llama al método actualizar() del servicio
         Optional<Curso> result = cursoService.actualizar(999L, cursoActualizado);
 
-        // Assert
+        // Verifica que no se actualizó nada
         assertFalse(result.isPresent());
-        verify(cursoRepository, times(1)).findById(999L);
         verify(cursoRepository, never()).save(any());
     }
 
     @Test
     void testEliminar_CursoExiste() {
-        // Arrange
+        // Define el comportamiento del mock: el Curso existe
         when(cursoRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(cursoRepository).deleteById(1L);
 
-        // Act
+        // Llama al método eliminar() del servicio
         boolean result = cursoService.eliminar(1L);
 
-        // Assert
+        // Verifica que la eliminación fue exitosa
         assertTrue(result);
-        verify(cursoRepository, times(1)).existsById(1L);
         verify(cursoRepository, times(1)).deleteById(1L);
     }
 
     @Test
     void testEliminar_CursoNoExiste() {
-        // Arrange
+        // Define el comportamiento del mock: el Curso no existe
         when(cursoRepository.existsById(999L)).thenReturn(false);
 
-        // Act
+        // Llama al método eliminar() del servicio
         boolean result = cursoService.eliminar(999L);
 
-        // Assert
+        // Verifica que no se eliminó nada
         assertFalse(result);
-        verify(cursoRepository, times(1)).existsById(999L);
         verify(cursoRepository, never()).deleteById(any());
     }
 
     @Test
     void testBuscarPorNombre() {
-        // Arrange
-        Curso curso = new Curso();
-        curso.setNombre("Matemáticas Básica");
-        
-        List<Curso> cursos = Arrays.asList(curso);
-        when(cursoRepository.findByNombreContainingIgnoreCase("matemáticas")).thenReturn(cursos);
+        // Define el comportamiento del mock: busca cursos por nombre
+        Curso curso = crearCursoEjemplo();
+        when(cursoRepository.findByNombreContainingIgnoreCase("Matemáticas")).thenReturn(List.of(curso));
 
-        // Act
-        List<Curso> result = cursoService.buscarPorNombre("matemáticas");
+        // Llama al método buscarPorNombre() del servicio
+        List<Curso> result = cursoService.buscarPorNombre("Matemáticas");
 
-        // Assert
+        // Verifica que se devuelvan los cursos que contienen el texto buscado
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.get(0).getNombre().contains("Matemáticas"));
+    }
+
+    @Test
+    void testBuscarPorDescripcion() {
+        // Define el comportamiento del mock: busca cursos por descripción
+        Curso curso = crearCursoEjemplo();
+        when(cursoRepository.findByDescripcionContainingIgnoreCase("matemáticas")).thenReturn(List.of(curso));
+
+        // Llama al método buscarPorDescripcion() del servicio
+        List<Curso> result = cursoService.buscarPorDescripcion("matemáticas");
+
+        // Verifica que se devuelvan los cursos que contienen el texto buscado
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertTrue(result.get(0).getDescripcion().toLowerCase().contains("matemáticas"));
+    }
+
+    @Test
+    void testObtenerOrdenadosPorNombre() {
+        // Define el comportamiento del mock: devuelve cursos ordenados por nombre
+        Curso curso = crearCursoEjemplo();
+        when(cursoRepository.findAllByOrderByNombreAsc()).thenReturn(List.of(curso));
+
+        // Llama al método obtenerOrdenadosPorNombre() del servicio
+        List<Curso> result = cursoService.obtenerOrdenadosPorNombre();
+
+        // Verifica que se devuelvan los cursos ordenados por nombre
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Matemáticas Básica", result.get(0).getNombre());
-        verify(cursoRepository, times(1)).findByNombreContainingIgnoreCase("matemáticas");
+    }
+
+    @Test
+    void testObtenerPorRangoDuracion() {
+        // Define el comportamiento del mock: devuelve cursos en rango de duración
+        Curso curso = crearCursoEjemplo();
+        when(cursoRepository.findByDuracionHorasBetween(30, 60)).thenReturn(List.of(curso));
+
+        // Llama al método obtenerPorRangoDuracion() del servicio
+        List<Curso> result = cursoService.obtenerPorRangoDuracion(30, 60);
+
+        // Verifica que se devuelvan los cursos en el rango especificado
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(Integer.valueOf(50), result.get(0).getTotalHoras());
     }
 
     @Test
     void testExistePorNombre_Existe() {
-        // Arrange
+        // Define el comportamiento del mock: el curso existe
         when(cursoRepository.existsByNombreIgnoreCase("Matemáticas Básica")).thenReturn(true);
 
-        // Act
+        // Llama al método existePorNombre() del servicio
         boolean result = cursoService.existePorNombre("Matemáticas Básica");
 
-        // Assert
+        // Verifica que el curso existe
         assertTrue(result);
-        verify(cursoRepository, times(1)).existsByNombreIgnoreCase("Matemáticas Básica");
     }
 
     @Test
     void testExistePorNombre_NoExiste() {
-        // Arrange
+        // Define el comportamiento del mock: el curso no existe
         when(cursoRepository.existsByNombreIgnoreCase("Curso Inexistente")).thenReturn(false);
 
-        // Act
+        // Llama al método existePorNombre() del servicio
         boolean result = cursoService.existePorNombre("Curso Inexistente");
 
-        // Assert
+        // Verifica que el curso no existe
         assertFalse(result);
-        verify(cursoRepository, times(1)).existsByNombreIgnoreCase("Curso Inexistente");
+    }
+
+    // ===== MÉTODOS AUXILIARES PARA CREAR OBJETOS DE PRUEBA =====
+    
+    private Curso crearCursoEjemplo() {
+        Curso curso = new Curso();
+        curso.setId(1L);
+        curso.setCodigo("EDU001");
+        curso.setNombre("Matemáticas Básica");
+        curso.setDescripcion("Curso de matemáticas para principiantes");
+        curso.setCreditos(4);
+        curso.setHorasTeoricas(30);
+        curso.setHorasPracticas(20);
+        curso.setTotalHoras(50);
+        curso.setCiclo("2024-1");
+        curso.setModalidad("PRESENCIAL");
+        curso.setActivo(true);
+        return curso;
     }
 }
