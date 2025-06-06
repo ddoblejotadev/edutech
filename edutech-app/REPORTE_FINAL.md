@@ -150,8 +150,8 @@ npm start
 
 Para probar la aplicación en modo demostración:
 
-- **Usuario**: `juan.perez@alumno.edu`
-- **Contraseña**: `demo123`
+- **Usuario**: `carlos.mendoza@duocuc.cl'`
+- **Contraseña**: `duoc2024`
 
 ---
 
