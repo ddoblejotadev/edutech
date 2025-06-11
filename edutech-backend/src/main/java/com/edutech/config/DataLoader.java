@@ -21,7 +21,7 @@ import java.util.Locale;
 import java.util.Random;
 
 @Component
-@Profile("prod") // Cargar datos solo en el perfil seleccionado
+@Profile("disabled") // Deshabilitado temporalmente - cambiar a "dev" para habilitar
 @Transactional // Agregar esta anotación para manejar la sesión de Hibernate
 public class DataLoader implements CommandLineRunner {
     

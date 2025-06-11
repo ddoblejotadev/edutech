@@ -2,11 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	
-	<parent>
+		<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.3.12</version>
+		<version>3.4.0</version>
 		<relativePath/>
 	</parent>
 	
@@ -14,14 +13,14 @@
 	<artifactId>edutech-backend</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<name>edutech-backend</name>
-	<description>EduTech Backend Unificado - Sistema de Gestión Educativa</description>
-	
-	<properties>
-		<java.version>17</java.version>
-		<maven.compiler.release>17</maven.compiler.release>
+	<description>EduTech Backend Unificado - Sistema de Gestión Educativa</description>	<properties>
+		<java.version>24</java.version>
+		<maven.compiler.source>24</maven.compiler.source>
+		<maven.compiler.target>24</maven.compiler.target>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<lombok.version>1.18.30</lombok.version>
+		<lombok.version>1.18.36</lombok.version>
 		<datafaker.version>2.0.2</datafaker.version>
+		<maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
 	</properties>
 
 	<dependencies>
@@ -103,14 +102,13 @@
 						</exclude>
 					</excludes>
 				</configuration>
-			</plugin>
-			
-			<plugin>
+			</plugin>			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
+				<version>${maven.compiler.plugin.version}</version>
 				<configuration>
-					<release>17</release>
+					<source>24</source>
+					<target>24</target>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -118,6 +116,9 @@
 							<version>${lombok.version}</version>
 						</path>
 					</annotationProcessorPaths>
+					<fork>true</fork>
+					<meminitial>128m</meminitial>
+					<maxmem>512m</maxmem>
 				</configuration>
 			</plugin>
 		</plugins>
