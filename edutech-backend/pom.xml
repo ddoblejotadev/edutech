@@ -15,12 +15,21 @@
 	<version>1.0.0-SNAPSHOT</version>
 	<name>edutech-backend</name>
 	<description>Backend for EduTech application</description>
-		<properties>
+
+	<properties>
+		<!-- Forzar Java 17 explícitamente -->
 		<java.version>17</java.version>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
+		<maven.compiler.release>17</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<lombok.version>1.18.32</lombok.version>
+		
+		<!-- Versiones específicas de plugins -->
+		<maven-compiler-plugin.version>3.12.1</maven-compiler-plugin.version>
+		<maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+		<maven-enforcer-plugin.version>3.4.1</maven-enforcer-plugin.version>
 	</properties>
 	
 	<dependencies>
@@ -80,12 +89,22 @@
 				</configuration>
 			</plugin>
 			
+			<!-- Plugin de compilación con configuración estricta para Java 17 y Lombok -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>				<configuration>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
 					<release>17</release>
+					<source>17</source>
+					<target>17</target>
+					<compilerVersion>17</compilerVersion>
+					<fork>true</fork>
 					<parameters>true</parameters>
+					<compilerArgs>
+						<arg>-Xlint:unchecked</arg>
+						<arg>-Xlint:deprecation</arg>
+					</compilerArgs>
 					<annotationProcessorPaths>
 						<path>
 							<groupId>org.projectlombok</groupId>
@@ -94,6 +113,84 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
+			</plugin>
+
+			<!-- Plugin para enforcer Java version -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<version>${maven-enforcer-plugin.version}</version>
+				<executions>
+					<execution>
+						<id>enforce-java</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<requireJavaVersion>
+									<version>[17,18)</version>
+									<message>Este proyecto requiere Java 17. Versión actual: ${java.version}</message>
+								</requireJavaVersion>
+								<requireMavenVersion>
+									<version>[3.6.0,)</version>
+									<message>Este proyecto requiere Maven 3.6.0 o superior</message>
+								</requireMavenVersion>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<!-- Plugin mejorado para tests -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>${maven-surefire-plugin.version}</version>
+				<configuration>
+					<includes>
+						<include>**/*Test.java</include>
+						<include>**/*Tests.java</include>
+					</includes>
+					<argLine>
+						--add-opens java.base/java.lang=ALL-UNNAMED 
+						--add-opens java.base/java.util=ALL-UNNAMED
+						--add-opens java.base/java.time=ALL-UNNAMED
+						-Dfile.encoding=UTF-8
+						-Djava.awt.headless=true
+					</argLine>
+					<systemPropertyVariables>
+						<spring.profiles.active>test</spring.profiles.active>
+						<java.awt.headless>true</java.awt.headless>
+					</systemPropertyVariables>
+					<forkCount>1</forkCount>
+					<reuseForks>false</reuseForks>
+					<useSystemClassLoader>true</useSystemClassLoader>
+					<useManifestOnlyJar>false</useManifestOnlyJar>
+					<failIfNoTests>false</failIfNoTests>
+					<trimStackTrace>false</trimStackTrace>
+				</configuration>
+			</plugin>
+
+			<!-- Plugin para tests de integración -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>3.2.5</version>
+				<configuration>
+					<includes>
+						<include>**/*IT.java</include>
+						<include>**/*IntegrationTest.java</include>
+					</includes>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
